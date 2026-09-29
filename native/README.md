@@ -21,6 +21,11 @@ the project database directory before opening it. The device integration test
 in `integration_test/sql_native_test.dart` checks write, read, persistence,
 and SQL error handling against the packaged engine.
 
+The `query` method is for a single prepared statement. It binds nullable text
+parameters and returns column names, nullable rows, affected-row count, and a
+truncation flag. Its 500-row / 1 MiB cap is a UI safety limit; callers page
+table data rather than relying on unbounded results.
+
 Source: https://www.sqlite.org/
 Version: 3.50.0
 License: public domain, as declared by the upstream SQLite source.

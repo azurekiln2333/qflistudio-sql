@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:qfli_studio_core/services/studio_profile.dart';
 
+import 'sql_native_channel.dart';
+
 /// 一次待交给 SQLite 后端执行的项目查询。
 class SqliteRequest {
   const SqliteRequest({required this.projectPath, required this.source});
@@ -54,9 +56,7 @@ class UnavailableSqliteEngine implements SqliteEngine {
 
 /// Calls the bundled HarmonyOS SQLite library through its method channel.
 class NativeSqliteEngine implements SqliteEngine {
-  const NativeSqliteEngine({
-    this.channel = const MethodChannel('qfli_sql/native'),
-  });
+  const NativeSqliteEngine({this.channel = sqlNativeChannel});
 
   final MethodChannel channel;
 

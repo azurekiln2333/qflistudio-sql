@@ -14,8 +14,19 @@ interface QfliSqlResponse {
   truncated: boolean;
 }
 
+interface QfliSqlQueryResponse {
+  available: boolean;
+  exitCode: number;
+  error: string;
+  affectedRows: number;
+  truncated: boolean;
+  columns: Array<string>;
+  rows: Array<Array<string | null>>;
+}
+
 interface QfliSqlModule {
   execute(source: string, databasePath: string): QfliSqlResponse;
+  query(source: string, databasePath: string, params: Array<string | null>): QfliSqlQueryResponse;
   version(): string;
 }
 
@@ -42,6 +53,11 @@ export function registerQfliSqlNativeChannel(engine: FlutterEngine): void {
           const source = call.argument('source') as string;
           const databasePath = call.argument('databasePath') as string;
           result.success(nativeModule.execute(source, databasePath));
+        } else if (call.method === 'query') {
+          const source = call.argument('source') as string;
+          const databasePath = call.argument('databasePath') as string;
+          const params = call.argument('params') as Array<string | null>;
+          result.success(nativeModule.query(source, databasePath, params));
         } else if (call.method === 'version') {
           result.success(nativeModule.version());
         } else {

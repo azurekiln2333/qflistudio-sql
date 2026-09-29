@@ -1,7 +1,7 @@
 # Implementation
 
 - [x] Make the existing bundled SQLite bridge executable from the current runner, including directory creation, honest runtime errors, and tests. Verified with a signed HarmonyOS HAP and on-device SQL round-trip. This is groundwork, not MySQL completion.
-- [ ] Define structured database results and parameterized mutation operations shared by SQL execution and the grid.
+- [x] Define structured database results and parameterized mutation operations for the grid. Verified on HarmonyOS with quoted text and NULL round-trips; the current script runner remains a separate multi-statement path until engine unification.
 - [ ] Build the database explorer, table grid, schema actions, and SQL editor as the SQL app's main workspace while retaining project/editor access.
 - [ ] Port and package a MySQL server for HarmonyOS arm64; add lifecycle management and local client transport.
 - [ ] Switch the default workbench and runner to the local MySQL engine after on-device readiness and persistence checks.

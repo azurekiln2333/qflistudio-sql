@@ -5,6 +5,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:qfli_sql/sql_database.dart';
 import 'package:qfli_sql/sql_runner.dart';
+import 'package:qfli_sql/sql_workspace_repository.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -87,5 +88,58 @@ void main() {
     );
     expect(multiple.success, isFalse);
     expect(multiple.error, contains('Only one SQL statement'));
+  });
+
+  testWidgets('workspace creates and edits a real database', (tester) async {
+    final root = await Directory.systemTemp.createTemp(
+      'qfli_workspace_device_',
+    );
+    addTearDown(() => root.delete(recursive: true));
+    final workspace = SqlWorkspaceRepository(root: root);
+
+    await workspace.createDatabase('work');
+    expect(await workspace.listDatabases(), ['work']);
+    await workspace.createTable('work', 'people', const [
+      SqlColumnDraft(name: 'id', type: 'INTEGER', primaryKey: true),
+      SqlColumnDraft(name: 'name', type: 'TEXT', notNull: true),
+      SqlColumnDraft(name: 'note', type: 'TEXT'),
+    ]);
+    expect(await workspace.listTables('work'), ['people']);
+
+    await workspace.insertRow('work', 'people', {
+      'name': "O'Brien",
+      'note': null,
+    });
+    var page = await workspace.loadTable('work', 'people');
+    expect(page.totalRows, 1);
+    expect(page.editable, isTrue);
+    expect(page.rows, [
+      ['1', "O'Brien", null],
+    ]);
+
+    await workspace.updateCell(
+      'work',
+      'people',
+      page.rowIds.single,
+      'note',
+      'ok',
+    );
+    page = await workspace.loadTable(
+      'work',
+      'people',
+      filterColumn: 'name',
+      filter: "O'B",
+      sortColumn: 'id',
+    );
+    expect(page.rows, [
+      ['1', "O'Brien", 'ok'],
+    ]);
+
+    await workspace.deleteRow('work', 'people', page.rowIds.single);
+    expect((await workspace.loadTable('work', 'people')).totalRows, 0);
+    await workspace.deleteTable('work', 'people');
+    expect(await workspace.listTables('work'), isEmpty);
+    await workspace.deleteDatabase('work');
+    expect(await workspace.listDatabases(), isEmpty);
   });
 }

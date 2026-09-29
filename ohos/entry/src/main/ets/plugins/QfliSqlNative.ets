@@ -6,14 +6,16 @@ import {
   MethodResult,
 } from '@ohos/flutter_ohos';
 
+interface QfliSqlResponse {
+  available: boolean;
+  exitCode: number;
+  output: string;
+  error: string;
+  truncated: boolean;
+}
+
 interface QfliSqlModule {
-  execute(source: string, databasePath: string): {
-    available: boolean;
-    exitCode: number;
-    output: string;
-    error: string;
-    truncated: boolean;
-  };
+  execute(source: string, databasePath: string): QfliSqlResponse;
   version(): string;
 }
 

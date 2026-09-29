@@ -86,6 +86,7 @@ int qfli_sql_execute(
 
     if (result == NULL || source == NULL || database_path == NULL) return 0;
     reset_result(result);
+    result->available = 1;
     output.limit = output_limit == 0 ? 1024 * 1024 : output_limit;
 
     sqlite_code = sqlite3_open_v2(
@@ -97,11 +98,11 @@ int qfli_sql_execute(
         result->error = copy_text(database == NULL
             ? "SQLite database open failed."
             : sqlite3_errmsg(database));
+        result->exit_code = 1;
         if (database != NULL) sqlite3_close(database);
         return 1;
     }
 
-    result->available = 1;
     sqlite_code = sqlite3_exec(
         database,
         source,
@@ -110,7 +111,10 @@ int qfli_sql_execute(
         &error_message);
     result->output = output.buffer == NULL ? copy_text("") : output.buffer;
     result->truncated = output.truncated;
-    if (sqlite_code != SQLITE_OK && !output.truncated) {
+    if (output.truncated) {
+        result->error = copy_text("Query output exceeds the 1 MiB display limit.");
+        result->exit_code = 1;
+    } else if (sqlite_code != SQLITE_OK) {
         result->error = copy_text(error_message == NULL
             ? sqlite3_errmsg(database)
             : error_message);

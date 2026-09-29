@@ -10,11 +10,16 @@ The bridge exposes only two NAPI functions:
   `error`, and `truncated`.
 - `version()` returns SQLite's own `sqlite3_libversion()` value.
 
-Build the shared library with the HarmonyOS NDK using
-`native/CMakeLists.txt`, place the resulting `libqfli_sql.so` under
-`ohos/entry/libs/<abi>/`, and register the ArkTS channel in the entry ability.
-The Dart side intentionally stays unavailable until that library and channel
-are installed; a missing bridge must never look like a successful query.
+The HarmonyOS build compiles `native/CMakeLists.txt` and packages
+`libqfli_sql.so` into the HAP. The NAPI entry point lives in
+`ohos/entry/src/main/cpp/` because Hvigor enables its CMake task only when
+the module's source set contains C++ code. After building, verify the HAP
+contains `libs/arm64-v8a/libqfli_sql.so`.
+
+The Dart runner calls the registered `qfli_sql/native` channel and creates
+the project database directory before opening it. The device integration test
+in `integration_test/sql_native_test.dart` checks write, read, persistence,
+and SQL error handling against the packaged engine.
 
 Source: https://www.sqlite.org/
 Version: 3.50.0

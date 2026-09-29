@@ -10,7 +10,7 @@ set(QFLI_SQLITE_DIR ${QFLI_SQL_DIR}/third_party/sqlite)
 add_library(qfli_sql SHARED
     ${QFLI_SQLITE_DIR}/sqlite3.c
     src/qfli_sql_bridge.c
-    src/qfli_sql_napi.cpp)
+    ../ohos/entry/src/main/cpp/qfli_sql_napi.cpp)
 
 target_include_directories(qfli_sql PRIVATE
     ${QFLI_SQLITE_DIR}

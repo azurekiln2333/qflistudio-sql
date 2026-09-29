@@ -36,20 +36,31 @@ void main() {
 
   group('档位收窄', () {
     test('新建项目只放行「空项目」和 SQL', () {
-      expect(
-        sqlProfile.filterTemplates(ProjectTemplate.values),
-        [ProjectTemplate.empty, ProjectTemplate.sql],
-      );
+      expect(sqlProfile.filterTemplates(ProjectTemplate.values), [
+        ProjectTemplate.empty,
+        ProjectTemplate.sql,
+      ]);
     });
 
     test('默认模板是 SQL 而不是空项目', () {
-      expect(sqlProfile.defaultTemplate,
-          ProjectTemplate.sql);
+      expect(sqlProfile.defaultTemplate, ProjectTemplate.sql);
     });
 
     test('语言筛选芯片只剩 SQL', () {
       // 首页传给档位的候选本来就不含「空项目」——它不是一门语言。
-      const all = ['Rust', 'Go', 'SQL', 'JSON', 'Markdown', 'C++', 'Lua', 'Web', 'Python', 'Java', 'Dart'];
+      const all = [
+        'Rust',
+        'Go',
+        'SQL',
+        'JSON',
+        'Markdown',
+        'C++',
+        'Lua',
+        'Web',
+        'Python',
+        'Java',
+        'Dart',
+      ];
       expect(sqlProfile.filterLanguages(all), ['SQL']);
     });
 
@@ -91,14 +102,14 @@ void main() {
   });
 
   group('运行后端', () {
-    test('本语言文件被接管，并明确报告 SQLite 引擎状态', () async {
+    test('本语言文件被接管，并在没有原生通道时报告错误', () async {
       write('main.sql', '// 示例');
       final result = await sqlProfile.runner!.run(
         projectPath: project.path,
         entryFile: p.join(project.path, 'main.sql'),
       );
       expect(result, isNotNull, reason: '运行后端没有接管本语言文件');
-      expect(result!.title, contains('SQLite 运行时不可用'));
+      expect(result!.title, '运行 main.sql');
       expect(await result.stdout.toList(), isEmpty);
       expect(await result.stderr.toList(), isNotEmpty);
       expect(await result.exitCode, kProgramNotRunExitCode);
@@ -123,7 +134,7 @@ void main() {
       );
       expect(result, isNotNull);
       expect(result!.hint, isNull, reason: '后端接管了就不该走兜底提示');
-      expect(result.title, contains('SQLite 运行时不可用'));
+      expect(result.title, '运行 main.sql');
     });
   });
 }

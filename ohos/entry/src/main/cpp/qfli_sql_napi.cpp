@@ -16,11 +16,12 @@ bool read_string(napi_env env, napi_value value, std::string *out)
     if (napi_get_value_string_utf8(env, value, nullptr, 0, &length) != napi_ok) {
         return false;
     }
-    std::string buffer(length, '\0');
+    std::string buffer(length + 1, '\0');
     if (length > 0 && napi_get_value_string_utf8(
             env, value, &buffer[0], length + 1, &length) != napi_ok) {
         return false;
     }
+    buffer.resize(length);
     *out = buffer;
     return true;
 }

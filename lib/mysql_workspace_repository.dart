@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:path/path.dart' as p;
+import 'package:qfli_studio_core/services/app_paths.dart';
+
+import 'mysql_database.dart';
 import 'sql_database.dart';
 import 'sql_workspace_repository.dart';
 
@@ -11,6 +15,25 @@ class MySqlWorkspaceRepository extends SqlWorkspaceRepository {
     required Directory runtimeDirectory,
     required super.database,
   }) : super(root: runtimeDirectory);
+
+  static Future<MySqlWorkspaceRepository> openLocal() async {
+    final storage = await AppPaths.storageDirectory();
+    if (storage == null) {
+      throw const FileSystemException('无法访问应用数据目录');
+    }
+    final runtime = Directory(p.join(storage, 'mysql'));
+    await runtime.create(recursive: true);
+    return MySqlWorkspaceRepository(
+      runtimeDirectory: runtime,
+      database: const NativeMySqlDatabase(),
+    );
+  }
+
+  @override
+  bool get supportsSchemaTools => true;
+
+  @override
+  bool get supportsSqlExport => true;
 
   @override
   List<String> get columnTypes => const [
@@ -79,9 +102,12 @@ class MySqlWorkspaceRepository extends SqlWorkspaceRepository {
     _identifier(table);
     final result = await _query(
       databaseName,
-      'SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, COLUMN_KEY '
-      'FROM information_schema.COLUMNS '
-      'WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? ORDER BY ORDINAL_POSITION',
+      'SELECT c.COLUMN_NAME, c.COLUMN_TYPE, c.IS_NULLABLE, '
+      'EXISTS (SELECT 1 FROM information_schema.STATISTICS s '
+      'WHERE s.TABLE_SCHEMA = c.TABLE_SCHEMA AND s.TABLE_NAME = c.TABLE_NAME '
+      "AND s.INDEX_NAME = 'PRIMARY' AND s.COLUMN_NAME = c.COLUMN_NAME) AS IS_PRIMARY, c.EXTRA "
+      'FROM information_schema.COLUMNS c '
+      'WHERE c.TABLE_SCHEMA = ? AND c.TABLE_NAME = ? ORDER BY c.ORDINAL_POSITION',
       [databaseName, table],
     );
     if (result.rows.isEmpty) throw StateError('数据表不存在：$table');
@@ -91,7 +117,13 @@ class MySqlWorkspaceRepository extends SqlWorkspaceRepository {
           name: row[0]!,
           type: row[1]!,
           notNull: row[2] == 'NO',
-          primaryKey: row[3] == 'PRI',
+          primaryKey: row[3] == '1',
+          generated:
+              row.length > 4 &&
+              (row[4]?.contains('VIRTUAL GENERATED') == true ||
+                  row[4]?.contains('STORED GENERATED') == true),
+          autoIncrement:
+              row.length > 4 && row[4]?.contains('auto_increment') == true,
         ),
     ];
   }
@@ -203,6 +235,132 @@ class MySqlWorkspaceRepository extends SqlWorkspaceRepository {
   }
 
   @override
+  Future<void> renameTable(
+    String databaseName,
+    String table,
+    String name,
+  ) async {
+    _requireUserDatabase(databaseName);
+    await _query(
+      databaseName,
+      'RENAME TABLE ${_identifier(table)} TO ${_identifier(name)}',
+    );
+  }
+
+  @override
+  Future<void> addColumn(
+    String databaseName,
+    String table,
+    SqlColumnDraft column,
+  ) async {
+    _requireUserDatabase(databaseName);
+    if (!columnTypes.contains(column.type)) {
+      throw ArgumentError('不支持的列类型：${column.type}');
+    }
+    if (column.primaryKey) throw ArgumentError('添加列时不支持设置主键');
+    await _query(
+      databaseName,
+      'ALTER TABLE ${_identifier(table)} ADD COLUMN '
+      '${_identifier(column.name)} ${column.type}'
+      '${column.notNull ? ' NOT NULL' : ' NULL'}',
+    );
+  }
+
+  @override
+  Future<void> renameColumn(
+    String databaseName,
+    String table,
+    String column,
+    String name,
+  ) async {
+    _requireUserDatabase(databaseName);
+    _validateColumns([column], await tableColumns(databaseName, table));
+    await _query(
+      databaseName,
+      'ALTER TABLE ${_identifier(table)} RENAME COLUMN '
+      '${_identifier(column)} TO ${_identifier(name)}',
+    );
+  }
+
+  @override
+  Future<void> deleteColumn(
+    String databaseName,
+    String table,
+    String column,
+  ) async {
+    _requireUserDatabase(databaseName);
+    _validateColumns([column], await tableColumns(databaseName, table));
+    await _query(
+      databaseName,
+      'ALTER TABLE ${_identifier(table)} DROP COLUMN ${_identifier(column)}',
+    );
+  }
+
+  @override
+  Future<List<SqlIndex>> tableIndexes(String databaseName, String table) async {
+    await tableColumns(databaseName, table);
+    final result = await _query(
+      databaseName,
+      'SELECT INDEX_NAME, NON_UNIQUE, COLUMN_NAME, EXPRESSION '
+      'FROM information_schema.STATISTICS '
+      'WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? '
+      'ORDER BY INDEX_NAME, SEQ_IN_INDEX',
+      [databaseName, table],
+    );
+    final grouped = <String, List<List<String?>>>{};
+    for (final row in result.rows) {
+      grouped.putIfAbsent(row[0]!, () => []).add(row);
+    }
+    return [
+      for (final entry in grouped.entries)
+        SqlIndex(
+          name: entry.key,
+          columns: [for (final row in entry.value) row[2] ?? row[3] ?? ''],
+          unique: entry.value.first[1] == '0',
+          primary: entry.key == 'PRIMARY',
+        ),
+    ];
+  }
+
+  @override
+  Future<void> createIndex(
+    String databaseName,
+    String table,
+    String name,
+    List<String> columns, {
+    bool unique = false,
+  }) async {
+    _requireUserDatabase(databaseName);
+    if (columns.isEmpty || columns.toSet().length != columns.length) {
+      throw ArgumentError('请选择不重复的索引列');
+    }
+    _validateColumns(columns, await tableColumns(databaseName, table));
+    await _query(
+      databaseName,
+      'CREATE ${unique ? 'UNIQUE ' : ''}INDEX ${_identifier(name)} '
+      'ON ${_identifier(table)} (${columns.map(_identifier).join(', ')})',
+    );
+  }
+
+  @override
+  Future<void> deleteIndex(
+    String databaseName,
+    String table,
+    String name,
+  ) async {
+    _requireUserDatabase(databaseName);
+    final indexes = await tableIndexes(databaseName, table);
+    if (!indexes.any((index) => index.name == name)) {
+      throw ArgumentError('索引不存在：$name');
+    }
+    await _query(
+      databaseName,
+      'ALTER TABLE ${_identifier(table)} DROP '
+      '${name == 'PRIMARY' ? 'PRIMARY KEY' : 'INDEX ${_identifier(name)}'}',
+    );
+  }
+
+  @override
   Future<void> insertRow(
     String databaseName,
     String table,
@@ -210,6 +368,11 @@ class MySqlWorkspaceRepository extends SqlWorkspaceRepository {
   ) async {
     final columns = await tableColumns(databaseName, table);
     _validateColumns(values.keys, columns);
+    if (values.keys.any(
+      (name) => columns.singleWhere((column) => column.name == name).generated,
+    )) {
+      throw ArgumentError('生成列不能直接写入');
+    }
     final names = values.keys.toList();
     for (final name in names) {
       _validateValue(
@@ -237,6 +400,7 @@ class MySqlWorkspaceRepository extends SqlWorkspaceRepository {
     final columns = await tableColumns(databaseName, table);
     _validateColumns([column], columns);
     final metadata = columns.singleWhere((item) => item.name == column);
+    if (metadata.generated) throw ArgumentError('生成列不能直接写入');
     _validateValue(metadata, value);
     final identity = _decodeIdentity(rowId, columns);
     final result = await _query(
@@ -267,7 +431,107 @@ class MySqlWorkspaceRepository extends SqlWorkspaceRepository {
 
   @override
   Future<SqlQueryResult> runQuery(String databaseName, String source) =>
-      database.query(databasePath: databasePath(databaseName), source: source);
+      database.query(
+        databasePath: databaseName.isEmpty ? '' : databasePath(databaseName),
+        source: source,
+      );
+
+  @override
+  Future<SqlScriptResult> runScript(String databaseName, String source) async {
+    final client = database;
+    if (client is SqlScriptDatabase) {
+      return (client as SqlScriptDatabase).executeScript(
+        databasePath: databaseName.isEmpty ? '' : databasePath(databaseName),
+        source: source,
+      );
+    }
+    final result = await runQuery(databaseName, source);
+    return SqlScriptResult(summary: result, results: [result]);
+  }
+
+  @override
+  Future<String> exportTableSql(String databaseName, String table) async {
+    final engine = await _query(
+      databaseName,
+      'SELECT ENGINE FROM information_schema.TABLES '
+      'WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?',
+      [databaseName, table],
+    );
+    if (engine.rows.isEmpty) throw StateError('数据表不存在：$table');
+    if (engine.rows.single.single?.toUpperCase() != 'INNODB') {
+      throw UnsupportedError('快照导出仅支持 InnoDB 表，未生成导出文件');
+    }
+    final metadata = await tableColumns(databaseName, table);
+    final columns = metadata.where((column) => !column.generated).toList();
+    if (columns.any(
+      (column) => RegExp(
+        r'^(geometry|point|linestring|polygon|multipoint|multilinestring|multipolygon|geometrycollection)(\(|$)',
+        caseSensitive: false,
+      ).hasMatch(column.type),
+    )) {
+      throw UnsupportedError('空间类型需要专用备份工具，未生成导出文件');
+    }
+    final projections = [
+      for (final column in columns)
+        'CAST(${_binary(column) ? 'HEX(${_identifier(column.name)})' : 'HEX(CAST(${_identifier(column.name)} AS CHAR CHARACTER SET utf8mb4))'} '
+            'AS CHAR CHARACTER SET utf8mb4)',
+    ];
+    // Read all rows in one connection so unkeyed tables cannot drift across pages.
+    final snapshot = await runScript(
+      databaseName,
+      "SET SESSION time_zone = '+00:00'; "
+      'START TRANSACTION WITH CONSISTENT SNAPSHOT, READ ONLY; '
+      'SHOW CREATE TABLE ${_identifier(table)}; '
+      'SELECT ${projections.isEmpty ? '1' : projections.join(', ')} '
+      'FROM ${_identifier(table)}; COMMIT;',
+    );
+    if (!snapshot.success) {
+      throw StateError(snapshot.error ?? 'SQL 导出失败');
+    }
+    if (snapshot.truncated ||
+        snapshot.results.any((result) => result.truncated)) {
+      throw StateError('表数据超过导出上限（1,000 行 / 1 MiB），未生成导出文件');
+    }
+    if (snapshot.results.length != 5) {
+      throw StateError('数据库未返回完整导出结果，未生成导出文件');
+    }
+    final output = StringBuffer()
+      ..writeln('-- QFLISQLab Oracle MySQL table export')
+      ..writeln('-- NULL is SQL NULL; values use hexadecimal literals.')
+      ..writeln('SET NAMES utf8mb4;')
+      ..writeln("SET SESSION time_zone = '+00:00';")
+      ..writeln("SET SESSION sql_mode = 'NO_AUTO_VALUE_ON_ZERO';")
+      ..writeln('${snapshot.results[2].rows.single[1]};');
+    var outputBytes = utf8.encode(output.toString()).length;
+    final rows = snapshot.results[3].rows;
+    if (rows.isNotEmpty) {
+      final insert =
+          'INSERT INTO ${_identifier(table)} '
+          '(${columns.map((column) => _identifier(column.name)).join(', ')}) VALUES';
+      output.writeln(insert);
+      outputBytes += utf8.encode(insert).length + 1;
+    }
+    for (var rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+      final row = rows[rowIndex];
+      final values = [
+        for (var index = 0; index < columns.length; index++)
+          row[index] == null
+              ? 'NULL'
+              : _binary(columns[index])
+              ? "X'${row[index]}'"
+              : "CONVERT(X'${row[index]}' USING utf8mb4)",
+      ];
+      final statement =
+          '(${values.join(', ')})'
+          '${rowIndex == rows.length - 1 ? ';' : ','}';
+      outputBytes += utf8.encode(statement).length + 1;
+      if (outputBytes > 1024 * 1024) {
+        throw StateError('SQL 导出超过 1 MiB 上限，未生成导出文件');
+      }
+      output.writeln(statement);
+    }
+    return output.toString();
+  }
 
   Future<SqlQueryResult> _query(
     String schema,

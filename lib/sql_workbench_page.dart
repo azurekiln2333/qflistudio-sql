@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:qfli_studio_core/pages/home_page.dart';
+import 'package:qfli_studio_core/services/picker_service.dart';
 import 'package:qfli_studio_core/store/auth_store.dart';
 import 'package:qfli_studio_core/store/project_store.dart';
 import 'package:qfli_studio_core/store/settings_store.dart';
 
 import 'sql_database.dart';
+import 'mysql_workspace_repository.dart';
+import 'sql_document_service.dart';
 import 'sql_query_library.dart';
 import 'sql_workspace_repository.dart';
 
@@ -40,14 +43,17 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
   String? _database;
   String? _table;
   SqlTablePage? _tablePage;
-  SqlQueryResult? _queryResult;
+  List<SqlColumn>? _schemaColumns;
+  SqlScriptResult? _queryResult;
+  List<SqlIndex> _indexes = [];
   String? _loadError;
   String? _tableError;
+  String? _schemaError;
   String? _queryLibraryError;
   String? _filterColumn;
   String? _sortColumn;
   bool _descending = false;
-  bool _queryMode = false;
+  _WorkbenchView _view = _WorkbenchView.data;
   bool _busy = true;
   bool _queryLibraryLoading = true;
   int _page = 0;
@@ -74,7 +80,7 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     try {
       final repository =
           await (widget.repositoryFactory?.call() ??
-              SqlWorkspaceRepository.openDefault());
+              MySqlWorkspaceRepository.openLocal());
       if (!mounted) return;
       _repository = repository;
       await _refreshTree();
@@ -168,6 +174,9 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
       if (selectedDatabase != _database || selectedTable != _table) {
         _tablePage = null;
         _tableError = null;
+        _schemaColumns = null;
+        _schemaError = null;
+        _indexes = [];
         _page = 0;
         _filterColumn = null;
         _filterController.clear();
@@ -178,12 +187,16 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
       _tables = tables;
       _database = selectedDatabase;
       _table = selectedTable;
+      if (selectedTable == null && _view == _WorkbenchView.schema) {
+        _view = _WorkbenchView.data;
+      }
     });
     if (selectedTable != null) await _refreshTable();
   }
 
   Future<void> _refreshTable() async {
     if (!mounted) return;
+    if (_view == _WorkbenchView.schema) return _refreshSchema();
     final database = _database;
     final table = _table;
     if (database == null || table == null) return;
@@ -221,6 +234,31 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     }
   }
 
+  Future<void> _refreshSchema() async {
+    final database = _database;
+    final table = _table;
+    if (!mounted || database == null || table == null) return;
+    setState(() {
+      _tablePage = null;
+      _schemaColumns = null;
+      _schemaError = null;
+      _indexes = [];
+    });
+    try {
+      final columns = await _repository!.tableColumns(database, table);
+      final indexes = await _repository!.tableIndexes(database, table);
+      if (mounted) {
+        setState(() {
+          _schemaColumns = columns;
+          _indexes = indexes;
+        });
+      }
+    } catch (error) {
+      if (mounted) setState(() => _schemaError = _message(error));
+      rethrow;
+    }
+  }
+
   void _selectDatabase(String name) => unawaited(
     _perform(() async {
       setState(() {
@@ -228,7 +266,11 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
         _table = null;
         _tablePage = null;
         _tableError = null;
+        _schemaColumns = null;
+        _schemaError = null;
+        _indexes = [];
         _queryResult = null;
+        _view = _WorkbenchView.data;
         _page = 0;
         _filterColumn = null;
         _filterController.clear();
@@ -244,7 +286,10 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
         _table = name;
         _tablePage = null;
         _tableError = null;
-        _queryMode = false;
+        _schemaColumns = null;
+        _schemaError = null;
+        _indexes = [];
+        _view = _WorkbenchView.data;
         _page = 0;
         _filterColumn = null;
         _filterController.clear();
@@ -308,6 +353,172 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     });
   }
 
+  Future<void> _renameTable(String table) async {
+    final database = _database;
+    if (database == null || _busy) return;
+    final name = await _nameDialog(
+      '重命名数据表',
+      '新表名',
+      actionLabel: '重命名',
+      initial: table,
+    );
+    if (name == null || name == table) return;
+    await _perform(() async {
+      await _repository!.renameTable(database, table, name);
+      await _refreshTree(
+        database: database,
+        table: _table == table ? name : _table,
+      );
+    });
+  }
+
+  Future<void> _showSchema(String table) async {
+    await _perform(() async {
+      setState(() {
+        _table = table;
+        _tablePage = null;
+        _tableError = null;
+        _schemaColumns = null;
+        _schemaError = null;
+        _indexes = [];
+        _view = _WorkbenchView.schema;
+        _page = 0;
+        _filterColumn = null;
+        _sortColumn = null;
+        _filterController.clear();
+      });
+      await _refreshTable();
+    });
+  }
+
+  Future<void> _addColumn() async {
+    final database = _database;
+    final table = _table;
+    if (_busy || database == null || table == null) return;
+    final draft = await _columnDialog();
+    if (draft == null) return;
+    await _perform(() async {
+      await _repository!.addColumn(database, table, draft);
+      await _refreshTable();
+    });
+  }
+
+  Future<void> _renameColumn(SqlColumn column) async {
+    final database = _database;
+    final table = _table;
+    if (_busy || database == null || table == null) return;
+    final name = await _nameDialog(
+      '重命名列',
+      '新列名',
+      actionLabel: '重命名',
+      initial: column.name,
+    );
+    if (name == null || name == column.name) return;
+    await _perform(() async {
+      await _repository!.renameColumn(database, table, column.name, name);
+      _resetTableFilters();
+      await _refreshTable();
+    });
+  }
+
+  Future<void> _deleteColumn(SqlColumn column) async {
+    final database = _database;
+    final table = _table;
+    if (_busy || database == null || table == null) return;
+    if (!await _confirm('删除列', '确定删除“${column.name}”及该列的所有数据吗？关联索引也可能被修改。'))
+      return;
+    await _perform(() async {
+      await _repository!.deleteColumn(database, table, column.name);
+      _resetTableFilters();
+      await _refreshTable();
+    });
+  }
+
+  Future<void> _createIndex() async {
+    final database = _database;
+    final table = _table;
+    final columns = _schemaColumns;
+    if (_busy || database == null || table == null || columns == null) return;
+    final draft = await _indexDialog(columns);
+    if (draft == null) return;
+    await _perform(() async {
+      await _repository!.createIndex(
+        database,
+        table,
+        draft.name,
+        draft.columns,
+        unique: draft.unique,
+      );
+      await _refreshTable();
+    });
+  }
+
+  Future<void> _deleteIndex(SqlIndex index) async {
+    final database = _database;
+    final table = _table;
+    if (_busy || database == null || table == null) return;
+    if (!await _confirm(
+      '删除索引',
+      '确定删除“${index.name}”吗？'
+          '${index.primary ? '该表将失去主键，现有行可能无法编辑。' : ''}',
+    ))
+      return;
+    await _perform(() async {
+      await _repository!.deleteIndex(database, table, index.name);
+      await _refreshTable();
+    });
+  }
+
+  void _resetTableFilters() {
+    _page = 0;
+    _filterColumn = null;
+    _filterController.clear();
+    _sortColumn = null;
+    _descending = false;
+  }
+
+  Future<void> _exportTable(String table) async {
+    final database = _database;
+    if (_busy || database == null) return;
+    await _perform(() async {
+      final source = await _repository!.exportTableSql(database, table);
+      final location = await PickerService.saveDocument(
+        suggestedName:
+            '${table.replaceAll(RegExp(r'[^a-zA-Z0-9_\u4e00-\u9fff-]'), '_')}.sql',
+      );
+      if (location == null) return;
+      await SqlDocumentService.write(location, source);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('已导出 $table')));
+      }
+    });
+  }
+
+  Future<void> _importSql() async {
+    if (_busy) return;
+    await _perform(() async {
+      final document = await PickerService.pickDocument(extensions: ['sql']);
+      if (document == null) return;
+      final source = await SqlDocumentService.read(document);
+      if (source.trim().isEmpty) throw const FormatException('SQL 文件为空');
+      if (!mounted) return;
+      if (!await _confirm(
+        '导入 SQL',
+        '执行“${document.name ?? 'SQL 文件'}”中的 SQL 吗？'
+            '目标：${_database ?? 'MySQL 服务器'}。'
+            '脚本可能修改或删除数据；执行失败时，前面的语句可能已经生效。',
+        actionLabel: '导入',
+      ))
+        return;
+      if (!mounted) return;
+      _queryController.text = source;
+      setState(() => _view = _WorkbenchView.sql);
+      await _executeScript(_database ?? '', source);
+    });
+  }
+
   Future<void> _insertRow() async {
     final database = _database;
     final table = _table;
@@ -364,45 +575,41 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
   }
 
   Future<void> _runQuery() async {
-    final database = _database;
+    final database = _database ?? '';
     final source = _queryController.text.trim();
-    if (database == null || source.isEmpty) return;
-    await _perform(() async {
-      final result = await _repository!.runQuery(database, source);
-      if (!mounted) return;
-      setState(() => _queryResult = result);
-      try {
-        await _queryLibrary?.recordExecution(
-          database: database,
-          source: source,
-          success: result.success,
-        );
-        if (mounted) setState(() {});
-      } catch (error) {
-        if (mounted) {
-          setState(() => _queryLibraryError = _message(error));
-        }
+    if (source.isEmpty) return;
+    await _perform(() => _executeScript(database, source));
+  }
+
+  Future<void> _executeScript(String database, String source) async {
+    final result = await _repository!.runScript(database, source);
+    if (!mounted) return;
+    setState(() => _queryResult = result);
+    try {
+      await _queryLibrary?.recordExecution(
+        database: database,
+        source: source,
+        success: result.success,
+      );
+      if (mounted) setState(() {});
+    } catch (error) {
+      if (mounted) {
+        setState(() => _queryLibraryError = _message(error));
       }
-      if (!mounted) return;
-      if (result.success) {
-        setState(() {
-          _tablePage = null;
-          _tableError = null;
-          _page = 0;
-          _filterColumn = null;
-          _filterController.clear();
-          _sortColumn = null;
-          _descending = false;
-        });
-        await _refreshTree(database: database);
-      }
+    }
+    if (!mounted) return;
+    setState(() {
+      _tablePage = null;
+      _tableError = null;
+      _resetTableFilters();
     });
+    await _refreshTree(database: database);
   }
 
   Future<void> _saveQuery() async {
-    final database = _database;
+    final database = _database ?? '';
     final source = _queryController.text.trim();
-    if (_busy || database == null || source.isEmpty) return;
+    if (_busy || source.isEmpty) return;
     final name = await _nameDialog('保存查询', '查询名称', actionLabel: '保存');
     if (name == null) return;
     await _performLibrary(
@@ -434,8 +641,9 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     String title,
     String label, {
     String actionLabel = '创建',
+    String initial = '',
   }) async {
-    final controller = TextEditingController();
+    final controller = TextEditingController(text: initial);
     return showDialog<String>(
       context: context,
       builder: (context) => _DialogLifetime(
@@ -531,18 +739,6 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                DropdownButton<String>(
-                                  value: field.type,
-                                  items: [
-                                    for (final type in _repository!.columnTypes)
-                                      DropdownMenuItem(
-                                        value: type,
-                                        child: Text(type),
-                                      ),
-                                  ],
-                                  onChanged: (value) =>
-                                      redraw(() => field.type = value!),
-                                ),
                                 IconButton(
                                   tooltip: '移除列',
                                   onPressed: fields.length == 1
@@ -552,6 +748,26 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
                                   icon: const Icon(Icons.remove_circle_outline),
                                 ),
                               ],
+                            ),
+                            const SizedBox(height: 8),
+                            DropdownButtonFormField<String>(
+                              key: ValueKey(
+                                '${identityHashCode(field)}-${field.type}',
+                              ),
+                              initialValue: field.type,
+                              isExpanded: true,
+                              decoration: const InputDecoration(
+                                labelText: '类型',
+                              ),
+                              items: [
+                                for (final type in _repository!.columnTypes)
+                                  DropdownMenuItem(
+                                    value: type,
+                                    child: Text(type),
+                                  ),
+                              ],
+                              onChanged: (value) =>
+                                  redraw(() => field.type = value!),
                             ),
                             Row(
                               children: [
@@ -614,7 +830,172 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     );
   }
 
+  Future<SqlColumnDraft?> _columnDialog() async {
+    final field = _ColumnInput();
+    return showDialog<SqlColumnDraft>(
+      context: context,
+      builder: (context) => _DialogLifetime(
+        onDispose: field.dispose,
+        child: StatefulBuilder(
+          builder: (context, redraw) => AlertDialog(
+            title: const Text('添加列'),
+            content: SizedBox(
+              width: 420,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: field.name,
+                      autofocus: true,
+                      decoration: const InputDecoration(labelText: '列名'),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      initialValue: field.type,
+                      isExpanded: true,
+                      decoration: const InputDecoration(labelText: '类型'),
+                      items: [
+                        for (final type in _repository!.columnTypes)
+                          DropdownMenuItem(value: type, child: Text(type)),
+                      ],
+                      onChanged: (value) => redraw(() => field.type = value!),
+                    ),
+                    CheckboxListTile(
+                      title: const Text('非空'),
+                      contentPadding: EdgeInsets.zero,
+                      value: field.notNull,
+                      onChanged: (value) =>
+                          redraw(() => field.notNull = value ?? false),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('取消'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(context, field.toDraft()),
+                child: const Text('添加'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<_IndexDraft?> _indexDialog(List<SqlColumn> columns) async {
+    final name = TextEditingController();
+    final selected = <String>[];
+    var unique = false;
+    return showDialog<_IndexDraft>(
+      context: context,
+      builder: (context) => _DialogLifetime(
+        onDispose: name.dispose,
+        child: StatefulBuilder(
+          builder: (context, redraw) => AlertDialog(
+            title: const Text('新建索引'),
+            content: SizedBox(
+              width: 420,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: name,
+                      autofocus: true,
+                      decoration: const InputDecoration(labelText: '索引名称'),
+                    ),
+                    CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('唯一索引'),
+                      value: unique,
+                      onChanged: (value) =>
+                          redraw(() => unique = value ?? false),
+                    ),
+                    for (final column in columns)
+                      CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(column.name),
+                        value: selected.contains(column.name),
+                        onChanged: (value) => redraw(() {
+                          if (value == true) {
+                            selected.add(column.name);
+                          } else {
+                            selected.remove(column.name);
+                          }
+                        }),
+                      ),
+                    if (selected.isNotEmpty) ...[
+                      const Divider(),
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('索引列顺序'),
+                      ),
+                      for (var index = 0; index < selected.length; index++)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text('${index + 1}. ${selected[index]}'),
+                            ),
+                            IconButton(
+                              tooltip: '前移',
+                              onPressed: index == 0
+                                  ? null
+                                  : () => redraw(() {
+                                      final value = selected.removeAt(index);
+                                      selected.insert(index - 1, value);
+                                    }),
+                              icon: const Icon(Icons.arrow_upward, size: 18),
+                            ),
+                            IconButton(
+                              tooltip: '后移',
+                              onPressed: index == selected.length - 1
+                                  ? null
+                                  : () => redraw(() {
+                                      final value = selected.removeAt(index);
+                                      selected.insert(index + 1, value);
+                                    }),
+                              icon: const Icon(Icons.arrow_downward, size: 18),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('取消'),
+              ),
+              FilledButton(
+                onPressed: selected.isEmpty
+                    ? null
+                    : () => Navigator.pop(
+                        context,
+                        _IndexDraft(
+                          name.text.trim(),
+                          List.of(selected),
+                          unique,
+                        ),
+                      ),
+                child: const Text('创建'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<Map<String, String?>?> _rowDialog(List<SqlColumn> columns) async {
+    columns = columns.where((column) => !column.generated).toList();
     final values = [
       for (final column in columns) _CellInput(initialNull: column.primaryKey),
     ];
@@ -881,10 +1262,37 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
                       onSelected: (action) {
                         if (action == 'delete') {
                           unawaited(_deleteTable(table));
+                        } else if (action == 'rename') {
+                          unawaited(_renameTable(table));
+                        } else if (action == 'schema') {
+                          if (drawerContext != null) {
+                            Navigator.of(drawerContext).pop();
+                          }
+                          unawaited(_showSchema(table));
+                        } else if (action == 'export') {
+                          unawaited(_exportTable(table));
                         }
                       },
-                      itemBuilder: (_) => const [
-                        PopupMenuItem(value: 'delete', child: Text('删除数据表')),
+                      itemBuilder: (_) => [
+                        if (_repository!.supportsSchemaTools) ...[
+                          const PopupMenuItem(
+                            value: 'schema',
+                            child: Text('表结构'),
+                          ),
+                          const PopupMenuItem(
+                            value: 'rename',
+                            child: Text('重命名'),
+                          ),
+                        ],
+                        if (_repository!.supportsSqlExport)
+                          const PopupMenuItem(
+                            value: 'export',
+                            child: Text('导出 SQL'),
+                          ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Text('删除数据表'),
+                        ),
                       ],
                     ),
                   ),
@@ -897,15 +1305,7 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
   );
 
   Widget _workspace() {
-    if (_database == null) {
-      return Center(
-        child: FilledButton.icon(
-          onPressed: _busy ? null : () => unawaited(_createDatabase()),
-          icon: const Icon(Icons.add),
-          label: const Text('新建数据库'),
-        ),
-      );
-    }
+    final compact = MediaQuery.sizeOf(context).width < 480;
     return Column(
       children: [
         Padding(
@@ -914,33 +1314,69 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
             children: [
               Expanded(
                 child: Text(
-                  _table == null ? _database! : '${_database!} / ${_table!}',
+                  _database == null
+                      ? 'MySQL'
+                      : _table == null
+                      ? _database!
+                      : '${_database!} / ${_table!}',
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
-              SegmentedButton<bool>(
-                segments: const [
+              SegmentedButton<_WorkbenchView>(
+                segments: [
                   ButtonSegment(
-                    value: false,
-                    label: Text('数据'),
-                    icon: Icon(Icons.table_rows_outlined),
+                    value: _WorkbenchView.data,
+                    label: compact ? null : const Text('数据'),
+                    tooltip: '数据',
+                    icon: const Icon(Icons.table_rows_outlined),
                   ),
+                  if (_repository!.supportsSchemaTools)
+                    ButtonSegment(
+                      value: _WorkbenchView.schema,
+                      label: compact ? null : const Text('结构'),
+                      tooltip: '表结构',
+                      enabled: _table != null,
+                      icon: const Icon(Icons.account_tree_outlined),
+                    ),
                   ButtonSegment(
-                    value: true,
-                    label: Text('SQL'),
-                    icon: Icon(Icons.code),
+                    value: _WorkbenchView.sql,
+                    label: compact ? null : const Text('SQL'),
+                    tooltip: 'SQL',
+                    icon: const Icon(Icons.code),
                   ),
                 ],
-                selected: {_queryMode},
-                onSelectionChanged: (selected) =>
-                    setState(() => _queryMode = selected.first),
+                showSelectedIcon: false,
+                selected: {_view},
+                onSelectionChanged: _busy
+                    ? null
+                    : (selected) {
+                        final view = selected.first;
+                        if (view == _WorkbenchView.schema) {
+                          unawaited(_showSchema(_table!));
+                        } else if (view == _WorkbenchView.data) {
+                          unawaited(
+                            _perform(() async {
+                              setState(() => _view = view);
+                              await _refreshTable();
+                            }),
+                          );
+                        } else {
+                          setState(() => _view = view);
+                        }
+                      },
               ),
             ],
           ),
         ),
         if (_busy) const LinearProgressIndicator(minHeight: 2),
-        Expanded(child: _queryMode ? _queryPanel() : _dataPanel()),
+        Expanded(
+          child: switch (_view) {
+            _WorkbenchView.data => _dataPanel(),
+            _WorkbenchView.schema => _schemaPanel(),
+            _WorkbenchView.sql => _queryPanel(),
+          },
+        ),
       ],
     );
   }
@@ -951,9 +1387,13 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     if (table == null) {
       return Center(
         child: FilledButton.icon(
-          onPressed: _busy ? null : () => unawaited(_createTable()),
+          onPressed: _busy
+              ? null
+              : () => unawaited(
+                  _database == null ? _createDatabase() : _createTable(),
+                ),
           icon: const Icon(Icons.add),
-          label: const Text('新建数据表'),
+          label: Text(_database == null ? '新建数据库' : '新建数据表'),
         ),
       );
     }
@@ -1100,7 +1540,10 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
                                     : null,
                               ),
                             ),
-                            onTap: page.editable
+                            onTap:
+                                page.editable &&
+                                    !page.columns[column].generated &&
+                                    !_busy
                                 ? () => unawaited(_editCell(row, column))
                                 : null,
                           ),
@@ -1167,6 +1610,140 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     );
   }
 
+  Widget _schemaPanel() {
+    final columns = _schemaColumns;
+    if (columns == null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_schemaError ?? '正在读取表结构', textAlign: TextAlign.center),
+              if (_schemaError != null) ...[
+                const SizedBox(height: 12),
+                TextButton.icon(
+                  onPressed: _busy
+                      ? null
+                      : () => unawaited(_perform(_refreshSchema)),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('重试'),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      children: [
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            FilledButton.icon(
+              onPressed: _busy ? null : () => unawaited(_addColumn()),
+              icon: const Icon(Icons.add),
+              label: const Text('添加列'),
+            ),
+            OutlinedButton.icon(
+              onPressed: _busy ? null : () => unawaited(_renameTable(_table!)),
+              icon: const Icon(Icons.drive_file_rename_outline),
+              label: const Text('重命名表'),
+            ),
+            OutlinedButton.icon(
+              onPressed: _busy ? null : () => unawaited(_exportTable(_table!)),
+              icon: const Icon(Icons.file_download_outlined),
+              label: const Text('导出 SQL'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            columns: const [
+              DataColumn(label: Text('列名')),
+              DataColumn(label: Text('类型')),
+              DataColumn(label: Text('约束')),
+              DataColumn(label: Text('操作')),
+            ],
+            rows: [
+              for (final column in columns)
+                DataRow(
+                  cells: [
+                    DataCell(SelectableText(column.name)),
+                    DataCell(Text(column.type)),
+                    DataCell(
+                      Text(
+                        [
+                          if (column.primaryKey) 'PRIMARY KEY',
+                          if (column.notNull) 'NOT NULL',
+                          if (column.autoIncrement) 'AUTO_INCREMENT',
+                          if (column.generated) 'GENERATED',
+                        ].join(', '),
+                      ),
+                    ),
+                    DataCell(
+                      PopupMenuButton<String>(
+                        tooltip: '列操作',
+                        enabled: !_busy,
+                        onSelected: (action) {
+                          if (action == 'rename') {
+                            unawaited(_renameColumn(column));
+                          } else {
+                            unawaited(_deleteColumn(column));
+                          }
+                        },
+                        itemBuilder: (_) => const [
+                          PopupMenuItem(value: 'rename', child: Text('重命名列')),
+                          PopupMenuItem(value: 'delete', child: Text('删除列')),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Row(
+          children: [
+            Expanded(
+              child: Text('索引', style: Theme.of(context).textTheme.titleSmall),
+            ),
+            TextButton.icon(
+              onPressed: _busy ? null : () => unawaited(_createIndex()),
+              icon: const Icon(Icons.add),
+              label: const Text('新建索引'),
+            ),
+          ],
+        ),
+        if (_indexes.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Text('暂无索引'),
+          ),
+        for (final index in _indexes)
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(index.primary ? Icons.key : Icons.list_alt),
+            title: Text(index.name),
+            subtitle: Text(
+              '${index.unique ? 'UNIQUE · ' : ''}'
+              '${index.columns.join(', ')}',
+            ),
+            trailing: IconButton(
+              tooltip: '删除索引',
+              onPressed: _busy ? null : () => unawaited(_deleteIndex(index)),
+              icon: const Icon(Icons.delete_outline),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _queryPanel() => ListView(
     padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
     children: [
@@ -1204,40 +1781,41 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
             icon: const Icon(Icons.bookmark_add_outlined),
             label: const Text('保存查询'),
           ),
+          OutlinedButton.icon(
+            onPressed: _busy || !_repository!.supportsSqlExport
+                ? null
+                : () => unawaited(_importSql()),
+            icon: const Icon(Icons.file_upload_outlined),
+            label: const Text('导入 SQL'),
+          ),
         ],
       ),
       if (_queryResult case final result?) ...[
         const SizedBox(height: 16),
+        if (result.truncated)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              '脚本结果超过上限，部分结果未显示。',
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
         if (!result.success)
           Text(
             result.error ?? 'SQL 执行失败',
             style: TextStyle(color: Theme.of(context).colorScheme.error),
-          )
-        else ...[
-          Text(
-            result.columns.isEmpty
-                ? '已执行 · 影响 ${result.affectedRows} 行'
-                : '${result.rows.length} 行${result.truncated ? ' · 结果已截断' : ''}',
           ),
-          if (result.columns.isNotEmpty)
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: [
-                  for (final name in result.columns)
-                    DataColumn(label: Text(name)),
-                ],
-                rows: [
-                  for (final row in result.rows)
-                    DataRow(
-                      cells: [
-                        for (final value in row)
-                          DataCell(SelectableText(value ?? 'NULL')),
-                      ],
-                    ),
-                ],
+        for (var index = 0; index < result.results.length; index++) ...[
+          if (result.results.length > 1)
+            Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 4),
+              child: Text(
+                '结果 ${index + 1}',
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
+          if (result.results[index].success)
+            _queryResultPanel(result.results[index]),
         ],
       ],
       if (_queryLibraryError case final error?) ...[
@@ -1267,12 +1845,41 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     ],
   );
 
+  Widget _queryResultPanel(SqlQueryResult result) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        result.columns.isEmpty
+            ? '已执行 · 影响 ${result.affectedRows} 行'
+            : '${result.rows.length} 行${result.truncated ? ' · 结果已截断' : ''}',
+      ),
+      if (result.columns.isNotEmpty)
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            columns: [
+              for (final name in result.columns) DataColumn(label: Text(name)),
+            ],
+            rows: [
+              for (final row in result.rows)
+                DataRow(
+                  cells: [
+                    for (final value in row)
+                      DataCell(SelectableText(value ?? 'NULL')),
+                  ],
+                ),
+            ],
+          ),
+        ),
+    ],
+  );
+
   Widget _queryLibraryPanel(SqlQueryLibrary library) {
     final saved = library.saved
-        .where((query) => query.database == _database)
+        .where((query) => query.database == (_database ?? ''))
         .toList();
     final history = library.history
-        .where((entry) => entry.database == _database)
+        .where((entry) => entry.database == (_database ?? ''))
         .toList();
     return Column(
       key: const ValueKey('query-library'),
@@ -1348,6 +1955,16 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
       ],
     );
   }
+}
+
+enum _WorkbenchView { data, schema, sql }
+
+class _IndexDraft {
+  const _IndexDraft(this.name, this.columns, this.unique);
+
+  final String name;
+  final List<String> columns;
+  final bool unique;
 }
 
 class _TableSpec {

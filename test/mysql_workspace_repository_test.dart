@@ -22,9 +22,9 @@ void main() {
     'composite key identifies one row even when visible values repeat',
     () async {
       client.columns = [
-        ['value', 'text', 'YES', ''],
-        ['group', 'varchar(255)', 'NO', 'PRI'],
-        ['id', 'bigint', 'NO', 'PRI'],
+        ['value', 'text', 'YES', '0'],
+        ['group', 'varchar(255)', 'NO', '1'],
+        ['id', 'bigint', 'NO', '1'],
       ];
       client.rows = [
         ['same', "O'Brien", '9007199254740993'],
@@ -60,8 +60,8 @@ void main() {
     () async {
       final page = await workspace.loadTable('lab', 'items');
       client.columns = [
-        ['new_id', 'int', 'NO', 'PRI'],
-        ['value', 'text', 'YES', ''],
+        ['new_id', 'int', 'NO', '1'],
+        ['value', 'text', 'YES', '0'],
       ];
       await expectLater(
         workspace.deleteRow('lab', 'items', page.rowIds.first),
@@ -78,7 +78,7 @@ void main() {
     'table without a primary key is readable and cannot mutate rows',
     () async {
       client.columns = [
-        ['value', 'text', 'YES', ''],
+        ['value', 'text', 'YES', '0'],
       ];
       client.rows = [
         ['same'],
@@ -175,8 +175,8 @@ class _Call {
 class _Client implements SqlDatabase {
   final calls = <_Call>[];
   List<List<String?>> columns = [
-    ['id', 'int', 'NO', 'PRI'],
-    ['value', 'text', 'YES', ''],
+    ['id', 'int', 'NO', '1'],
+    ['value', 'text', 'YES', '0'],
   ];
   List<List<String?>> rows = [
     ['1', 'original'],
@@ -198,7 +198,7 @@ class _Client implements SqlDatabase {
       available: true,
       exitCode: error == null ? 0 : 1,
       columns: isMetadata
-          ? ['COLUMN_NAME', 'COLUMN_TYPE', 'IS_NULLABLE', 'COLUMN_KEY']
+          ? ['COLUMN_NAME', 'COLUMN_TYPE', 'IS_NULLABLE', 'IS_PRIMARY']
           : isCount
           ? ['COUNT(*)']
           : [for (final column in columns) column.first!],

@@ -12,12 +12,30 @@ class SqlColumn {
     required this.type,
     required this.notNull,
     required this.primaryKey,
+    this.generated = false,
+    this.autoIncrement = false,
   });
 
   final String name;
   final String type;
   final bool notNull;
   final bool primaryKey;
+  final bool generated;
+  final bool autoIncrement;
+}
+
+class SqlIndex {
+  const SqlIndex({
+    required this.name,
+    required this.columns,
+    required this.unique,
+    this.primary = false,
+  });
+
+  final String name;
+  final List<String> columns;
+  final bool unique;
+  final bool primary;
 }
 
 class SqlColumnDraft {
@@ -64,6 +82,9 @@ class SqlWorkspaceRepository {
   static const types = ['INTEGER', 'TEXT', 'REAL', 'NUMERIC', 'BLOB'];
 
   List<String> get columnTypes => types;
+
+  bool get supportsSchemaTools => false;
+  bool get supportsSqlExport => false;
 
   static Future<SqlWorkspaceRepository> openDefault() async {
     final storage = await AppPaths.storageDirectory();
@@ -321,6 +342,47 @@ class SqlWorkspaceRepository {
 
   Future<SqlQueryResult> runQuery(String databaseName, String source) =>
       database.query(databasePath: databasePath(databaseName), source: source);
+
+  Future<SqlScriptResult> runScript(String databaseName, String source) async {
+    final result = await runQuery(databaseName, source);
+    return SqlScriptResult(summary: result, results: [result]);
+  }
+
+  Future<void> renameTable(String databaseName, String table, String name) =>
+      throw UnsupportedError('当前数据库引擎不支持此结构操作');
+
+  Future<void> addColumn(
+    String databaseName,
+    String table,
+    SqlColumnDraft column,
+  ) => throw UnsupportedError('当前数据库引擎不支持此结构操作');
+
+  Future<void> renameColumn(
+    String databaseName,
+    String table,
+    String column,
+    String name,
+  ) => throw UnsupportedError('当前数据库引擎不支持此结构操作');
+
+  Future<void> deleteColumn(String databaseName, String table, String column) =>
+      throw UnsupportedError('当前数据库引擎不支持此结构操作');
+
+  Future<List<SqlIndex>> tableIndexes(String databaseName, String table) =>
+      throw UnsupportedError('当前数据库引擎不支持索引操作');
+
+  Future<void> createIndex(
+    String databaseName,
+    String table,
+    String name,
+    List<String> columns, {
+    bool unique = false,
+  }) => throw UnsupportedError('当前数据库引擎不支持索引操作');
+
+  Future<void> deleteIndex(String databaseName, String table, String name) =>
+      throw UnsupportedError('当前数据库引擎不支持索引操作');
+
+  Future<String> exportTableSql(String databaseName, String table) =>
+      throw UnsupportedError('当前数据库引擎不支持 SQL 导出');
 
   static String quoteIdentifier(String name) {
     _validateName(name);

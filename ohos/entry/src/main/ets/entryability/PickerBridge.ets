@@ -11,7 +11,8 @@ interface PickerDocument {
 
 export function isPickerMethod(method: string): boolean {
   return method === 'pickDocument' || method === 'saveDocument' ||
-    method === 'pickPhotos' || method === 'readUri' || method === 'writeUri';
+    method === 'pickPhotos' || method === 'readUri' || method === 'readSqlUri' ||
+    method === 'writeUri';
 }
 
 export function handlePickerCall(
@@ -40,6 +41,9 @@ async function runPickerCall(
         return;
       case 'readUri':
         result.success(await readUri(call.argument('uri') as string));
+        return;
+      case 'readSqlUri':
+        result.success(await readUri(call.argument('uri') as string, 1024 * 1024));
         return;
       case 'writeUri':
         await writeUri(
@@ -86,7 +90,7 @@ async function saveDocument(
   const suffix = dot > 0 ? name.substring(dot) : '.json';
   const options = new picker.DocumentSaveOptions();
   options.newFileNames = [name];
-  options.fileSuffixChoices = [`JSON|${suffix}`];
+  options.fileSuffixChoices = [`QFLI files|${suffix}`];
   const uris = await new picker.DocumentViewPicker(context).save(options);
   if (uris.length === 0) return null;
   return { uri: uris[0], name: uriName(uris[0]) };
@@ -104,13 +108,28 @@ async function pickPhotos(): Promise<Array<PickerDocument>> {
   return documents;
 }
 
-async function readUri(uri: string): Promise<Uint8Array> {
+async function readUri(uri: string, maxBytes?: number): Promise<Uint8Array> {
   const file = await fs.open(uri, fs.OpenMode.READ_ONLY);
   try {
     const stat = await fs.stat(file.fd);
-    const buffer = new ArrayBuffer(Number(stat.size));
-    const bytesRead = await fs.read(file.fd, buffer, { length: buffer.byteLength });
-    return new Uint8Array(buffer, 0, bytesRead);
+    const size = Number(stat.size);
+    if (!Number.isSafeInteger(size) || size < 0) throw new Error('文件大小无效');
+    if (maxBytes !== undefined && size > maxBytes) throw new Error('SQL 文件超过 1 MiB 上限');
+    const bytes = new Uint8Array(size);
+    const chunk = new ArrayBuffer(Math.min(size, 64 * 1024));
+    let offset = 0;
+    while (offset < size) {
+      const length = Math.min(chunk.byteLength, size - offset);
+      const count = await fs.read(file.fd, chunk, { length: length });
+      if (count <= 0 || count > length) throw new Error('文件未完整读取，请重新选择');
+      bytes.set(new Uint8Array(chunk, 0, count), offset);
+      offset += count;
+    }
+    const extra = new ArrayBuffer(1);
+    if (await fs.read(file.fd, extra, { length: 1 }) !== 0) {
+      throw new Error('文件在读取过程中已发生变化，请重新选择');
+    }
+    return bytes;
   } finally {
     await fs.close(file.fd);
   }
@@ -119,7 +138,15 @@ async function readUri(uri: string): Promise<Uint8Array> {
 async function writeUri(uri: string, bytes: Uint8Array): Promise<void> {
   const file = await fs.open(uri, fs.OpenMode.WRITE_ONLY | fs.OpenMode.TRUNC);
   try {
-    await fs.write(file.fd, bytes.buffer, { length: bytes.byteLength });
+    let offset = 0;
+    while (offset < bytes.byteLength) {
+      const length = Math.min(64 * 1024, bytes.byteLength - offset);
+      const chunk = bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + length);
+      const count = await fs.write(file.fd, chunk, { length: length });
+      if (count <= 0 || count > length) throw new Error('文件未完整写入');
+      offset += count;
+    }
+    await fs.fsync(file.fd);
   } finally {
     await fs.close(file.fd);
   }

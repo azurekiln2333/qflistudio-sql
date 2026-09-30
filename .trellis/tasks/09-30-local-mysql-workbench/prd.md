@@ -14,7 +14,7 @@ Make QFLISQLab a self-contained local database application. A user can create da
 
 ## Requirements
 
-1. Bundle and start a real, local MySQL server on the supported target device. The app must own initialization, storage, lifecycle, error reporting, and a clean shutdown. It must not require the user to install or administer a separate server.
+1. Bundle and start a real, local Oracle MySQL server on the supported target device. MariaDB or a compatibility layer does not satisfy this requirement, as confirmed by the user on 2026-09-30. The app must own initialization, storage, lifecycle, error reporting, and a clean shutdown. It must not require the user to install or administer a separate server.
 2. Execute MySQL SQL statements against the local server, including schema changes and data queries. Report affected rows, columns, result values, and errors accurately.
 3. Let users create, rename where supported, and delete databases, tables, columns, and indexes with confirmation for destructive actions.
 4. Show databases and tables in a navigable left pane and table rows in an editable grid in the main pane. Support adding, changing, deleting, refreshing, filtering, sorting, and paging rows, with correct NULL and typed values.

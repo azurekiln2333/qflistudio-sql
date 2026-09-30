@@ -2,7 +2,7 @@
 
 ## Runtime boundary
 
-The final database engine is a bundled MySQL server for HarmonyOS arm64, started with app-private paths and accessed over a local socket. The runtime manager owns initialization, one-instance startup, readiness, shutdown, and diagnostics. The app never reports the server as ready before a live query succeeds. A packaged, versioned binary and its license notices are release artifacts, not user setup instructions.
+The final database engine is a bundled Oracle MySQL server for HarmonyOS arm64, started with app-private paths and accessed over a local socket. MariaDB is excluded by the user's explicit engine choice. Oracle MySQL 8.4.6 is the pinned source used for the initial port experiment. The runtime manager owns initialization, one-instance startup, readiness, shutdown, and diagnostics. The app never reports the server as ready before a live query succeeds. A packaged, versioned binary and its license notices are release artifacts, not user setup instructions.
 
 The existing SQLite source is a separate engine and an immediate way to make the current SQL runner functional during migration. It does not satisfy the MySQL requirement and must not be labeled as MySQL.
 

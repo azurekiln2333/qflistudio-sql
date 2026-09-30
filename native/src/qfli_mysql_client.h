@@ -37,10 +37,22 @@ struct QueryLimits {
     std::size_t bytes = 1024 * 1024;
 };
 
+struct ScriptResult {
+    QueryResult summary;
+    std::vector<QueryResult> results;
+};
+
 QueryResult query(const std::string &socket_path, const std::string &schema,
                   const std::string &source,
                   const std::vector<std::optional<std::string>> &parameters = {},
                   QueryLimits limits = {});
+
+QueryResult shutdown(const std::string &socket_path);
+
+ScriptResult execute_script(const std::string &socket_path, const std::string &schema,
+                            const std::string &source, QueryLimits limits = {});
+
+const char *client_version();
 
 }  // namespace qfli_mysql
 

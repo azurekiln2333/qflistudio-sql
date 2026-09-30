@@ -13,12 +13,26 @@ import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { GeneratedPluginRegistrant } from '../plugins/GeneratedPluginRegistrant';
 import { registerQfliSqlNativeChannel } from '../plugins/QfliSqlNative';
+import { registerQfliMysqlChannel } from '../plugins/QfliMysqlNative';
+import { QfliMysqlRuntime } from '../plugins/QfliMysqlRuntime';
 import { handlePickerCall, isPickerMethod } from './PickerBridge';
 
 const CHANNEL_PLATFORM = 'qflistudio/platform';
 const CHANNEL_HUAWEI = 'qflistudio/huawei_account';
 
 export default class EntryAbility extends FlutterAbility {
+  private mysqlRuntime: QfliMysqlRuntime | undefined;
+
+  async onDestroy(): Promise<void> {
+    try {
+      await this.mysqlRuntime?.stop();
+    } catch (error) {
+      console.error(`Oracle MySQL shutdown: ${error}`);
+    } finally {
+      super.onDestroy();
+    }
+  }
+
   onWindowStageCreate(windowStage: window.WindowStage): void {
     // 启动遮罩消失后、Flutter 首帧渲染前，引擎初始化期间窗口会露出
     // 默认白底。窗口底色与 Flutter 的 MD3 surface 保持一致。
@@ -40,6 +54,7 @@ export default class EntryAbility extends FlutterAbility {
     registerQfliSqlNativeChannel(flutterEngine)
 
     const abilityContext = this.context as common.UIAbilityContext;
+    this.mysqlRuntime = registerQfliMysqlChannel(flutterEngine, abilityContext);
 
     // 通用平台能力：打开系统浏览器（HTML 预览用）。
     const platformChannel = new MethodChannel(

@@ -1,0 +1,310 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1988,14 +1988,16 @@
+ ENDIF()
+ 
+ # Add system/bundled editline.
+-MYSQL_CHECK_EDITLINE()
+-SET(EDITLINE_WARN_GIVEN)
+-WARN_MISSING_SYSTEM_EDITLINE(EDITLINE_WARN_GIVEN)
+-IF(EDITLINE_WARN_GIVEN)
+-  MESSAGE(FATAL_ERROR
+-    "-DWITH_EDITLINE=system, but missing system libraries.\n"
+-    "You can use -DWITH_EDITLINE=bundled instead."
+-    )
++IF(NOT QFLI_MYSQL_WITHOUT_LINE_EDITING)
++  MYSQL_CHECK_EDITLINE()
++  SET(EDITLINE_WARN_GIVEN)
++  WARN_MISSING_SYSTEM_EDITLINE(EDITLINE_WARN_GIVEN)
++  IF(EDITLINE_WARN_GIVEN)
++    MESSAGE(FATAL_ERROR
++      "-DWITH_EDITLINE=system, but missing system libraries.\n"
++      "You can use -DWITH_EDITLINE=bundled instead."
++      )
++  ENDIF()
+ ENDIF()
+ 
+ # Add lz4 library
+--- a/cmake/mysql_add_executable.cmake
++++ b/cmake/mysql_add_executable.cmake
+@@ -72,6 +72,16 @@
+ # order to run them during testing.
+ 
+ FUNCTION(MYSQL_ADD_EXECUTABLE target_arg)
++  IF(CMAKE_CROSSCOMPILING AND QFLI_MYSQL_HOST_TOOLS AND
++      target_arg MATCHES "^(comp_err|comp_client_err|comp_sql|uca9dump|gen_lex_token|gen_keyword_list|gen_lex_hash)$")
++    SET(HOST_TOOL "${QFLI_MYSQL_HOST_TOOLS}/${target_arg}")
++    IF(NOT EXISTS "${HOST_TOOL}")
++      MESSAGE(FATAL_ERROR "Missing MySQL host generator: ${HOST_TOOL}")
++    ENDIF()
++    ADD_EXECUTABLE(${target_arg} IMPORTED GLOBAL)
++    SET_TARGET_PROPERTIES(${target_arg} PROPERTIES IMPORTED_LOCATION "${HOST_TOOL}")
++    RETURN()
++  ENDIF()
+   SET(EXECUTABLE_OPTIONS
+     ENABLE_EXPORTS     # For Linux, link with: -Wl,--export-dynamic -rdynamic
+                        # This option is needed for some uses of "dlopen" or
+--- a/utilities/CMakeLists.txt
++++ b/utilities/CMakeLists.txt
+@@ -30,7 +30,7 @@
+   DISABLE_DOCUMENTATION_WARNINGS()
+ ENDIF()
+ 
+-IF(NOT CMAKE_CROSSCOMPILING)
++IF(NOT CMAKE_CROSSCOMPILING OR QFLI_MYSQL_HOST_TOOLS)
+   MYSQL_ADD_EXECUTABLE(comp_err
+     comp_err.cc
+     COMPONENT Test
+--- a/extra/zstd/CMakeLists.txt
++++ b/extra/zstd/CMakeLists.txt
+@@ -46,6 +46,10 @@
+   ${ZSTD_VERSION_DIR}/lib/dictBuilder/zdict.c
+ )
+ 
++IF(QFLI_MYSQL_WITHOUT_ZSTD_DICT_BUILDER)
++  LIST(FILTER ZSTD_SRCS EXCLUDE REGEX "/dictBuilder/")
++ENDIF()
++
+ IF((LINUX AND NOT LINUX_ARM) OR
+     (APPLE AND NOT APPLE_ARM))
+   ENABLE_LANGUAGE(ASM)
+--- a/libmysql/dns_srv.cc
++++ b/libmysql/dns_srv.cc
+@@ -41,7 +41,7 @@
+ // POSIX version
+ 
+ static bool get_dns_srv(Dns_srv_data &data, const char *dnsname, int &error) {
+-#ifdef LINUX_ALPINE
++#if defined(LINUX_ALPINE) || defined(__OHOS__)
+   res_init();
+ #else
+   struct __res_state state {};
+@@ -52,7 +52,7 @@
+ 
+   data.clear();
+ 
+-#ifdef LINUX_ALPINE
++#if defined(LINUX_ALPINE) || defined(__OHOS__)
+   int res = res_search(dnsname, ns_c_in, ns_t_srv, query_buffer,
+                        sizeof(query_buffer));
+ #else
+@@ -93,7 +93,7 @@
+     error = h_errno;
+   }
+ 
+-#ifdef LINUX_ALPINE
++#if defined(LINUX_ALPINE) || defined(__OHOS__)
+   // nothing
+ #else
+   res_nclose(&state);
+--- a/sql-common/get_password.cc
++++ b/sql-common/get_password.cc
+@@ -117,7 +117,7 @@
+ 
+   for (;;) {
+     char tmp;
+-    if (my_read(fd, &tmp, 1, MYF(0)) != 1) break;
++    if (my_read(fd, reinterpret_cast<uchar *>(&tmp), 1, MYF(0)) != 1) break;
+     if (tmp == '\b' || (int)tmp == 127) {
+       if (pos != to) {
+         if (echo) {
+--- a/mysys/my_thread.cc
++++ b/mysys/my_thread.cc
+@@ -32,6 +32,8 @@
+ 
+ #include "my_config.h"
+ 
++#include <cerrno>
++
+ #ifdef HAVE_PTHREAD_SETNAME_NP_LINUX
+ #include <cstring>
+ #ifndef _GNU_SOURCE
+@@ -139,7 +141,10 @@
+ }
+ 
+ int my_thread_cancel(my_thread_handle *thread) {
+-#ifndef _WIN32
++#if defined(__OHOS__)
++  (void)thread;
++  return ENOTSUP;
++#elif !defined(_WIN32)
+   return pthread_cancel(thread->thread);
+ #else
+   bool ok = false;
+--- a/sql/mysqld.cc
++++ b/sql/mysqld.cc
+@@ -2600,6 +2600,10 @@
+   }
+ }
+ 
++#ifdef __OHOS__
++extern "C" void qfli_mysql_record_exit(int) __attribute__((weak));
++#endif
++
+ static void mysqld_exit(int exit_code) {
+   assert((exit_code >= MYSQLD_SUCCESS_EXIT && exit_code <= MYSQLD_ABORT_EXIT) ||
+          exit_code == MYSQLD_RESTART_EXIT);
+@@ -2626,6 +2630,9 @@
+   close_service_status_pipe_in_mysqld();
+ #endif  // _WIN32
+ 
++#ifdef __OHOS__
++  if (qfli_mysql_record_exit != nullptr) qfli_mysql_record_exit(exit_code);
++#endif
+   exit(exit_code); /* purecov: inspected */
+ }
+ 
+--- a/sql/CMakeLists.txt
++++ b/sql/CMakeLists.txt
+@@ -1447,3 +1447,7 @@
+ ADD_CUSTOM_TARGET(show-dist-name
+   COMMAND ${CMAKE_COMMAND} -E echo "${CPACK_PACKAGE_FILE_NAME}"
+ )
++
++IF(QFLI_MYSQL_PLATFORM_CMAKE)
++  INCLUDE("${QFLI_MYSQL_PLATFORM_CMAKE}")
++ENDIF()
+--- a/extra/abseil/CMakeLists.txt
++++ b/extra/abseil/CMakeLists.txt
+@@ -79,7 +79,9 @@
+ IF(MSVC AND NOT WIN32_CLANG)
+   SET(absl_BUILD_SHARED_LIBS ON)
+ ENDIF()
+-IF(LINUX)
++IF(QFLI_MYSQL_STATIC_ABSEIL)
++  SET(absl_BUILD_SHARED_LIBS OFF)
++ELSEIF(LINUX)
+   SET(absl_BUILD_SHARED_LIBS ON)
+ ENDIF()
+ 
+--- a/extra/protobuf/protobuf-24.4/CMakeLists.txt
++++ b/extra/protobuf/protobuf-24.4/CMakeLists.txt
+@@ -52,7 +52,11 @@
+ if(WITH_PROTOC)
+   set(protobuf_PROTOC_EXE protoc)
+   set(protobuf_BUILD_PROTOC_BINARIES OFF)
+-  add_executable(protoc IMPORTED)
++  if(CMAKE_CROSSCOMPILING AND QFLI_MYSQL_HOST_TOOLS)
++    add_executable(protoc IMPORTED GLOBAL)
++  else()
++    add_executable(protoc IMPORTED)
++  endif()
+   set_property(TARGET protoc PROPERTY IMPORTED_LOCATION ${WITH_PROTOC})
+ endif()
+ 
+--- a/storage/innobase/buf/buf0buf.cc
++++ b/storage/innobase/buf/buf0buf.cc
+@@ -1259,6 +1259,9 @@
+   buf_chunk_t *chunk;
+ 
+ #ifdef UNIV_LINUX
++  buf_pool->stat.reset();
++
++#ifndef __OHOS__
+   cpu_set_t cpuset;
+ 
+   CPU_ZERO(&cpuset);
+@@ -1267,8 +1270,6 @@
+ 
+   CPU_SET(instance_no % n_cores, &cpuset);
+ 
+-  buf_pool->stat.reset();
+-
+   if (pthread_setaffinity_np(pthread_self(), sizeof(cpuset), &cpuset) == -1) {
+     ib::error(ER_IB_ERR_SCHED_SETAFFNINITY_FAILED)
+         << "sched_setaffinity() failed!";
+@@ -1276,6 +1277,7 @@
+   /* Linux might be able to set different setting for each thread
+   worth to try to set high priority for this thread. */
+   setpriority(PRIO_PROCESS, (pid_t)syscall(SYS_gettid), -20);
++#endif /* !__OHOS__ */
+ #endif /* UNIV_LINUX */
+ 
+   ut_ad(buf_pool_size % srv_buf_pool_chunk_unit == 0);
+--- a/storage/innobase/buf/buf0flu.cc
++++ b/storage/innobase/buf/buf0flu.cc
+@@ -3011,7 +3011,7 @@
+   return (all_succeeded);
+ }
+ 
+-#ifdef UNIV_LINUX
++#if defined(UNIV_LINUX) && !defined(__OHOS__)
+ /**
+ Set priority for page_cleaner threads.
+ @param[in]      priority        priority intended to set
+@@ -3130,7 +3130,7 @@
+ 
+   THD *thd = create_internal_thd();
+ 
+-#ifdef UNIV_LINUX
++#if defined(UNIV_LINUX) && !defined(__OHOS__)
+   /* linux might be able to set different setting for each thread.
+   worth to try to set high priority for page cleaner threads */
+   if (buf_flush_page_cleaner_set_priority(buf_flush_page_cleaner_priority)) {
+@@ -3546,7 +3546,7 @@
+ 
+ /** Worker thread of page_cleaner. */
+ static void buf_flush_page_cleaner_thread() {
+-#ifdef UNIV_LINUX
++#if defined(UNIV_LINUX) && !defined(__OHOS__)
+   /* linux might be able to set different setting for each thread
+   worth to try to set high priority for page cleaner threads */
+   if (buf_flush_page_cleaner_set_priority(buf_flush_page_cleaner_priority)) {
+--- a/storage/innobase/os/os0file.cc
++++ b/storage/innobase/os/os0file.cc
+@@ -80,10 +80,11 @@
+ #endif /* UNIV_HOTBACKUP */
+ #endif /* LINUX_NATIVE_AIO */
+ 
+-#ifdef HAVE_FALLOC_PUNCH_HOLE_AND_KEEP_SIZE
++#if defined(HAVE_FALLOC_PUNCH_HOLE_AND_KEEP_SIZE) || \
++    defined(HAVE_FALLOC_FL_ZERO_RANGE)
+ #include <fcntl.h>
+ #include <linux/falloc.h>
+-#endif /* HAVE_FALLOC_PUNCH_HOLE_AND_KEEP_SIZE */
++#endif /* HAVE_FALLOC_PUNCH_HOLE_AND_KEEP_SIZE || HAVE_FALLOC_FL_ZERO_RANGE */
+ 
+ #include <errno.h>
+ #include <lz4.h>
+--- a/storage/innobase/include/ut0crc32.h
++++ b/storage/innobase/include/ut0crc32.h
+@@ -50,7 +50,9 @@
+   - do you need the variant with swapped byte order?
+ */
+ 
+-#if defined(__GNUC__) && defined(__x86_64__) || defined(_WIN32)
++#if defined(__OHOS__)
++#define CRC32_DEFAULT
++#elif defined(__GNUC__) && defined(__x86_64__) || defined(_WIN32)
+ #define CRC32_x86_64
+ #ifdef _WIN32
+ #define CRC32_x86_64_WIN
+--- a/extra/boost/boost_1_84_0/boost/core/detail/sp_thread_sleep.hpp
++++ b/extra/boost/boost_1_84_0/boost/core/detail/sp_thread_sleep.hpp
+@@ -56,7 +56,7 @@
+ 
+ #include <time.h>
+ 
+-#if defined(BOOST_HAS_PTHREADS) && !defined(__ANDROID__)
++#if defined(BOOST_HAS_PTHREADS) && !defined(__ANDROID__) && !defined(__OHOS__)
+ # include <pthread.h>
+ #endif
+ 
+@@ -67,7 +67,7 @@
+ 
+ inline void sp_thread_sleep() BOOST_NOEXCEPT
+ {
+-#if defined(BOOST_HAS_PTHREADS) && !defined(__ANDROID__)
++#if defined(BOOST_HAS_PTHREADS) && !defined(__ANDROID__) && !defined(__OHOS__)
+ 
+     int oldst;
+     pthread_setcancelstate( PTHREAD_CANCEL_DISABLE, &oldst );
+@@ -85,7 +85,7 @@
+ 
+     nanosleep( &rqtp, 0 );
+ 
+-#if defined(BOOST_HAS_PTHREADS) && !defined(__ANDROID__)
++#if defined(BOOST_HAS_PTHREADS) && !defined(__ANDROID__) && !defined(__OHOS__)
+ 
+     pthread_setcancelstate( oldst, &oldst );
+ 

@@ -1,5 +1,5 @@
 name: qfli_sql
-description: "QFLISQLab：SQLite 数据库与 SQL 工作流。"
+description: "QFLISQLab：本地 Oracle MySQL 数据库与 SQL 工作流。"
 publish_to: 'none'
 version: 1.0.0+1
 

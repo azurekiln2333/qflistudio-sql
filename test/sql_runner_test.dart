@@ -25,7 +25,7 @@ void main() {
       expect(result, isNotNull);
       expect(result!.title, '运行 main.sql');
       expect(await result.stdout.toList(), isEmpty);
-      expect(await result.stderr.toList(), ['当前设备无法连接 SQLite 引擎。']);
+      expect(await result.stderr.toList(), ['当前设备无法连接 Oracle MySQL 引擎。']);
       expect(await result.exitCode, kProgramNotRunExitCode);
     });
 

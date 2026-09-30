@@ -230,18 +230,6 @@ class _HostClient implements SqlDatabase {
     if (exit != 0) {
       throw StateError('Host MySQL bridge failed: ${await errors}');
     }
-    final raw = jsonDecode(await output) as Map<String, dynamic>;
-    final message = raw['error'] as String;
-    return SqlQueryResult(
-      available: raw['available'] as bool,
-      exitCode: raw['exitCode'] as int,
-      columns: List<String>.from(raw['columns'] as List),
-      rows: [
-        for (final row in raw['rows'] as List) List<String?>.from(row as List),
-      ],
-      affectedRows: raw['affectedRows'] as int,
-      truncated: raw['truncated'] as bool,
-      error: message.isEmpty ? null : message,
-    );
+    return SqlQueryResult.fromNative(jsonDecode(await output));
   }
 }

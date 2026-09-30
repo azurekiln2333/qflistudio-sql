@@ -65,6 +65,7 @@ app.*.map.json
 **/ohos/**/node_modules/
 **/ohos/**/.hvigor/
 **/ohos/entry/libs/
+**/ohos/entry/src/main/resources/rawfile/mysql/
 
 # Native language runtime build output
 **/native/build/

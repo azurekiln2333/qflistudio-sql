@@ -1,15 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:qfli_studio_core/services/studio_profile.dart';
 
 import 'sql_native_channel.dart';
+import 'mysql_database.dart';
+import 'sql_database.dart';
 
-/// 一次待交给 SQLite 后端执行的项目查询。
-class SqliteRequest {
-  const SqliteRequest({required this.projectPath, required this.source});
+class SqlProgramRequest {
+  const SqlProgramRequest({required this.projectPath, required this.source});
 
   final String projectPath;
   final String source;
@@ -17,15 +19,12 @@ class SqliteRequest {
   String get databasePath => p.join(projectPath, '.qfli', 'data.sqlite');
 }
 
-/// SQLite 执行后端的最小边界。
-///
-/// 实现在当前进程内打开 [SqliteRequest.databasePath]，执行 SQL 并返回结果。
-abstract interface class SqliteEngine {
-  Future<SqliteExecutionResult> execute(SqliteRequest request);
+abstract interface class SqlProgramEngine {
+  Future<SqlProgramExecutionResult> execute(SqlProgramRequest request);
 }
 
-class SqliteExecutionResult {
-  const SqliteExecutionResult({
+class SqlProgramExecutionResult {
+  const SqlProgramExecutionResult({
     required this.available,
     required this.stdout,
     required this.stderr,
@@ -36,6 +35,116 @@ class SqliteExecutionResult {
   final Iterable<String> stdout;
   final Iterable<String> stderr;
   final int exitCode;
+}
+
+typedef SqliteRequest = SqlProgramRequest;
+typedef SqliteEngine = SqlProgramEngine;
+typedef SqliteExecutionResult = SqlProgramExecutionResult;
+
+class NativeMySqlEngine implements SqlProgramEngine {
+  const NativeMySqlEngine({this.database = const NativeMySqlDatabase()});
+
+  final NativeMySqlDatabase database;
+  static Future<void> _pending = Future<void>.value();
+
+  @override
+  Future<SqlProgramExecutionResult> execute(SqlProgramRequest request) {
+    final operation = _pending.then((_) => _execute(request));
+    _pending = operation.then((_) {}, onError: (Object error) {});
+    return operation;
+  }
+
+  Future<SqlProgramExecutionResult> _execute(SqlProgramRequest request) async {
+    try {
+      final marker = File(p.join(request.projectPath, '.qfli', 'mysql.json'));
+      final String schema;
+      final exists = await marker.exists();
+      if (exists) {
+        final data = jsonDecode(await marker.readAsString());
+        if (data is! Map || data['schema'] is! String) {
+          throw const FormatException('项目 MySQL 配置无效。');
+        }
+        schema = data['schema'] as String;
+        if (!RegExp(r'^qfli_project_[a-z0-9_]{1,48}$').hasMatch(schema)) {
+          throw const FormatException('项目 MySQL 数据库名称无效。');
+        }
+      } else {
+        final random = Random.secure();
+        final suffix = List.generate(
+          16,
+          (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0'),
+        ).join();
+        schema = 'qfli_project_$suffix';
+      }
+      final creation = await database.query(
+        databasePath: '',
+        source:
+            'CREATE DATABASE IF NOT EXISTS `$schema` '
+            'CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci',
+      );
+      if (!creation.success) return _result(creation);
+      if (!exists) {
+        await marker.parent.create(recursive: true);
+        final temporary = File('${marker.path}.tmp');
+        await temporary.writeAsString(
+          jsonEncode({'schema': schema}),
+          flush: true,
+        );
+        await temporary.rename(marker.path);
+      }
+      final result = await database.executeScript(
+        databasePath: schema,
+        source: request.source,
+      );
+      return SqlProgramExecutionResult(
+        available: result.available,
+        stdout: [
+          for (var index = 0; index < result.results.length; index++) ...[
+            if (result.results.length > 1) '结果 ${index + 1}',
+            ..._output(result.results[index]),
+          ],
+        ],
+        stderr: [
+          if (result.error != null) result.error!,
+          if (result.truncated) '查询结果超过显示上限，输出已截断。',
+        ],
+        exitCode: result.available ? result.exitCode : kProgramNotRunExitCode,
+      );
+    } on FileSystemException catch (error) {
+      return _failure('无法保存项目数据库配置：${error.message}');
+    } on FormatException catch (error) {
+      return _failure(error.message);
+    }
+  }
+
+  Iterable<String> _output(SqlQueryResult result) sync* {
+    if (result.columns.isEmpty) {
+      yield '影响 ${result.affectedRows} 行';
+    } else {
+      yield result.columns.join(' | ');
+      for (final row in result.rows) {
+        yield row
+            .map((value) => value == null ? 'NULL' : jsonEncode(value))
+            .join(' | ');
+      }
+    }
+  }
+
+  SqlProgramExecutionResult _result(SqlQueryResult result) =>
+      SqlProgramExecutionResult(
+        available: result.available,
+        stdout: const [],
+        stderr: [result.error ?? 'Oracle MySQL 执行失败'],
+        exitCode: result.available ? result.exitCode : kProgramNotRunExitCode,
+      );
+
+  SqlProgramExecutionResult _failure(String message) =>
+      SqlProgramExecutionResult(
+        available: false,
+        stdout: const [],
+        stderr: [message],
+        exitCode: kProgramNotRunExitCode,
+      );
 }
 
 class UnavailableSqliteEngine implements SqliteEngine {
@@ -111,11 +220,9 @@ class NativeSqliteEngine implements SqliteEngine {
 
 /// SQL 版 App 的运行后端。
 class SqlProgramRunner implements ProgramRunner {
-  const SqlProgramRunner({this.engine = const NativeSqliteEngine()});
+  const SqlProgramRunner({this.engine = const NativeMySqlEngine()});
 
-  /// The engine is injectable so the native SQLite boundary can be tested
-  /// without starting an external process.
-  final SqliteEngine engine;
+  final SqlProgramEngine engine;
 
   /// 本后端接管的源码后缀。
   static const Set<String> _sourceExtensions = {'.sql'};
@@ -136,7 +243,7 @@ class SqlProgramRunner implements ProgramRunner {
       return _failure(p.basename(entryFile), '无法读取 SQL 文件：${error.message}');
     }
 
-    final request = SqliteRequest(projectPath: projectPath, source: source);
+    final request = SqlProgramRequest(projectPath: projectPath, source: source);
     final result = await engine.execute(request);
     final available = result.available;
     return ProgramRunResult(

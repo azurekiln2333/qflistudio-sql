@@ -42,11 +42,21 @@ int main(int argc, char **argv)
     writer.Key("available"); writer.Bool(result.available);
     writer.Key("exitCode"); writer.Uint(result.error_code);
     writer.Key("error"); writer.String(result.error.data(), result.error.size());
+    writer.Key("sqlState"); writer.String(result.sql_state.data(), result.sql_state.size());
     writer.Key("affectedRows"); writer.Uint64(result.affected_rows);
     writer.Key("truncated"); writer.Bool(result.truncated);
     writer.Key("columns"); writer.StartArray();
     for (const auto &column : result.columns) {
         writer.String(column.name.data(), column.name.size());
+    }
+    writer.EndArray();
+    writer.Key("columnInfo"); writer.StartArray();
+    for (const auto &column : result.columns) {
+        writer.StartObject();
+        writer.Key("name"); writer.String(column.name.data(), column.name.size());
+        writer.Key("nativeType"); writer.Uint(column.native_type);
+        writer.Key("binary"); writer.Bool(column.binary);
+        writer.EndObject();
     }
     writer.EndArray();
     writer.Key("rows"); writer.StartArray();

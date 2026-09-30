@@ -3,7 +3,8 @@
 ## Required engine
 
 The user explicitly requires Oracle MySQL. MariaDB and SQLite do not satisfy
-the final runtime requirement. The current workbench still uses SQLite.
+the final runtime requirement. The workbench and runner now default to
+Oracle; device acceptance remains pending.
 
 ## Source inputs
 
@@ -18,8 +19,8 @@ the final runtime requirement. The current workbench still uses SQLite.
 - OpenSSL source and partial objects are in
   `build/mysql-port/openssl-3.5.3/` and `openssl-build/`.
 
-These source trees and experiments are ignored build artifacts. There is no
-bundled Oracle server artifact yet. Release packaging must include source
+These source trees and experiments are ignored build artifacts. The compiled
+Oracle runtime is staged at `build/mysql-port/package`. Release packaging must include source
 provenance, reproducible patches/build inputs, and the upstream license notices.
 
 ## Available toolchain
@@ -89,3 +90,55 @@ For HAP verification, process-scoped Java options used successfully were:
 -Xms32m -Xmx256m -XX:MaxMetaspaceSize=128m
 -XX:ReservedCodeCacheSize=64m -XX:ActiveProcessorCount=2
 ```
+
+## Reproducible Port Continuation
+
+- Organized pinned-source preparation, OpenSSL build, Oracle build, native child
+  entry and runtime staging now live under `native/mysql/`.
+- Target OpenSSL and all eight host generators built. Oracle 8.4.6 target CMake
+  configuration completed with explicit platform fallback selections.
+- Oracle's DNS resolver, optional editline/dictionary trainer and unavailable
+  pthread_cancel paths required small OHOS patches. Static Protobuf/Abseil
+  avoid extra shared dependencies in the HAP.
+- Generic SDK C++ headers emit std::__1, while target libc++_shared exports
+  std::__n1. The target requires `llvm/include/libcxx-ohos/include/c++/v1`.
+  With those headers, `libqfli_mysql.so` strictly linked for AArch64 with only
+  ace_napi, libc++_shared and libc as runtime dependencies.
+- The source and target build were moved to WSL ext4 at
+  `/root/qfli-mysql-port` to reduce repeated header reads through `/mnt/d`.
+  The final package was staged back into `build/mysql-port/package`.
+- ICU data is bundled at `share/icu/icudt77l`; the child entry accepts an
+  explicit `icuDataDirectory` and sets ICU_DATA before Oracle startup.
+- Initialization writes an atomic numeric exit record after Oracle cleanup.
+  The parent requires that record and a real `SELECT VERSION()` result.
+- WSL restarts interrupted server and host-generator compilation; existing objects were
+  retained and compilation resumed. Heavy builds remain single-job/sequential.
+- Further tests and device probes were deferred by the user. These build
+  findings do not establish initialization, shutdown or persistence on target.
+- Bundled protoc 24.4 is an eighth required host generator. Oracle's supported
+  WITH_PROTOC option points the cross-build to that host executable.
+
+## Compiled Package and HAP
+
+- Oracle MySQL 8.4.6 arm64 server and client linked with `--no-undefined`.
+  Successful log: `build/mysql-port/ohos-build-ext4-server-link.log`.
+- The package contains `libqfli_mysql_server.so` (71,584,424 bytes),
+  `libqfli_mysql.so` (13,627,424 bytes), and 73 rawfiles (5,139,034 bytes).
+  ELF architecture and dependency checks completed during packaging.
+- The build was resumed incrementally in WSL ext4. The consolidated scripts
+  have not been run from a clean build tree end to end.
+- Full Hvigor `assembleHap` compiled and signed the normal application.
+  The HAP contains both Oracle arm64 libraries, runtime.json, ICU/charset/error
+  resources, and both upstream license notices.
+- The first ArkTS build rejected a constructor parameter property; explicit
+  class-field declaration and assignment fixed compilation.
+- SDK declarations restrict ArkTS `startNativeChildProcess` to PC/2-in-1 and
+  tablet devices. The upstream native API reference applies the same restriction
+  to `OH_Ability_CreateNativeChildProcess` and `OH_Ability_StartNativeChildProcess`:
+  PC/2-in-1 through API13, plus tablets from API14. Native C is not a phone
+  workaround. Reference:
+  `https://github.com/openharmony/docs/blob/master/en/application-dev/reference/apis-ability-kit/capi-native-child-process-h.md`.
+- The project declares phone, so its Oracle launch path remains blocked. The
+  runtime explicitly rejects unsupported devices before asset extraction or
+  initialization writes. A supported phone host has not been established.
+- Further tests and device probes remain deferred at the user's request.

@@ -180,22 +180,19 @@ class SqlWorkspaceRepository {
         : ' ORDER BY ${quoteIdentifier(sortColumn)} ${descending ? 'DESC' : 'ASC'}';
     final suffix = '$where$order LIMIT ? OFFSET ?';
     final parameters = [...filters, '$pageSize', '${page * pageSize}'];
-    var result = await database.query(
+    final identity = await _tableRowIdentity(databaseName, table, columns);
+    final editable = identity != null;
+    final result = await database.query(
       databasePath: path,
-      source: 'SELECT rowid, * FROM ${quoteIdentifier(table)}$suffix',
+      source:
+          'SELECT ${identity == null ? '' : '${quoteIdentifier(identity)}, '}'
+          '* FROM ${quoteIdentifier(table)}$suffix',
       parameters: parameters,
     );
-    var editable = true;
-    if (!result.success &&
-        result.error?.contains('no such column: rowid') == true) {
-      editable = false;
-      result = await database.query(
-        databasePath: path,
-        source: 'SELECT * FROM ${quoteIdentifier(table)}$suffix',
-        parameters: parameters,
-      );
-    }
     _require(result);
+    if (result.truncated) {
+      throw StateError('该页数据超过显示上限，请缩小查询范围');
+    }
     return SqlTablePage(
       columns: columns,
       rows: [for (final row in result.rows) editable ? row.sublist(1) : row],
@@ -285,12 +282,15 @@ class SqlWorkspaceRepository {
   ) async {
     final columns = await tableColumns(databaseName, table);
     _validateColumns([column], columns);
+    final identity = await _tableRowIdentity(databaseName, table, columns);
+    if (identity == null) throw StateError('该表没有可用的行标识');
     final result = _require(
       await database.query(
         databasePath: databasePath(databaseName),
         source:
             'UPDATE ${quoteIdentifier(table)} '
-            'SET ${quoteIdentifier(column)} = ? WHERE rowid = ?',
+            'SET ${quoteIdentifier(column)} = ? '
+            'WHERE ${quoteIdentifier(identity)} = ?',
         parameters: [value, rowId],
       ),
     );
@@ -302,10 +302,15 @@ class SqlWorkspaceRepository {
     String table,
     String rowId,
   ) async {
+    final columns = await tableColumns(databaseName, table);
+    final identity = await _tableRowIdentity(databaseName, table, columns);
+    if (identity == null) throw StateError('该表没有可用的行标识');
     final result = _require(
       await database.query(
         databasePath: databasePath(databaseName),
-        source: 'DELETE FROM ${quoteIdentifier(table)} WHERE rowid = ?',
+        source:
+            'DELETE FROM ${quoteIdentifier(table)} '
+            'WHERE ${quoteIdentifier(identity)} = ?',
         parameters: [rowId],
       ),
     );
@@ -336,6 +341,27 @@ class SqlWorkspaceRepository {
     for (final name in names) {
       if (!known.contains(name)) throw ArgumentError('列不存在：$name');
     }
+  }
+
+  Future<String?> _tableRowIdentity(
+    String databaseName,
+    String table,
+    List<SqlColumn> columns,
+  ) async {
+    final metadata = _require(
+      await database.query(
+        databasePath: databasePath(databaseName),
+        source: 'PRAGMA main.table_list(${quoteIdentifier(table)})',
+      ),
+    );
+    if (metadata.rows.isEmpty || metadata.rows.any((row) => row[4] == '1')) {
+      return null;
+    }
+    final names = columns.map((column) => column.name.toLowerCase()).toSet();
+    for (final alias in const ['rowid', '_rowid_', 'oid']) {
+      if (!names.contains(alias)) return alias;
+    }
+    return null;
   }
 
   static SqlQueryResult _require(SqlQueryResult result) {

@@ -142,4 +142,64 @@ void main() {
     await workspace.deleteDatabase('work');
     expect(await workspace.listDatabases(), isEmpty);
   });
+
+  testWidgets('grid identity is not shadowed by a user rowid column', (
+    tester,
+  ) async {
+    final root = await Directory.systemTemp.createTemp('qfli_rowid_device_');
+    addTearDown(() => root.delete(recursive: true));
+    final workspace = SqlWorkspaceRepository(root: root);
+    await workspace.createDatabase('work');
+    await workspace.createTable('work', 'items', const [
+      SqlColumnDraft(name: 'rowid', type: 'TEXT'),
+      SqlColumnDraft(name: 'name', type: 'TEXT'),
+    ]);
+    await workspace.insertRow('work', 'items', {
+      'rowid': 'same',
+      'name': 'one',
+    });
+    await workspace.insertRow('work', 'items', {
+      'rowid': 'same',
+      'name': 'two',
+    });
+    var page = await workspace.loadTable('work', 'items');
+    expect(page.rowIds, ['1', '2']);
+    await workspace.updateCell(
+      'work',
+      'items',
+      page.rowIds.first,
+      'name',
+      'edit',
+    );
+    page = await workspace.loadTable('work', 'items');
+    expect(page.rows, [
+      ['same', 'edit'],
+      ['same', 'two'],
+    ]);
+    await workspace.deleteRow('work', 'items', page.rowIds.first);
+    expect((await workspace.loadTable('work', 'items')).rows, [
+      ['same', 'two'],
+    ]);
+  });
+
+  testWidgets('tables without an accessible rowid are read only', (
+    tester,
+  ) async {
+    final root = await Directory.systemTemp.createTemp('qfli_readonly_device_');
+    addTearDown(() => root.delete(recursive: true));
+    final workspace = SqlWorkspaceRepository(root: root);
+    await workspace.createDatabase('work');
+    final created = await workspace.runQuery(
+      'work',
+      'CREATE TABLE items (id TEXT PRIMARY KEY) WITHOUT ROWID',
+    );
+    expect(created.success, isTrue, reason: created.error);
+    await workspace.insertRow('work', 'items', {'id': 'one'});
+    final page = await workspace.loadTable('work', 'items');
+    expect(page.editable, isFalse);
+    expect(page.rowIds, isEmpty);
+    expect(page.rows, [
+      ['one'],
+    ]);
+  });
 }

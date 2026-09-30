@@ -29,3 +29,17 @@ table data rather than relying on unbounded results.
 Source: https://www.sqlite.org/
 Version: 3.50.0
 License: public domain, as declared by the upstream SQLite source.
+
+## Oracle MySQL migration
+
+`src/qfli_mysql_client.cpp` is a separate Oracle C API client. It uses a private
+Unix socket, prepared statements, nullable bound values, and
+`CLIENT_FOUND_ROWS`. Binary result columns use hexadecimal text; exact numeric
+values remain strings. Rows and bytes are capped, and incomplete rows are never
+published. It is not yet compiled into the production HAP or registered as the
+default engine.
+
+See [host tests](tests/README.md) for actual Oracle validation and
+`../.trellis/tasks/09-30-local-mysql-workbench/research/oracle-mysql-port.md`
+for the arm64 server port. A working SQLite HAP is not evidence of a completed
+MySQL runtime.

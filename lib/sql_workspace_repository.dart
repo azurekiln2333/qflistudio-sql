@@ -63,6 +63,8 @@ class SqlWorkspaceRepository {
   static const int pageSize = 100;
   static const types = ['INTEGER', 'TEXT', 'REAL', 'NUMERIC', 'BLOB'];
 
+  List<String> get columnTypes => types;
+
   static Future<SqlWorkspaceRepository> openDefault() async {
     final storage = await AppPaths.storageDirectory();
     if (storage == null) {

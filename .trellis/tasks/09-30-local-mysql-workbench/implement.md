@@ -25,3 +25,20 @@
   queries). Original unrelated platform changes were not included.
 - Oracle MySQL runtime remains unimplemented. See
   `research/oracle-mysql-port.md` for source and cross-build progress.
+
+## Oracle Client and Repository Verification (2026-09-30)
+
+- Added an opt-in `MySqlWorkspaceRepository`; production remains SQLite until
+  arm64 startup and persistence are verified.
+- Added the Oracle C API socket client with prepared parameters, exact numeric
+  text, nullable rows, binary hex values, matched-row counts, and result caps.
+- Native client compiled with Clang and `-Wall -Wextra -Werror`; actual Oracle
+  MySQL 8.0.46 round-trip tests passed on WSL. This is a host test engine, not the
+  pinned 8.4.6 target artifact.
+- Four repository integration tests passed on actual Oracle MySQL, covering
+  schema/data operations, composite and binary keys, BLOB/empty/NULL values,
+  Unicode, filtering/sorting/paging, and read-only tables without primary keys.
+- The client still needs an async HarmonyOS channel and lifecycle integration.
+  These results do not complete any bundled-server acceptance criterion.
+- `flutter analyze --no-pub`: passed; `flutter test --no-pub`: 36 tests passed.
+- The host test CMake project configured and built both executables successfully.

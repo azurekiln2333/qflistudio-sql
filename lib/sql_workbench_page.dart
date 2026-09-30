@@ -534,8 +534,7 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
                                 DropdownButton<String>(
                                   value: field.type,
                                   items: [
-                                    for (final type
-                                        in SqlWorkspaceRepository.types)
+                                    for (final type in _repository!.columnTypes)
                                       DropdownMenuItem(
                                         value: type,
                                         child: Text(type),

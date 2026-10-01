@@ -90,6 +90,28 @@ void main() {
     expect(multiple.error, contains('Only one SQL statement'));
   });
 
+  testWidgets(
+    'structured scripts use native boundaries and retain all results',
+    (tester) async {
+      const database = NativeSqliteDatabase();
+      final result = await database.executeScript(
+        databasePath: ':memory:',
+        source:
+            "BEGIN; CREATE TABLE items (text TEXT); "
+            "INSERT INTO items VALUES ('semi;colon'); COMMIT; "
+            "SELECT text FROM items; SELECT NULL AS note;",
+      );
+      expect(result.success, isTrue, reason: result.error);
+      expect(result.results.length, 6);
+      expect(result.results[4].rows, [
+        ['semi;colon'],
+      ]);
+      expect(result.results[5].rows, [
+        [null],
+      ]);
+    },
+  );
+
   testWidgets('workspace creates and edits a real database', (tester) async {
     final root = await Directory.systemTemp.createTemp(
       'qfli_workspace_device_',

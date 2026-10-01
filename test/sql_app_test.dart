@@ -102,7 +102,7 @@ void main() {
   });
 
   group('运行后端', () {
-    test('本语言文件被接管，并在没有原生通道时报告错误', () async {
+    test('本语言文件被接管，错误不会报告为成功', () async {
       write('main.sql', '// 示例');
       final result = await sqlProfile.runner!.run(
         projectPath: project.path,
@@ -112,7 +112,7 @@ void main() {
       expect(result!.title, '运行 main.sql');
       expect(await result.stdout.toList(), isEmpty);
       expect(await result.stderr.toList(), isNotEmpty);
-      expect(await result.exitCode, kProgramNotRunExitCode);
+      expect(await result.exitCode, isNonZero);
     });
 
     test('别的语言文件交回内核', () async {

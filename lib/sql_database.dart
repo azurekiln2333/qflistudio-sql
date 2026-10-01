@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
 import 'sql_native_channel.dart';
+import 'sqlite_ffi.dart';
 
 class SqlResultColumn {
   const SqlResultColumn({
@@ -159,10 +160,37 @@ abstract interface class SqlScriptDatabase {
 }
 
 /// Structured, parameterized queries for the local SQLite database workspace.
-class NativeSqliteDatabase implements SqlDatabase {
-  const NativeSqliteDatabase({this.channel = sqlNativeChannel});
+class NativeSqliteDatabase implements SqlDatabase, SqlScriptDatabase {
+  const NativeSqliteDatabase({this.channel});
 
-  final MethodChannel channel;
+  final MethodChannel? channel;
+
+  @override
+  Future<SqlScriptResult> executeScript({
+    required String databasePath,
+    required String source,
+  }) async {
+    if (!SqliteFfi.supported) {
+      final result = await query(databasePath: databasePath, source: source);
+      return SqlScriptResult(summary: result, results: [result]);
+    }
+    try {
+      if (databasePath != ':memory:') {
+        await Directory(p.dirname(databasePath)).create(recursive: true);
+      }
+      return SqlScriptResult.fromNative(
+        await invokeSqliteNative('executeScript', {
+          'source': source,
+          'databasePath': databasePath,
+        }, channel: channel),
+      );
+    } on Object catch (error) {
+      return SqlScriptResult(
+        summary: _failure(error.toString()),
+        results: const [],
+      );
+    }
+  }
 
   @override
   Future<SqlQueryResult> query({
@@ -174,11 +202,11 @@ class NativeSqliteDatabase implements SqlDatabase {
       if (databasePath != ':memory:') {
         await Directory(p.dirname(databasePath)).create(recursive: true);
       }
-      final raw = await channel.invokeMethod<Object?>('query', {
+      final raw = await invokeSqliteNative('query', {
         'source': source,
         'databasePath': databasePath,
         'params': parameters,
-      });
+      }, channel: channel);
       return SqlQueryResult.fromNative(raw);
     } on FormatException {
       return _failure('SQLite 返回了无效的查询结果。');

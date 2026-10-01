@@ -1,0 +1,4 @@
+analyzer:
+  exclude:
+    # This harness uses the application's package config, not the FFI plugin's.
+    - tests/mysql_workspace_test.dart

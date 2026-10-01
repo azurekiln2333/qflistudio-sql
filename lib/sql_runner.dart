@@ -9,6 +9,7 @@ import 'package:qfli_studio_core/services/studio_profile.dart';
 import 'sql_native_channel.dart';
 import 'mysql_database.dart';
 import 'sql_database.dart';
+import 'sqlite_ffi.dart';
 
 class SqlProgramRequest {
   const SqlProgramRequest({required this.projectPath, required this.source});
@@ -163,20 +164,20 @@ class UnavailableSqliteEngine implements SqliteEngine {
   }
 }
 
-/// Calls the bundled HarmonyOS SQLite library through its method channel.
+/// Executes the bundled SQLite C engine through FFI or the OHOS channel.
 class NativeSqliteEngine implements SqliteEngine {
-  const NativeSqliteEngine({this.channel = sqlNativeChannel});
+  const NativeSqliteEngine({this.channel});
 
-  final MethodChannel channel;
+  final MethodChannel? channel;
 
   @override
   Future<SqliteExecutionResult> execute(SqliteRequest request) async {
     try {
       await Directory(p.dirname(request.databasePath)).create(recursive: true);
-      final raw = await channel.invokeMethod<Object?>('execute', {
+      final raw = await invokeSqliteNative('execute', {
         'source': request.source,
         'databasePath': request.databasePath,
-      });
+      }, channel: channel);
       if (raw is! Map ||
           raw['available'] is! bool ||
           raw['exitCode'] is! num ||
@@ -218,9 +219,20 @@ class NativeSqliteEngine implements SqliteEngine {
   );
 }
 
+/// Matches the default workbench's native engine on each platform.
+class NativeLocalSqlEngine implements SqlProgramEngine {
+  const NativeLocalSqlEngine();
+
+  @override
+  Future<SqlProgramExecutionResult> execute(SqlProgramRequest request) =>
+      SqliteFfi.supported
+          ? const NativeSqliteEngine().execute(request)
+          : const NativeMySqlEngine().execute(request);
+}
+
 /// SQL 版 App 的运行后端。
 class SqlProgramRunner implements ProgramRunner {
-  const SqlProgramRunner({this.engine = const NativeMySqlEngine()});
+  const SqlProgramRunner({this.engine = const NativeLocalSqlEngine()});
 
   final SqlProgramEngine engine;
 

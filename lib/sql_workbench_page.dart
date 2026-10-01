@@ -12,6 +12,7 @@ import 'mysql_workspace_repository.dart';
 import 'sql_document_service.dart';
 import 'sql_query_library.dart';
 import 'sql_workspace_repository.dart';
+import 'sqlite_ffi.dart';
 
 class SqlWorkbenchPage extends StatefulWidget {
   const SqlWorkbenchPage({
@@ -80,7 +81,9 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     try {
       final repository =
           await (widget.repositoryFactory?.call() ??
-              MySqlWorkspaceRepository.openLocal());
+              (SqliteFfi.supported
+                  ? SqlWorkspaceRepository.openDefault()
+                  : MySqlWorkspaceRepository.openLocal()));
       if (!mounted) return;
       _repository = repository;
       await _refreshTree();
@@ -1315,7 +1318,9 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
               Expanded(
                 child: Text(
                   _database == null
-                      ? 'MySQL'
+                      ? (_repository is MySqlWorkspaceRepository
+                            ? 'MySQL'
+                            : 'SQLite')
                       : _table == null
                       ? _database!
                       : '${_database!} / ${_table!}',

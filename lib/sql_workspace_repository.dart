@@ -73,10 +73,12 @@ class SqlWorkspaceRepository {
   const SqlWorkspaceRepository({
     required this.root,
     this.database = const NativeSqliteDatabase(),
+    this.scriptDatabase,
   });
 
   final Directory root;
   final SqlDatabase database;
+  final SqlScriptDatabase? scriptDatabase;
 
   static const int pageSize = 100;
   static const types = ['INTEGER', 'TEXT', 'REAL', 'NUMERIC', 'BLOB'];
@@ -93,7 +95,10 @@ class SqlWorkspaceRepository {
     }
     final root = Directory(p.join(storage, 'databases'));
     await root.create(recursive: true);
-    return SqlWorkspaceRepository(root: root);
+    return SqlWorkspaceRepository(
+      root: root,
+      scriptDatabase: const NativeSqliteDatabase(),
+    );
   }
 
   String databasePath(String name) {
@@ -344,6 +349,13 @@ class SqlWorkspaceRepository {
       database.query(databasePath: databasePath(databaseName), source: source);
 
   Future<SqlScriptResult> runScript(String databaseName, String source) async {
+    final engine = scriptDatabase;
+    if (engine != null) {
+      return engine.executeScript(
+        databasePath: databasePath(databaseName),
+        source: source,
+      );
+    }
     final result = await runQuery(databaseName, source);
     return SqlScriptResult(summary: result, results: [result]);
   }

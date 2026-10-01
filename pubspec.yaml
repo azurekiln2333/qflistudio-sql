@@ -17,6 +17,10 @@ dependencies:
 
   path: ^1.9.1
 
+  ffi: ^2.2.0
+  qfli_sqlite_native:
+    path: native
+
   cupertino_icons: ^1.0.8
 
 dependency_overrides:

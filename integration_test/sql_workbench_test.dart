@@ -21,13 +21,15 @@ void main() {
       'qfli_workbench_device_',
     );
     addTearDown(() => root.delete(recursive: true));
-    final repository = SqlWorkspaceRepository(root: root);
-    await repository.createDatabase('device_work');
-    await repository.createTable('device_work', 'people', const [
+    final repository = await SqlWorkspaceRepository.openDefault();
+    final databaseName = 'device_work_${DateTime.now().millisecondsSinceEpoch}';
+    await repository.createDatabase(databaseName);
+    addTearDown(() => repository.deleteDatabase(databaseName));
+    await repository.createTable(databaseName, 'people', const [
       SqlColumnDraft(name: 'id', type: 'INTEGER', primaryKey: true),
       SqlColumnDraft(name: 'name', type: 'TEXT'),
     ]);
-    await repository.insertRow('device_work', 'people', {'name': 'Before'});
+    await repository.insertRow(databaseName, 'people', {'name': 'Before'});
     final libraryFile = File(p.join(root.path, 'sql_queries.json'));
     final library = await SqlQueryLibrary.open(libraryFile);
     final store = ProjectStore();
@@ -43,7 +45,6 @@ void main() {
           store: store,
           auth: auth,
           settings: settings,
-          repositoryFactory: () async => repository,
           queryLibraryFactory: () async => library,
         ),
       ),
@@ -55,11 +56,11 @@ void main() {
     await tester.tap(find.text('保存'));
     await tester.pumpAndSettle();
     expect(find.text('After'), findsOneWidget);
-    expect((await repository.loadTable('device_work', 'people')).rows, [
+    expect((await repository.loadTable(databaseName, 'people')).rows, [
       ['1', 'After'],
     ]);
 
-    await tester.tap(find.text('SQL'));
+    await tester.tap(find.byTooltip('SQL'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'SELECT name FROM people');
     await tester.pump();
@@ -76,7 +77,7 @@ void main() {
     await tester.pumpAndSettle();
     final reopened = await SqlQueryLibrary.open(libraryFile);
     expect(reopened.saved.single.source, 'SELECT name FROM people');
-    expect(reopened.history.single.database, 'device_work');
+    expect(reopened.history.single.database, databaseName);
     expect(tester.takeException(), isNull);
   });
 }

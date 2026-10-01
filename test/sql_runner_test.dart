@@ -17,15 +17,16 @@ void main() {
       final entry = File(p.join(project.path, 'main.sql'))
         ..writeAsStringSync('SELECT 1;');
 
-      final result = await const SqlProgramRunner().run(
-        projectPath: project.path,
-        entryFile: entry.path,
-      );
+      final result = await const SqlProgramRunner(
+        engine: NativeSqliteEngine(
+          channel: MethodChannel('qfli_sql/absent_test'),
+        ),
+      ).run(projectPath: project.path, entryFile: entry.path);
 
       expect(result, isNotNull);
       expect(result!.title, '运行 main.sql');
       expect(await result.stdout.toList(), isEmpty);
-      expect(await result.stderr.toList(), ['当前设备无法连接 Oracle MySQL 引擎。']);
+      expect(await result.stderr.toList(), ['当前设备无法连接 SQLite 引擎。']);
       expect(await result.exitCode, kProgramNotRunExitCode);
     });
 

@@ -24,6 +24,7 @@ This directory contains guidelines for backend development. Fill in each file wi
 | [SQLite Native Runtime](./sqlite-native-runtime.md) | Multi-platform C packaging, FFI, queries and real runtime evidence | Implemented |
 | [Oracle MySQL Workspace](./mysql-workspace.md) | Oracle metadata, primary keys, binary values, and native client | Documented |
 | [Oracle Desktop Runtime](./mysql-desktop-runtime.md) | Windows/Linux private server lifecycle, FFI and bundle contract | Implemented |
+| [Oracle Android Runtime](./mysql-android-runtime.md) | Bionic build, installed code/data layout and private server lifecycle | Implemented; x86_64 device verified |
 
 ---
 
@@ -31,6 +32,7 @@ This directory contains guidelines for backend development. Fill in each file wi
 
 - Read SQLite Native Runtime for SQLite engine, FFI and packaging changes.
 - Read Oracle Desktop Runtime for local MySQL client, lifecycle or desktop packaging changes.
+- Read Oracle Android Runtime for Android Oracle build, installation and lifecycle changes.
 
 ## Quality Check
 

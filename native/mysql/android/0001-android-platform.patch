@@ -1,0 +1,48 @@
+--- a/libmysql/dns_srv.cc
++++ b/libmysql/dns_srv.cc
+@@ -42,3 +42,3 @@
+ static bool get_dns_srv(Dns_srv_data &data, const char *dnsname, int &error) {
+-#if defined(LINUX_ALPINE) || defined(__OHOS__)
++#if defined(LINUX_ALPINE) || defined(__OHOS__) || defined(__ANDROID__)
+   res_init();
+@@ -54,3 +54,3 @@
+-#if defined(LINUX_ALPINE) || defined(__OHOS__)
++#if defined(LINUX_ALPINE) || defined(__OHOS__) || defined(__ANDROID__)
+   int res = res_search(dnsname, ns_c_in, ns_t_srv, query_buffer,
+                        sizeof(query_buffer));
+@@ -94,3 +94,3 @@
+-#if defined(LINUX_ALPINE) || defined(__OHOS__)
++#if defined(LINUX_ALPINE) || defined(__OHOS__) || defined(__ANDROID__)
+   // nothing
+ #else
+--- a/mysys/my_thread.cc
++++ b/mysys/my_thread.cc
+@@ -142,3 +142,3 @@
+ int my_thread_cancel(my_thread_handle *thread) {
+-#if defined(__OHOS__)
++#if defined(__OHOS__) || defined(__ANDROID__)
+   (void)thread;
+--- a/storage/innobase/buf/buf0buf.cc
++++ b/storage/innobase/buf/buf0buf.cc
+@@ -1263,3 +1263,3 @@
+-#ifndef __OHOS__
++#if !defined(__OHOS__) && !defined(__ANDROID__)
+   cpu_set_t cpuset;
+ 
+--- a/storage/innobase/buf/buf0flu.cc
++++ b/storage/innobase/buf/buf0flu.cc
+@@ -3011,3 +3011,3 @@
+-#if defined(UNIV_LINUX) && !defined(__OHOS__)
++#if defined(UNIV_LINUX) && !defined(__OHOS__) && !defined(__ANDROID__)
+ /**
+ Set priority for page_cleaner threads.
+@@ -3130,3 +3130,3 @@
+-#if defined(UNIV_LINUX) && !defined(__OHOS__)
++#if defined(UNIV_LINUX) && !defined(__OHOS__) && !defined(__ANDROID__)
+   /* linux might be able to set different setting for each thread.
+   worth to try to set high priority for page cleaner threads */
+@@ -3546,3 +3546,3 @@
+ static void buf_flush_page_cleaner_thread() {
+-#if defined(UNIV_LINUX) && !defined(__OHOS__)
++#if defined(UNIV_LINUX) && !defined(__OHOS__) && !defined(__ANDROID__)
+   /* linux might be able to set different setting for each thread

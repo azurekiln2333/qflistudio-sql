@@ -131,6 +131,14 @@ std::unique_ptr<MYSQL, ConnectionCloser> connect(
         return {};
     }
 #endif
+#ifdef __ANDROID__
+    // Dart's worker sampling signals can interrupt Bionic poll during handshake.
+    const unsigned int interrupted_io_retries = 32;
+    if (mysql_options(connection.get(), MYSQL_OPT_RETRY_COUNT, &interrupted_io_retries) != 0) {
+        set_error(result, connection.get());
+        return {};
+    }
+#endif
     if (!mysql_real_connect(connection.get(), "localhost", "root", password.c_str(),
                             schema.empty() ? nullptr : schema.c_str(), 0,
                             socket_path.c_str(), flags)) {

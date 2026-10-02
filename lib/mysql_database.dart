@@ -1,19 +1,27 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 
 import 'sql_database.dart';
 import 'sql_native_channel.dart';
 import 'local_mysql_runtime.dart';
+import 'android_mysql_runtime.dart';
 
-/// Desktop FFI and the OHOS channel both own a real private Oracle runtime.
+/// Native FFI and the OHOS channel own a real private Oracle runtime.
 class NativeMySqlDatabase implements SqlDatabase, SqlScriptDatabase {
   const NativeMySqlDatabase({this.channel, this.runtime});
 
   final MethodChannel? channel;
   final LocalMySqlRuntime? runtime;
 
-  Future<Object?> _invoke(String method, Map<String, Object?> arguments) {
+  Future<Object?> _invoke(String method, Map<String, Object?> arguments) async {
     if (channel == null && (runtime != null || LocalMySqlRuntime.supported)) {
-      return (runtime ?? LocalMySqlRuntime.shared).invoke(method, arguments);
+      final selected =
+          runtime ??
+          (Platform.isAndroid
+              ? await AndroidMySqlRuntime.prepare()
+              : LocalMySqlRuntime.shared);
+      return selected.invoke(method, arguments);
     }
     return (channel ?? mysqlNativeChannel).invokeMethod<Object?>(
       method,

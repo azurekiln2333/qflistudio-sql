@@ -1,0 +1,9 @@
+--- a/include/my_inttypes.h
++++ b/include/my_inttypes.h
+@@ -49,3 +49,6 @@
+ typedef unsigned short ushort;
+ #endif
++#if defined(__ANDROID__) && !defined(MYSQL_ABI_CHECK)
++typedef unsigned short ushort;
++#endif
+ #if !defined(HAVE_ULONG) && !defined(MYSQL_ABI_CHECK)

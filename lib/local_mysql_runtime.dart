@@ -16,11 +16,16 @@ class LocalMySqlRuntime {
     required this.launcherPath,
     this.serverPath,
     this.serverUser,
+    this.libraryDirectory,
+    this.temporaryDirectory,
     this.readinessTimeout = const Duration(seconds: 45),
   });
 
   static bool get supported =>
-      Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+      Platform.isAndroid ||
+      Platform.isWindows ||
+      Platform.isLinux ||
+      Platform.isMacOS;
 
   static final LocalMySqlRuntime shared = _discover();
   static final Set<String> _ownedDirectories = {};
@@ -32,6 +37,8 @@ class LocalMySqlRuntime {
   final String? serverPath;
   // Only explicit host fixtures may ask mysqld to run as root.
   final String? serverUser;
+  final String? libraryDirectory;
+  final Directory? temporaryDirectory;
   final Duration readinessTimeout;
   Future<void> _tail = Future<void>.value();
   Process? _server;
@@ -81,7 +88,7 @@ class LocalMySqlRuntime {
     if (_server != null && _exitCode == null) return;
     await _stop();
     if (!supported) {
-      throw UnsupportedError('Local Oracle MySQL requires a desktop host.');
+      throw UnsupportedError('Local Oracle MySQL is unavailable on this host.');
     }
     final server =
         serverPath ??
@@ -97,6 +104,7 @@ class LocalMySqlRuntime {
     }
     await dataDirectory.create(recursive: true);
     await _makePrivate(dataDirectory.path);
+    await temporaryDirectory?.create(recursive: true);
     final resolved = await dataDirectory.resolveSymbolicLinks();
     final owned = Platform.isWindows ? resolved.toLowerCase() : resolved;
     if (!_ownedDirectories.add(owned)) {
@@ -153,10 +161,14 @@ class LocalMySqlRuntime {
             '--no-defaults',
             '--initialize-insecure',
             '--basedir=${bundleDirectory.path}',
+            if (Platform.isAndroid)
+              '--lc-messages-dir=${p.join(bundleDirectory.path, 'share')}',
             '--datadir=${staging.path}',
             '--performance-schema=OFF',
             '--innodb-buffer-pool-size=32M',
             '--innodb-redo-log-capacity=16M',
+            if (temporaryDirectory != null)
+              '--tmpdir=${temporaryDirectory!.path}',
             if (serverUser != null) '--user=$serverUser',
           ], timeout: const Duration(minutes: 3));
           _password = _randomHex(32);
@@ -179,7 +191,8 @@ class LocalMySqlRuntime {
       if (Platform.isWindows) {
         _socket = 'qfli_mysql_${_randomHex(16)}';
       } else {
-        _ipcDirectory = await Directory.systemTemp.createTemp('qfli-mysql-');
+        _ipcDirectory = await (temporaryDirectory ?? Directory.systemTemp)
+            .createTemp('qfli-mysql-');
         await _makePrivate(_ipcDirectory!.path);
         _socket = p.join(_ipcDirectory!.path, 'mysql.sock');
       }
@@ -197,7 +210,7 @@ class LocalMySqlRuntime {
         '--lc-messages-dir=${p.join(bundleDirectory.path, 'share')}',
         '--socket=$_socket',
         '--skip-networking',
-        '--mysqlx=0',
+        '--loose-mysqlx=0',
         '--skip-log-bin',
         '--performance-schema=OFF',
         '--max-connections=20',
@@ -210,6 +223,7 @@ class LocalMySqlRuntime {
         '--max-allowed-packet=8M',
         '--innodb-buffer-pool-size=32M',
         '--innodb-redo-log-capacity=16M',
+        if (temporaryDirectory != null) '--tmpdir=${temporaryDirectory!.path}',
         '--init-file=${init.path}',
         '--pid-file=${p.join(dataDirectory.path, 'mysqld.pid')}',
         '--log-error=${p.join(dataDirectory.path, 'mysqld.log')}',
@@ -266,9 +280,12 @@ class LocalMySqlRuntime {
       if (Platform.isWindows)
         'PATH':
             '${p.join(bundleDirectory.path, 'bin')};${p.join(bundleDirectory.path, 'lib')};${Platform.environment['PATH'] ?? ''}',
-      if (Platform.isLinux)
+      if (Platform.isLinux || Platform.isAndroid)
         'LD_LIBRARY_PATH':
-            '${p.join(bundleDirectory.path, 'lib')}:${Platform.environment['LD_LIBRARY_PATH'] ?? ''}',
+            '${libraryDirectory ?? p.join(bundleDirectory.path, 'lib')}:${Platform.environment['LD_LIBRARY_PATH'] ?? ''}',
+      if (temporaryDirectory != null) 'TMPDIR': temporaryDirectory!.path,
+      if (Platform.isAndroid)
+        'ICU_DATA': p.join(bundleDirectory.path, 'share', 'icu'),
     },
   );
 
@@ -374,10 +391,10 @@ class LocalMySqlRuntime {
 
   static Future<void> _makePrivate(String path, {bool directory = true}) async {
     if (Platform.isWindows) return;
-    final result = await Process.run('/bin/chmod', [
-      directory ? '700' : '600',
-      path,
-    ]);
+    final result = await Process.run(
+      Platform.isAndroid ? '/system/bin/chmod' : '/bin/chmod',
+      [directory ? '700' : '600', path],
+    );
     if (result.exitCode != 0) {
       throw FileSystemException('Cannot make MySQL storage private.', path);
     }

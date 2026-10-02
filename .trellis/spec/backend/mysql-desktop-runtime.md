@@ -4,15 +4,17 @@
 
 Windows/Linux local Oracle MySQL backend and packaging. The default product
 engine preference currently remains SQLite/cloud; selection of this local
-backend is a subsequent integration requirement. macOS bundle/signing, Android
-server integration and native iOS hosting remain implementation gaps. Never
+backend is a separate workbench integration change. Android has its own verified
+runtime contract in mysql-android-runtime.md. macOS bundle/signing and native
+iOS hosting remain implementation gaps. Never
 report those platforms as delivered based on portable source or desktop tests.
 
 ## Interfaces And Transport
 
 - `NativeMySqlDatabase({MethodChannel? channel, LocalMySqlRuntime? runtime})`:
   an explicit channel wins. Otherwise desktop calls use the injected/shared
-  runtime; Android/OHOS/iOS retain their existing channel path for now.
+  runtime; Android prepares the installed layout described in its runtime spec.
+  OHOS/iOS retain their existing channel path.
 - `LocalMySqlRuntime.invoke(method, arguments)` accepts `query` and
   `executeScript`. `schema` is a schema name, including empty server scope;
   `source` is SQL, `params` is nullable strings for prepared queries.

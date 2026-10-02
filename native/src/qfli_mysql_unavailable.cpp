@@ -28,6 +28,24 @@ ScriptResult execute_script(const std::string &, const std::string &,
     return {unavailable(), {}};
 }
 
+QueryResult query(const std::string &, const std::string &, const std::string &,
+                  const std::vector<std::optional<std::string>> &, QueryLimits,
+                  const std::string &)
+{
+    return unavailable();
+}
+
+QueryResult shutdown(const std::string &, const std::string &)
+{
+    return unavailable();
+}
+
+ScriptResult execute_script(const std::string &, const std::string &,
+                            const std::string &, QueryLimits, const std::string &)
+{
+    return {unavailable(), {}};
+}
+
 const char *client_version()
 {
     return "";

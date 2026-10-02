@@ -90,10 +90,11 @@ bool initialize_library(QueryResult &result)
 
 std::unique_ptr<MYSQL, ConnectionCloser> connect(
     QueryResult &result, const std::string &socket_path, const std::string &schema,
+    const std::string &password,
     unsigned long flags = CLIENT_FOUND_ROWS)
 {
     if (socket_path.empty() || socket_path.find('\0') != std::string::npos ||
-        schema.find('\0') != std::string::npos) {
+        schema.find('\0') != std::string::npos || password.find('\0') != std::string::npos) {
         local_error(result, "Invalid local MySQL connection path or schema.");
         return {};
     }
@@ -104,7 +105,11 @@ std::unique_ptr<MYSQL, ConnectionCloser> connect(
     }
     const unsigned int connect_timeout = 5;
     const unsigned int operation_timeout = 60;
+#ifdef _WIN32
+    const auto protocol = MYSQL_PROTOCOL_PIPE;
+#else
     const auto protocol = MYSQL_PROTOCOL_SOCKET;
+#endif
     const auto ssl_mode = SSL_MODE_DISABLED;
     const unsigned long max_packet = 8 * 1024 * 1024;
     if (mysql_options(connection.get(), MYSQL_OPT_PROTOCOL, &protocol) != 0 ||
@@ -116,7 +121,17 @@ std::unique_ptr<MYSQL, ConnectionCloser> connect(
         set_error(result, connection.get());
         return {};
     }
-    if (!mysql_real_connect(connection.get(), "localhost", "root", "",
+#ifdef _WIN32
+    // Oracle does not classify named pipes as TLS-secured transports. Its
+    // default caching_sha2_password uses RSA for the first private-pipe login.
+    const bool get_server_public_key = true;
+    if (mysql_options(connection.get(), MYSQL_OPT_GET_SERVER_PUBLIC_KEY,
+                      &get_server_public_key) != 0) {
+        set_error(result, connection.get());
+        return {};
+    }
+#endif
+    if (!mysql_real_connect(connection.get(), "localhost", "root", password.c_str(),
                             schema.empty() ? nullptr : schema.c_str(), 0,
                             socket_path.c_str(), flags)) {
         set_error(result, connection.get());
@@ -132,10 +147,30 @@ std::unique_ptr<MYSQL, ConnectionCloser> connect(
 
 }  // namespace
 
+// Preserve the existing OHOS C++ ABI while desktop calls supply credentials.
 QueryResult query(const std::string &socket_path, const std::string &schema,
                   const std::string &source,
                   const std::vector<std::optional<std::string>> &parameters,
                   QueryLimits limits)
+{
+    return query(socket_path, schema, source, parameters, limits, {});
+}
+
+QueryResult shutdown(const std::string &socket_path)
+{
+    return shutdown(socket_path, {});
+}
+
+ScriptResult execute_script(const std::string &socket_path, const std::string &schema,
+                            const std::string &source, QueryLimits limits)
+{
+    return execute_script(socket_path, schema, source, limits, {});
+}
+
+QueryResult query(const std::string &socket_path, const std::string &schema,
+                  const std::string &source,
+                  const std::vector<std::optional<std::string>> &parameters,
+                  QueryLimits limits, const std::string &password)
 {
     QueryResult result;
     if (socket_path.empty() || socket_path.find('\0') != std::string::npos ||
@@ -162,7 +197,7 @@ QueryResult query(const std::string &socket_path, const std::string &schema,
         local_error(result, "Could not initialize the MySQL client thread.");
         return result;
     }
-    auto connection = connect(result, socket_path, schema);
+    auto connection = connect(result, socket_path, schema, password);
     if (!connection) return result;
     std::unique_ptr<MYSQL_STMT, StatementCloser> statement(mysql_stmt_init(connection.get()));
     if (!statement) {
@@ -287,7 +322,7 @@ QueryResult query(const std::string &socket_path, const std::string &schema,
     }
 }
 
-QueryResult shutdown(const std::string &socket_path)
+QueryResult shutdown(const std::string &socket_path, const std::string &password)
 {
     QueryResult result;
     if (!initialize_library(result)) return result;
@@ -296,7 +331,7 @@ QueryResult shutdown(const std::string &socket_path)
         local_error(result, "Could not initialize the MySQL client thread.");
         return result;
     }
-    auto connection = connect(result, socket_path, "");
+    auto connection = connect(result, socket_path, "", password);
     if (!connection) return result;
     if (mysql_shutdown(connection.get(), SHUTDOWN_DEFAULT) != 0) {
         set_error(result, connection.get());
@@ -305,7 +340,8 @@ QueryResult shutdown(const std::string &socket_path)
 }
 
 ScriptResult execute_script(const std::string &socket_path, const std::string &schema,
-                            const std::string &source, QueryLimits limits)
+                            const std::string &source, QueryLimits limits,
+                            const std::string &password)
 {
     ScriptResult script;
     auto &summary = script.summary;
@@ -319,7 +355,7 @@ ScriptResult execute_script(const std::string &socket_path, const std::string &s
         local_error(summary, "Could not initialize the MySQL client thread.");
         return script;
     }
-    auto connection = connect(summary, socket_path, schema,
+    auto connection = connect(summary, socket_path, schema, password,
                               CLIENT_FOUND_ROWS | CLIENT_MULTI_STATEMENTS);
     if (!connection) return script;
     if (mysql_real_query(connection.get(), source.data(), source.size()) != 0) {

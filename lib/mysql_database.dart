@@ -2,12 +2,24 @@ import 'package:flutter/services.dart';
 
 import 'sql_database.dart';
 import 'sql_native_channel.dart';
+import 'local_mysql_runtime.dart';
 
-/// The platform channel owns readiness and the private socket connection.
+/// Desktop FFI and the OHOS channel both own a real private Oracle runtime.
 class NativeMySqlDatabase implements SqlDatabase, SqlScriptDatabase {
-  const NativeMySqlDatabase({this.channel = mysqlNativeChannel});
+  const NativeMySqlDatabase({this.channel, this.runtime});
 
-  final MethodChannel channel;
+  final MethodChannel? channel;
+  final LocalMySqlRuntime? runtime;
+
+  Future<Object?> _invoke(String method, Map<String, Object?> arguments) {
+    if (channel == null && (runtime != null || LocalMySqlRuntime.supported)) {
+      return (runtime ?? LocalMySqlRuntime.shared).invoke(method, arguments);
+    }
+    return (channel ?? mysqlNativeChannel).invokeMethod<Object?>(
+      method,
+      arguments,
+    );
+  }
 
   @override
   Future<SqlScriptResult> executeScript({
@@ -15,7 +27,7 @@ class NativeMySqlDatabase implements SqlDatabase, SqlScriptDatabase {
     required String source,
   }) async {
     try {
-      final raw = await channel.invokeMethod<Object?>('executeScript', {
+      final raw = await _invoke('executeScript', {
         'schema': databasePath,
         'source': source,
       });
@@ -41,7 +53,7 @@ class NativeMySqlDatabase implements SqlDatabase, SqlScriptDatabase {
     List<String?> parameters = const [],
   }) async {
     try {
-      final raw = await channel.invokeMethod<Object?>('query', {
+      final raw = await _invoke('query', {
         'schema': databasePath,
         'source': source,
         'params': parameters,

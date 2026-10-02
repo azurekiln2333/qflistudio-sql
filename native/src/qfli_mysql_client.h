@@ -46,11 +46,19 @@ QueryResult query(const std::string &socket_path, const std::string &schema,
                   const std::string &source,
                   const std::vector<std::optional<std::string>> &parameters = {},
                   QueryLimits limits = {});
+QueryResult query(const std::string &socket_path, const std::string &schema,
+                  const std::string &source,
+                  const std::vector<std::optional<std::string>> &parameters,
+                  QueryLimits limits, const std::string &password);
 
 QueryResult shutdown(const std::string &socket_path);
+QueryResult shutdown(const std::string &socket_path, const std::string &password);
 
 ScriptResult execute_script(const std::string &socket_path, const std::string &schema,
                             const std::string &source, QueryLimits limits = {});
+ScriptResult execute_script(const std::string &socket_path, const std::string &schema,
+                            const std::string &source, QueryLimits limits,
+                            const std::string &password);
 
 const char *client_version();
 

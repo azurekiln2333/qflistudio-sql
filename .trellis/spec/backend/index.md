@@ -23,17 +23,21 @@ This directory contains guidelines for backend development. Fill in each file wi
 | [SQLite Workspace](./sql-workspace.md) | Stable grid identity and fixed-offset paging | Documented |
 | [SQLite Native Runtime](./sqlite-native-runtime.md) | Multi-platform C packaging, FFI, queries and real runtime evidence | Implemented |
 | [Oracle MySQL Workspace](./mysql-workspace.md) | Oracle metadata, primary keys, binary values, and native client | Documented |
+| [Oracle Desktop Runtime](./mysql-desktop-runtime.md) | Windows/Linux private server lifecycle, FFI and bundle contract | Implemented |
 
 ---
 
 ## Pre-Development Checklist
 
 - Read SQLite Native Runtime for SQLite engine, FFI and packaging changes.
+- Read Oracle Desktop Runtime for local MySQL client, lifecycle or desktop packaging changes.
 
 ## Quality Check
 
 - Run the native engine and existing SQL tests; see SQLite Native Runtime for
   platform verification requirements and explicit environment skips.
+- For local Oracle changes, run the real lifecycle checks and typed adapter tests
+  described in Oracle Desktop Runtime. Preserve OHOS C++ symbols.
 
 ## How to Fill These Guidelines
 

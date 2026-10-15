@@ -1,0 +1,1058 @@
+start hap build...
+Running Hvigor task assembleHap...
+> hvigor [32mstart to execute ohpm install[39m
+ohpm INFO: remove useless folder succeed: "D:\MyNewProjects\qfli_sql\ohos\oh_modules\.tmp"
+[32minstall completed in 0s 136ms[39m
+> hvigor [32mUP-TO-DATE :entry:default@PreBuild...  [39m
+> hvigor [32mUP-TO-DATE :integration_test:default@PreBuild...  [39m
+> hvigor [32mUP-TO-DATE :path_provider_ohos:default@PreBuild...  [39m
+flutter assemble: Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 22880 bytes (98.6% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+
+copy flutter assets to project start
+copy flutter assets to project end
+copy ConfigsFile start
+buildinfo.json5 not exist
+framesconfig.json not exist
+copy ConfigsFile end
+> hvigor [32mFinished :entry:default@FlutterTask... after 1 min 1 s 701 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateMetadata...  [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 11 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgSdkInfo...  [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :integration_test:default@CreateHarBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :integration_test:default@ConfigureCmake... after 1 ms [39m
+> hvigor [32mFinished :integration_test:default@MergeProfile... after 26 ms [39m
+> hvigor [32mFinished :path_provider_ohos:default@CreateHarBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :path_provider_ohos:default@ConfigureCmake... after 1 ms [39m
+> hvigor [32mFinished :path_provider_ohos:default@MergeProfile... after 8 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 9 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessRouterMap...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessShareConfig...  [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :integration_test:default@BuildNativeWithCmake... after 1 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@CreateBuildProfile...  [39m
+> hvigor [32mFinished :path_provider_ohos:default@BuildNativeWithCmake... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 25 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateLoaderJson...  [39m
+> hvigor [32mFinished :integration_test:default@BuildNativeWithNinja... after 1 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 11 ms [39m
+> hvigor [32mFinished :path_provider_ohos:default@BuildNativeWithNinja... after 1 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@MakePackInfo...  [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 126 ms [39m
+> hvigor [32mUP-TO-DATE :integration_test:default@ProcessLibs...  [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 31 ms [39m
+> hvigor [32mUP-TO-DATE :path_provider_ohos:default@ProcessLibs...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessResource...  [39m
+> hvigor [32mUP-TO-DATE :integration_test:default@DoNativeStrip...  [39m
+> hvigor [32mUP-TO-DATE :path_provider_ohos:default@DoNativeStrip...  [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 349 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 4 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 114 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 64 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 110 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 9 ms [39m
+> hvigor [32mFinished :entry:default@CompileArkTS... after 3 s 874 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgModuleJson... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 720 ms [39m
+> hvigor [32mFinished :entry:default@PackingCheck... after 7 ms [39m
+
+47 tasks in total: 32 executed, 15 up-to-date
+> hvigor WARN: WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/common/Any.ets:7:20
+ Usage of 'ESObject' type is restricted (arkts-limited-esobj)
+
+WARN: ArkTS:WARN File: D:/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_ohos-2.2.1/ohos/src/main/ets/io/flutter/plugins/pathprovider/Messages.ets:97:14
+ Usage of 'ESObject' type is restricted (arkts-limited-esobj)
+
+WARN: ArkTS:WARN File: D:/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_ohos-2.2.1/ohos/src/main/ets/io/flutter/plugins/pathprovider/Messages.ets:122:14
+ Usage of 'ESObject' type is restricted (arkts-limited-esobj)
+
+WARN: ArkTS:WARN File: D:/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_ohos-2.2.1/ohos/src/main/ets/io/flutter/plugins/pathprovider/Messages.ets:147:14
+ Usage of 'ESObject' type is restricted (arkts-limited-esobj)
+
+WARN: ArkTS:WARN File: D:/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_ohos-2.2.1/ohos/src/main/ets/io/flutter/plugins/pathprovider/Messages.ets:172:14
+ Usage of 'ESObject' type is restricted (arkts-limited-esobj)
+
+WARN: ArkTS:WARN File: D:/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_ohos-2.2.1/ohos/src/main/ets/io/flutter/plugins/pathprovider/Messages.ets:197:14
+ Usage of 'ESObject' type is restricted (arkts-limited-esobj)
+
+WARN: ArkTS:WARN File: D:/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_ohos-2.2.1/ohos/src/main/ets/io/flutter/plugins/pathprovider/Messages.ets:222:14
+ Usage of 'ESObject' type is restricted (arkts-limited-esobj)
+
+WARN: ArkTS:WARN File: D:/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_ohos-2.2.1/ohos/src/main/ets/io/flutter/plugins/pathprovider/Messages.ets:249:14
+ Usage of 'ESObject' type is restricted (arkts-limited-esobj)
+
+WARN: ArkTS:WARN File: D:/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_ohos-2.2.1/ohos/src/main/ets/io/flutter/plugins/pathprovider/PathProviderPlugin.ets:108:34
+ Argument of type 'Context | null' is not assignable to parameter of type 'Context'.
+  Type 'null' is not assignable to type 'Context'.
+
+WARN: ArkTS:WARN File: D:/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_ohos-2.2.1/ohos/src/main/ets/io/flutter/plugins/pathprovider/PathProviderPlugin.ets:112:39
+ Argument of type 'Context | null' is not assignable to parameter of type 'Context'.
+  Type 'null' is not assignable to type 'Context'.
+
+WARN: ArkTS:WARN: For details about ArkTS syntax errors, see FAQs
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/util/StringUtils.ets:7:21
+ Currently module for 'libflutter.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/dart/DartMessenger.ets:402:47
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/dart/DartMessenger.ets:443:16
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/dart/DartMessenger.ets:453:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:129:34
+ 'decodeWithStream' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:186:14
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:188:12
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:191:15
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:192:12
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:196:38
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:199:12
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:200:10
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:203:38
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:205:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:207:10
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:210:38
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:212:28
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:214:10
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:217:12
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:217:25
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:219:10
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:220:10
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:221:10
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:363:15
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/loader/FlutterLoader.ets:363:40
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/common/JSONMessageCodec.ets:87:38
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/util/ByteBuffer.ets:744:20
+ 'decode' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/util/ByteBuffer.ets:780:29
+ 'encodeInto' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/common/StandardMessageCodec.ets:196:13
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/DynamicView/dynamicView.ets:222:6
+ 'clip' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/DynamicView/dynamicView.ets:227:6
+ 'clip' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/TextInputChannel.ets:109:17
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/util/PasteboardUtils.ets:53:30
+ To use this API, you need to apply for the permissions: ohos.permission.READ_PASTEBOARD [since 12]
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:565:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:568:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:576:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:591:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:1452:59
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:1474:28
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:1484:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:1486:28
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:1499:30
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:1501:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:1513:21
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/ListenableEditingState.ets:1515:30
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/TextInputPlugin.ets:322:32
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/TextInputPlugin.ets:338:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/TextInputPlugin.ets:340:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/TextInputPlugin.ets:652:44
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/editing/TextInputPlugin.ets:654:44
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/KeyData.ets:74:34
+ 'decode' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/KeyData.ets:85:70
+ 'encode' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/KeyEmbedderResponder.ets:143:51
+ This API is unavailable to phone.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/KeyEmbedderResponder.ets:155:51
+ This API is unavailable to phone.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/KeyEmbedderResponder.ets:192:63
+ This API is unavailable to phone.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/KeyEmbedderResponder.ets:296:28
+ This API is unavailable to phone.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/KeyEventHandler.ets:140:34
+ The 'isCapsLockOn' API is supported since SDK version 19. However, the current compatible SDK version is 5.1.0(18).
+ It is recommended to use apiAvailable to safeguard API compatibility.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/KeyEventHandler.ets:140:69
+ The 'isCapsLockOn' API is supported since SDK version 19. However, the current compatible SDK version is 5.1.0(18).
+ It is recommended to use apiAvailable to safeguard API compatibility.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/KeyEventHandler.ets:231:37
+ The 'isNumLockOn' API is supported since SDK version 19. However, the current compatible SDK version is 5.1.0(18).
+ It is recommended to use apiAvailable to safeguard API compatibility.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/KeyEventHandler.ets:231:71
+ The 'isNumLockOn' API is supported since SDK version 19. However, the current compatible SDK version is 5.1.0(18).
+ It is recommended to use apiAvailable to safeguard API compatibility.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:66:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:67:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:68:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:69:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:70:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:71:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:72:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:73:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:74:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:75:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:76:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:77:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:78:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:79:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:80:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:81:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:82:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:83:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:84:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:85:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:86:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:87:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:88:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:89:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:90:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:91:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:92:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:93:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:94:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:95:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:96:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:97:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:98:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:99:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:100:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:101:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:102:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:103:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:104:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:105:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:106:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:107:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:108:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:109:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:111:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:112:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:113:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:114:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:115:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:116:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:117:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:118:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/mouse/MouseCursorPlugin.ets:120:71
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:238:44
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:239:44
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:240:43
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:241:43
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:242:33
+ 'screenX' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:242:43
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:242:73
+ 'screenX' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:243:33
+ 'screenY' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:243:43
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:243:73
+ 'screenY' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:244:37
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:245:37
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:251:37
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:252:37
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:253:36
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:254:36
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:255:26
+ 'screenX' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:255:36
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:255:59
+ 'screenX' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:256:26
+ 'screenY' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:256:36
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:256:59
+ 'screenY' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:257:30
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/EmbeddingNodeController.ets:258:30
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:436:33
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:461:42
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:463:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:761:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:900:14
+ 'px2vp' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:901:15
+ 'px2vp' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:910:37
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:1087:44
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:1088:45
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:1289:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:1297:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:1305:38
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:1313:38
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:1331:56
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:1332:17
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:1336:49
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/view/FlutterView.ets:1337:17
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:57:9
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:101:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:111:22
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:121:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:131:18
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:140:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:148:22
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:156:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:164:18
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:218:17
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:470:86
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:488:20
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:493:40
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:499:31
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:513:86
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:589:24
+ 'getContext' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:593:19
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:593:39
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:596:21
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterManager.ets:596:41
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/platform/PlatformViewRegistryImpl.ets:36:28
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/platform/PlatformViewRegistryImpl.ets:40:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/platform/PlatformViewRegistryImpl.ets:50:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/mutatorsstack/FlutterMutatorsStack.ets:149:19
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/mutatorsstack/FlutterMutatorsStack.ets:162:19
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/mutatorsstack/FlutterMutatorsStack.ets:163:29
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/mutatorsstack/FlutterMutatorsStack.ets:175:19
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/mutatorsstack/FlutterMutatorsStack.ets:176:29
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/mutatorsstack/FlutterMutatorView.ets:124:16
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/mutatorsstack/FlutterMutatorView.ets:125:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/mutatorsstack/FlutterMutatorView.ets:130:16
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/mutatorsstack/FlutterMutatorView.ets:131:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/platform/PlatformViewsController.ets:851:20
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/platform/PlatformViewsController.ets:861:23
+ 'px2vp' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/platform/PlatformViewsController.ets:919:42
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/platform/PlatformViewsController.ets:920:42
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineGroup.ets:103:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineGroup.ets:172:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineConnectionRegistry.ets:288:29
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineConnectionRegistry.ets:296:29
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineConnectionRegistry.ets:304:40
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineConnectionRegistry.ets:312:40
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineConnectionRegistry.ets:320:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineConnectionRegistry.ets:328:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineConnectionRegistry.ets:337:29
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineConnectionRegistry.ets:347:40
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEngineConnectionRegistry.ets:359:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/PlatformChannel.ets:23:21
+ Currently module for 'libflutter.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/LocalizationChannel.ets:84:29
+ 'Locale' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/LocalizationChannel.ets:85:24
+ 'language' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/LocalizationChannel.ets:86:24
+ 'region' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/LocalizationChannel.ets:87:24
+ 'script' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/AccessibilityChannel.ets:19:21
+ Currently module for 'libflutter.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/AccessibilityChannel.ets:46:39
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/AccessibilityChannel.ets:47:53
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/AccessibilityChannel.ets:53:44
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/AccessibilityChannel.ets:62:45
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/AccessibilityChannel.ets:70:45
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/systemchannels/AccessibilityChannel.ets:78:43
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/localization/LocalizationPlugin.ets:52:21
+ 'Locale' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/localization/LocalizationPlugin.ets:97:44
+ 'getSystemLocale' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:86:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:90:33
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:94:59
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:96:50
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:203:24
+ To use this API, you need to apply for the permissions: ohos.permission.VIBRATE
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:203:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:207:24
+ To use this API, you need to apply for the permissions: ohos.permission.VIBRATE
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:207:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:211:24
+ To use this API, you need to apply for the permissions: ohos.permission.VIBRATE
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:211:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:215:24
+ To use this API, you need to apply for the permissions: ohos.permission.VIBRATE
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:215:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:219:24
+ To use this API, you need to apply for the permissions: ohos.permission.VIBRATE
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:219:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:310:12
+ 'back' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:339:28
+ To use this API, you need to apply for the permissions: ohos.permission.READ_PASTEBOARD [since 12]
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:449:43
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/PlatformPlugin.ets:511:22
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/view/SensitiveContentPlugin.ets:47:28
+ 'getContext' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/view/SensitiveContentPlugin.ets:53:28
+ To use this API, you need to apply for the permissions: ohos.permission.PRIVACY_WINDOW
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterAbility.ets:111:40
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterAbility.ets:127:18
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterAbility.ets:162:35
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/renderer/FlutterRenderer.ets:174:47
+ 'createImageReceiver' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:338:41
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:413:27
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:414:27
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:415:33
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:416:33
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:417:34
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:418:34
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:488:21
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:489:21
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:490:27
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:491:27
+ 'vp2px' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventProcessor.ets:534:41
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterNapi.ets:7:21
+ Currently module for 'libflutter.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterNapi.ets:796:13
+ This API is unavailable to phone.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEnginePreload.ets:55:51
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/engine/FlutterEnginePreload.ets:111:51
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterEntry.ets:89:25
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/FlutterPage.ets:13:21
+ Currently module for 'libflutter.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventTracker.ets:46:20
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventTracker.ets:47:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventTracker.ets:59:63
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventTracker.ets:60:22
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventTracker.ets:60:47
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventTracker.ets:64:60
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventTracker.ets:65:25
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventTracker.ets:68:46
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/embedding/ohos/TouchEventTracker.ets:69:20
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/common/SendableStandardMessageCodec.ets:193:13
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/plugin/common/SendableJSONMessageCodec.ets:92:38
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/oh_modules/.ohpm/@ohos+flutter_ohos@cwrecvbfi+fmv9+aqz7qxd7aemtbz1goynfgkf87f9u=/oh_modules/@ohos/flutter_ohos/src/main/ets/util/PathUtils.ets:43:13
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_ohos-2.2.1/ohos/src/main/ets/io/flutter/plugins/pathprovider/PathProviderPlugin.ets:165:13
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliSqlNative.ets:1:27
+ Currently module for 'libqfli_sql.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:1:23
+ Currently module for 'libqfli_mysql.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:173:12
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:538:28
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:540:36
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:553:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:677:43
+ This API is unavailable to phone.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:677:43
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:747:13
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:748:21
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:760:15
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:761:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:763:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:802:13
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:802:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:806:54
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:819:55
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:826:12
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:826:33
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:836:21
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:840:26
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:844:10
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:846:10
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/plugins/QfliMysqlRuntime.ets:848:8
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/PickerBridge.ets:103:67
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/PickerBridge.ets:112:25
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/PickerBridge.ets:114:27
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/PickerBridge.ets:123:30
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/PickerBridge.ets:129:18
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/PickerBridge.ets:134:14
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/PickerBridge.ets:139:25
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/PickerBridge.ets:145:30
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/PickerBridge.ets:149:14
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/PickerBridge.ets:151:14
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/EntryAbility.ets:42:39
+ This API is unavailable to phone.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/entryability/EntryAbility.ets:73:18
+ 'pushUrl' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/pages/Index.ets:5:28
+ 'getShared' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/pages/Index.ets:11:21
+ 'getContext' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/pages/AgreementReader.ets:20:27
+ 'getParams' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/MyNewProjects/qfli_sql/ohos/entry/src/main/ets/pages/AgreementReader.ets:58:31
+ 'back' has been deprecated.
+
+
+> hvigor ERROR: Failed :entry:default@SignHap...
+> hvigor ERROR: 00303107 Configuration Error
+Error Message: Invalid storeFile value. Make sure it is not null or empty. The file must be included in 'C:\Users\lichengyu\.ohos\config\default_ohos_atLNRYMqojeWBzAE5Xsd0aBTQux6Ptm1YtuqBYW5IQg=.p12'. At file: D:\MyNewProjects\qfli_sql\ohos\build-profile.json5
+
+* Try the following:
+  > Please check signingConfigs in root project file
+
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+> hvigor ERROR: BUILD FAILED in 1 min 12 s 640 ms
+
+Oops; flutter has exited unexpectedly: "ProcessException: The command failed with exit code 1
+  Command: hvigorw assembleHap -p product=default -p buildMode=release --no-daemon -p FLUTTER_TARGET=lib\main.dart -p TARGET_PLATFORM=ohos-arm64 -p DART_DEFINES=RkxVVFRFUl9WRVJTSU9OPTMuMjcuNS1vaG9zLTEuMC4x,RkxVVFRFUl9DSEFOTkVMPVt1c2VyLWJyYW5jaF0=,RkxVVFRFUl9HSVRfVVJMPXVua25vd24gc291cmNl,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049MTI1ODdjNzllOA==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049NDJkM2Q3NWE1Ng==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My4xMS41 -p DART_OBFUSCATION=false -p TRACK_WIDGET_CREATION=true -p TREE_SHAKE_ICONS=true -p PACKAGE_CONFIG=D:\MyNewProjects\qfli_sql\.dart_tool\package_config.json".
+Error 1 retrieving device properties for OPD2413:
+adb.exe: device 'adb-d361e7a0-gqqQSM' not found
+
+A crash report has been written to D:\MyNewProjects\qfli_sql\flutter_13.log
+This crash may already be reported. Check GitHub for similar crashes.
+https://github.com/flutter/flutter/issues?q=is%3Aissue+ProcessException%3A+The+command+failed+with+exit+code+1%0A++Command%3A+hvigorw+assembleHap+-p+product%3Ddefault+-p+buildMode%3Drelease+--no-daemon+-p+FLUTTER_TARGET%3Dlib%5Cmain.dart+-p+TARGET_PLATFORM%3Dohos-arm64+-p+DART_DEFINES%3DRkxVVFRFUl9WRVJTSU9OPTMuMjcuNS1vaG9zLTEuMC4x%2CRkxVVFRFUl9DSEFOTkVMPVt1c2VyLWJyYW5jaF0%3D%2CRkxVVFRFUl9HSVRfVVJMPXVua25vd24gc291cmNl%2CRkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049MTI1ODdjNzllOA%3D%3D%2CRkxVVFRFUl9FTkdJTkVfUkVWSVNJT049NDJkM2Q3NWE1Ng%3D%3D%2CRkxVVFRFUl9EQVJUX1ZFUlNJT049My4xMS41+-p+DART_OBFUSCATION%3Dfalse+-p+TRACK_WIDGET_CREATION%3Dtrue+-p+TREE_SHAKE_ICONS%3Dtrue+-p+PACKAGE_CONFIG%3DD%3A%5CMyNewProjects%5Cqfli_sql%5C.dart_tool%5Cpackage_config.json
+
+To report your crash to the Flutter team, first read the guide to filing a bug.
+https://flutter.dev/to/report-bugs
+
+Create a new GitHub issue by pasting this link into your browser and completing the issue template. Thank you!
+https://github.com/flutter/flutter/issues/new?title=%5Btool_crash%5D+ProcessException%3A+The+command+failed+with+exit+code+1+Command%3A+hvigorw%2C+OS+error+code%3A+1&body=%23%23+Command%0A%60%60%60sh%0Aflutter+build+hap+--release+--target-platform+ohos-arm64+--no-pub%0A%60%60%60%0A%0A%23%23+Steps+to+Reproduce%0A1.+...%0A2.+...%0A3.+...%0A%0A%23%23+Logs%0AProcessException%3A+The+command+failed+with+exit+code+1+Command%3A+hvigorw%2C+OS+error+code%3A+1%0A%60%60%60console%0A%230++++++RunResult.throwException+%28package%3Aflutter_tools%2Fsrc%2Fbase%2Fprocess.dart%3A153%3A5%29%0A%231++++++_DefaultProcessUtils.runSync+%28package%3Aflutter_tools%2Fsrc%2Fbase%2Fprocess.dart%3A523%3A17%29%0A%232++++++hvigorwTask+%28package%3Aflutter_tools%2Fsrc%2Fohos%2Fhvigor.dart%3A135%3A41%29%0A%233++++++assembleHap+%28package%3Aflutter_tools%2Fsrc%2Fohos%2Fhvigor.dart%3A159%3A10%29%0A%234++++++OhosHvigorBuilder.buildHap+%28package%3Aflutter_tools%2Fsrc%2Fohos%2Fhvigor.dart%3A419%3A33%29%0A%3Casynchronous+suspension%3E%0A%235++++++BuildHapCommand.runCommand+%28package%3Aflutter_tools%2Fsrc%2Fcommands%2Fbuild_hap.dart%3A88%3A5%29%0A%3Casynchronous+suspension%3E%0A%236++++++FlutterCommand.run.%3Canonymous+closure%3E+%28package%3Aflutter_tools%2Fsrc%2Frunner%2Fflutter_command.dart%3A1590%3A27%29%0A%3Casynchronous+suspension%3E%0A%237++++++AppContext.run.%3Canonymous+closure%3E+%28package%3Aflutter_tools%2Fsrc%2Fbase%2Fcontext.dart%3A154%3A19%29%0A%3Casynchronous+suspension%3E%0A%238++++++CommandRunner.runCommand+%28package%3Aargs%2Fcommand_runner.dart%3A212%3A13%29%0A%3Casynchronous+suspension%3E%0A%239++++++FlutterCommandRunner.runCommand.%3Canonymous+closure%3E+%28package%3Aflutter_tools%2Fsrc%2Frunner%2Fflutter_command_runner.dart%3A496%3A9%29%0A%3Casynchronous+suspension%3E%0A%2310+++++AppContext.run.%3Canonymous+closure%3E+%28package%3Aflutter_tools%2Fsrc%2Fbase%2Fcontext.dart%3A154%3A19%29%0A%3Casynchronous+suspension%3E%0A%2311+++++FlutterCommandRunner.runCommand+%28package%3Aflutter_tools%2Fsrc%2Frunner%2Fflutter_command_runner.dart%3A431%3A5%29%0A%3Casynchronous+suspension%3E%0A%2312+++++FlutterCommandRunner.run.%3Canonymous+closure%3E+%28package%3Aflutter_tools%2Fsrc%2Frunner%2Fflutter_command_runner.dart%3A307%3A33%29%0A%3Casynchronous+suspension%3E%0A%2313+++++run.%3Canonymous+closure%3E.%3Canonymous+closure%3E+%28package%3Aflutter_tools%2Frunner.dart%3A104%3A11%29%0A%3Casynchronous+suspension%3E%0A%2314+++++AppContext.run.%3Canonymous+closure%3E+%28package%3Aflutter_tools%2Fsrc%2Fbase%2Fcontext.dart%3A154%3A19%29%0A%60%60%60%0A%60%60%60console%0A%5B%21%5D+Flutter+%28Channel+%5Buser-branch%5D%2C+3.27.5-ohos-1.0.1%2C+on+Microsoft+Windows+%5B%E7%89%88%E6%9C%AC+10.0.19045.7291%5D%2C+locale+zh-CN%29+%5B310ms%5D%0A++++%21+Flutter+version+3.27.5-ohos-1.0.1+on+channel+%5Buser-branch%5D+at+D%3A%5CProgramFiles%5Cflutter_ohos%0A++++++Currently+on+an+unknown+channel.+Run+%60flutter+channel%60+to+switch+to+an+official+channel.%0A++++++If+that+doesn%27t+fix+the+issue%2C+reinstall+Flutter+by+following+instructions+at+https%3A%2F%2Fflutter.dev%2Fsetup.%0A++++%21+Upstream+repository+unknown+source+is+not+a+standard+remote.%0A++++++Set+environment+variable+%22FLUTTER_GIT_URL%22+to+unknown+source+to+dismiss+this+error.%0A++++%E2%80%A2+Framework+revision+12587c79e8+%2811+months+ago%29%2C+2025-11-06+12%3A01%3A07+%2B0800%0A++++%E2%80%A2+Engine+revision+42d3d75a56%0A++++%E2%80%A2+Dart+version+3.11.5%0A++++%E2%80%A2+DevTools+version+2.54.1%0A++++%E2%80%A2+Feature+flags%3A+enable-ohos%2C+enable-web%2C+enable-linux-desktop%2C+enable-macos-desktop%2C+enable-windows-desktop%2C+enable-android%2C+enable-ios%2C+cli-animations%2C+enable-native-assets%2C+omit-legacy-version-file%2C+enable-lldb-debugging%2C+enable-uiscene-migration%0A++++%E2%80%A2+If+those+were+intentional%2C+you+can+disregard+the+above+warnings%3B+however+it+is+recommended+to+use+%22git%22+directly+to+perform+update+checks+and+upgrades.%0A%0A%5B%E2%9C%93%5D+HarmonyOS+toolchain+-+develop+for+HarmonyOS+devices%0A++++%E2%80%A2+OpenHarmony+Sdk+at+D%3A%5CProgramFiles%5CHuawei%5COpenHarmony%5CSdk%2C+available+api+versions+has+%5B23%3A23%2C+20%3A20%5D%0A++++%E2%80%A2+Ohpm+version+26.0.0.630%0A++++%E2%80%A2+Node+version+v24.15.0%0A++++%E2%80%A2+Hvigorw+binary+at+D%3A%5CProgramFiles%5CHuawei%5CDevEco+Studio%5Ctools%5Chvigor%5Cbin%5Chvigorw%0A%0A%5B%E2%9C%93%5D+Windows+Version+%2810+%E4%B8%93%E4%B8%9A%E5%B7%A5%E4%BD%9C%E7%AB%99%E7%89%88+64+%E4%BD%8D%2C+22H2%2C+2009%29+%5B6.3s%5D%0A%0A%5B%21%5D+Android+toolchain+-+develop+for+Android+devices+%28Android+SDK+version+36.1.0%29+%5B424ms%5D%0A++++%E2%80%A2+Android+SDK+at+D%3A%5CProgramData%5CAndroid%5CSdk%0A++++%E2%80%A2+Emulator+version+36.5.11.0+%28build_id+15261927%29+%28CL%3AN%2FA%29%0A++++%E2%80%A2+Platform+android-36.1%2C+build-tools+36.1.0%0A++++%E2%80%A2+ANDROID_HOME+%3D+D%3A%5CProgramData%5CAndroid%5CSdk%0A++++%E2%80%A2+Java+binary+at%3A+D%3A%5CProgramFiles%5CAndroid%5CAndroid+Studio%5Cjbr%5Cbin%5Cjava%0A++++++This+is+the+JDK+bundled+with+the+latest+Android+Studio+installation+on+this+machine.%0A++++++To+manually+set+the+JDK+path%2C+use%3A+%60flutter+config+--jdk-dir%3D%22path%2Fto%2Fjdk%22%60.%0A++++%E2%80%A2+Java+version+OpenJDK+Runtime+Environment+%28build+21.0.10%2B-14961533-b1163.108%29%0D%0A++++%E2%9C%97+Android+license+status+unknown.%0A++++++Run+%60flutter+doctor+--android-licenses%60+to+accept+the+SDK+licenses.%0A++++++See+https%3A%2F%2Fflutter.dev%2Fto%2Fwindows-android-setup+for+more+details.%0A%0A%5B%E2%9C%93%5D+Chrome+-+develop+for+the+web+%5B10ms%5D%0A++++%E2%80%A2+Chrome+at+C%3A%5CProgram+Files%5CGoogle%5CChrome%5CApplication%5Cchrome.exe%0A%0A%5B%E2%9C%97%5D+Visual+Studio+-+develop+Windows+apps+%5B9ms%5D%0A++++%E2%9C%97+Visual+Studio+not+installed%3B+this+is+necessary+to+develop+Windows+apps.%0A++++++Download+at+https%3A%2F%2Fvisualstudio.microsoft.com%2Fdownloads%2F.%0A++++++Please+install+the+%22Desktop+development+with+C%2B%2B%22+workload%2C+including+all+of+its+default+components%0A%0A%5B%E2%9C%93%5D+Connected+device+%286+available%29+%5B1%2C112ms%5D%0A++++%E2%80%A2+OPD2413+%28mobile%29++++++++++++++%E2%80%A2+192.168.68.236%3A35991+%E2%80%A2+android-arm64++%E2%80%A2+Android+16+%28API+36%29%0A++++%E2%80%A2+OPD2413+%28mobile%29++++++++++++++%E2%80%A2+adb-d361e7a0-gqqQSM++%E2%80%A2+unsupported++++%E2%80%A2+Android+null+%28API+null%29+%28unsupported%29%0A++++%E2%80%A2+192.168.68.207%3A46551+%28mobile%29+%E2%80%A2+192.168.68.207%3A46551+%E2%80%A2+ohos-arm64+++++%E2%80%A2+Ohos+OpenHarmony-7.0.0.105+%28API+26%29%0A++++%E2%80%A2+Windows+%28desktop%29+++++++++++++%E2%80%A2+windows++++++++++++++%E2%80%A2+windows-x64++++%E2%80%A2+Microsoft+Windows+%5B%E7%89%88%E6%9C%AC+10.0.19045.7291%5D%0A++++%E2%80%A2+Chrome+%28web%29++++++++++++++++++%E2%80%A2+chrome+++++++++++++++%E2%80%A2+web-javascript+%E2%80%A2+Google+Chrome+155.0.8059.79%0A++++%E2%80%A2+Edge+%28web%29++++++++++++++++++++%E2%80%A2+edge+++++++++++++++++%E2%80%A2+web-javascript+%E2%80%A2+Microsoft+Edge+155.0.4283.45%0A%0A%5B%E2%9C%93%5D+Network+resources+%5B5.9s%5D%0A++++%E2%80%A2+All+expected+network+resources+are+available.%0A%0A%21+Doctor+found+issues+in+3+categories.%0A%0A%60%60%60%0A%0A%23%23+Flutter+Application+Metadata%0A%2A%2AType%2A%2A%3A+malformed%0A%2A%2AVersion%2A%2A%3A+1.0.0%2B1%0A%2A%2AMaterial%2A%2A%3A+true%0A%2A%2AAndroid+X%2A%2A%3A+false%0A%2A%2AModule%2A%2A%3A+false%0A%2A%2APlugin%2A%2A%3A+false%0A%2A%2AAndroid+package%2A%2A%3A+null%0A%2A%2AiOS+bundle+identifier%2A%2A%3A+null%0A%2A%2ACreation+channel%2A%2A%3A+null%0A%2A%2ACreation+framework+version%2A%2A%3A+null%0A%23%23%23+Plugins%0Afile_selector_ios-0.5.3%2B1%0Aintegration_test%0Apath_provider_foundation-2.4.1%0Anative%0Afile_selector_android-0.5.1%2B15%0Apath_provider_android-2.2.17%0Afile_selector_macos-0.9.4%2B3%0Afile_selector_linux-0.9.3%2B2%0Apath_provider_linux-2.2.1%0Afile_selector_windows-0.9.3%2B4%0Apath_provider_windows-2.3.0%0Afile_selector_web-0.9.4%2B2%0Apath_provider_ohos-2.2.1%0A%0A&labels=tool%2Csevere%3A+crash

@@ -1,0 +1,40 @@
+== environment ==
+/usr/sbin/mysqld  Ver 8.0.46-0ubuntu0.24.04.4 for Linux on x86_64 ((Ubuntu))
+/usr/bin/mysql  Ver 8.0.46-0ubuntu0.24.04.4 for Linux on x86_64 ((Ubuntu))
+runroot=/tmp/qfli-mysql-review.ry1lRa
+== initialize private datadir ==
+initialize exit=0
+== start private mysqld (no defaults, no tcp, no mysqlx) ==
+server ready=1 pid=66
+VERSION=8.0.46-0ubuntu0.24.04.4
+COMMENT=(Ubuntu)
+SKIP_NETWORKING=1
+MYSQLX_PORT='<disabled>'
+TCP_PORT=0
+
+== sql-example-121 ==
+  PASS example: 'a|3'
+  PASS exercise 0: '1'
+== sql-example-122 ==
+  PASS example: '1|Alice@example.com|5'
+  PASS exercise 0: '6|2'
+== sql-example-123 ==
+  PASS example: '1|2026-01-02|4'
+  PASS exercise 0: '4'
+== sql-example-124 ==
+  PASS example: 'REPEATABLE-READ'
+  PASS exercise 0: 'REPEATABLE-READ'
+== sql-example-125 ==
+  PASS example: 'north|book,pen\nsouth|bag'
+  PASS exercise 0: 'pen,book,bag'
+== sql-example-126 ==
+  PASS example: '1|x|\n2|y|p\n3||q'
+  PASS exercise 0: '1'
+
+mysql examples passed: 6/6
+mysql exercise answers passed: 6/6
+all authored MySQL expectations matched execution
+
+== shutdown private server ==
+server exit=0
+python_rc=0

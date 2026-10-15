@@ -1,0 +1,25 @@
+=== build qfli_mysql (NAPI) ===
+[100%] Building CXX object sql/CMakeFiles/qfli_mysql.dir/mnt/d/MyNewProjects/qfli_sql/native/mysql/qfli_mysql_host.cpp.o
+clang++-18: warning: argument unused during compilation: '-stdlib=libc++' [-Wunused-command-line-argument]
+[100%] Building CXX object sql/CMakeFiles/qfli_mysql.dir/mnt/d/MyNewProjects/qfli_sql/ohos/entry/src/main/cpp/qfli_mysql_proto_probe.cpp.o
+clang++-18: warning: argument unused during compilation: '-stdlib=libc++' [-Wunused-command-line-argument]
+[100%] Building CXX object sql/CMakeFiles/qfli_mysql.dir/mnt/d/MyNewProjects/qfli_sql/ohos/entry/src/main/cpp/qfli_mysql_napi.cpp.o
+clang++-18: warning: argument unused during compilation: '-stdlib=libc++' [-Wunused-command-line-argument]
+[100%] Linking CXX shared library ../qfli-runtime/lib/libqfli_mysql.so
+[100%] Built target qfli_mysql
+EXIT_qfli_mysql=0
+=== relink proto (paranoia; sources touched) ===
+[100%] Building CXX object sql/CMakeFiles/qfli_mysql_server_proto.dir/mnt/d/MyNewProjects/qfli_sql/native/mysql/qfli_mysql_server.cpp.o
+clang++-18: warning: argument unused during compilation: '-stdlib=libc++' [-Wunused-command-line-argument]
+[100%] Linking CXX shared library ../qfli-runtime/lib/libqfli_mysql_server_proto.so
+[100%] Built target qfli_mysql_server_proto
+EXIT_proto=0
+=== hashes ===
+55230487682a5733d0772dcb58c2baa591fed9523ed97a9c1a614a4c659a0ccd  qfli-runtime/lib/libqfli_mysql.so
+f216e6def30a0c761af6c13dd5a1c6dcd2dc90280605db8d0ebd342b668a2446  qfli-runtime/lib/libqfli_mysql_server_proto.so
+05fbfbb0dc55da94d56c11f995e8d95426cc19511aa3e193797c9e41cff0d6a2  qfli-runtime/lib/libqfli_mysql_server.so
+ef54810dfeff3260e8563dd1c19cccc7c09ecd1e0ea569de09ca700d6f9ed76c  qfli-runtime/lib/libqfli_mysql_launcher.so
+-rwxr-xr-x 1 root root 15005632 2026-10-15 18:53:02.190263800 +0800 qfli-runtime/lib/libqfli_mysql.so
+-rwxr-xr-x 1 root root    22560 2026-10-15 18:34:49.464064985 +0800 qfli-runtime/lib/libqfli_mysql_launcher.so
+-rwxr-xr-x 1 root root 89004736 2026-10-15 18:34:39.124064683 +0800 qfli-runtime/lib/libqfli_mysql_server.so
+-rwxr-xr-x 1 root root 81011056 2026-10-15 18:53:09.334263800 +0800 qfli-runtime/lib/libqfli_mysql_server_proto.so

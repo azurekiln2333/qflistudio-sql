@@ -5,7 +5,11 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:qfli_studio_core/services/studio_profile.dart';
+import 'package:qfli_studio_core/terminal/shell/command_parser.dart';
+import 'package:qfli_studio_core/terminal/shell/sandbox_shell_backend.dart';
 
+import 'cloud_mysql_database.dart';
+import 'sql_engine_preference.dart';
 import 'sql_native_channel.dart';
 import 'mysql_database.dart';
 import 'sql_database.dart';
@@ -97,37 +101,11 @@ class NativeMySqlEngine implements SqlProgramEngine {
         databasePath: schema,
         source: request.source,
       );
-      return SqlProgramExecutionResult(
-        available: result.available,
-        stdout: [
-          for (var index = 0; index < result.results.length; index++) ...[
-            if (result.results.length > 1) '结果 ${index + 1}',
-            ..._output(result.results[index]),
-          ],
-        ],
-        stderr: [
-          if (result.error != null) result.error!,
-          if (result.truncated) '查询结果超过显示上限，输出已截断。',
-        ],
-        exitCode: result.available ? result.exitCode : kProgramNotRunExitCode,
-      );
+      return scriptProgramResult(result);
     } on FileSystemException catch (error) {
       return _failure('无法保存项目数据库配置：${error.message}');
     } on FormatException catch (error) {
       return _failure(error.message);
-    }
-  }
-
-  Iterable<String> _output(SqlQueryResult result) sync* {
-    if (result.columns.isEmpty) {
-      yield '影响 ${result.affectedRows} 行';
-    } else {
-      yield result.columns.join(' | ');
-      for (final row in result.rows) {
-        yield row
-            .map((value) => value == null ? 'NULL' : jsonEncode(value))
-            .join(' | ');
-      }
     }
   }
 
@@ -146,6 +124,58 @@ class NativeMySqlEngine implements SqlProgramEngine {
         stderr: [message],
         exitCode: kProgramNotRunExitCode,
       );
+}
+
+/// Renders a MySQL script result the same way for the local and cloud engines.
+SqlProgramExecutionResult scriptProgramResult(SqlScriptResult result) {
+  Iterable<String> output(SqlQueryResult result) sync* {
+    if (result.columns.isEmpty) {
+      yield '影响 ${result.affectedRows} 行';
+    } else {
+      yield result.columns.join(' | ');
+      for (final row in result.rows) {
+        yield row
+            .map((value) => value == null ? 'NULL' : jsonEncode(value))
+            .join(' | ');
+      }
+    }
+  }
+
+  // The cloud server adds an empty entry for the failing statement.
+  final shown = [
+    for (final item in result.results)
+      if (item.columns.isNotEmpty || item.error == null) item,
+  ];
+  return SqlProgramExecutionResult(
+    available: result.available,
+    stdout: [
+      for (var index = 0; index < shown.length; index++) ...[
+        if (shown.length > 1) '结果 ${index + 1}',
+        ...output(shown[index]),
+      ],
+    ],
+    stderr: [
+      if (result.error != null) result.error!,
+      if (result.truncated) '查询结果超过显示上限，输出已截断。',
+    ],
+    exitCode: result.available ? result.exitCode : kProgramNotRunExitCode,
+  );
+}
+
+/// Runs project SQL in the user's cloud MySQL default schema.
+class CloudMySqlEngine implements SqlProgramEngine {
+  const CloudMySqlEngine({required this.database});
+
+  final CloudMySqlDatabase database;
+
+  @override
+  Future<SqlProgramExecutionResult> execute(SqlProgramRequest request) async {
+    final result = await database.executeScript(
+      databasePath: '',
+      source: request.source,
+    );
+    return scriptProgramResult(result);
+  }
 }
 
 class UnavailableSqliteEngine implements SqliteEngine {
@@ -219,6 +249,34 @@ class NativeSqliteEngine implements SqliteEngine {
   );
 }
 
+/// Follows the workbench engine choice: device SQLite unless cloud is chosen.
+class PreferredSqlEngine implements SqlProgramEngine {
+  const PreferredSqlEngine();
+
+  @override
+  Future<SqlProgramExecutionResult> execute(SqlProgramRequest request) async {
+    final selected = await SqlEnginePreference.load();
+    if (selected == SqlEngineKind.localMysql) {
+      return const NativeMySqlEngine().execute(request);
+    }
+    if (selected == SqlEngineKind.cloud) {
+      final token = SqlEnginePreference.token();
+      if (token == null) {
+        return const SqlProgramExecutionResult(
+          available: false,
+          stdout: [],
+          stderr: ['已选择云 MySQL，请先在 SQL 工作台登录。'],
+          exitCode: kProgramNotRunExitCode,
+        );
+      }
+      return CloudMySqlEngine(
+        database: CloudMySqlDatabase(token: () => token),
+      ).execute(request);
+    }
+    return const NativeLocalSqlEngine().execute(request);
+  }
+}
+
 /// Matches the default workbench's native engine on each platform.
 class NativeLocalSqlEngine implements SqlProgramEngine {
   const NativeLocalSqlEngine();
@@ -226,13 +284,13 @@ class NativeLocalSqlEngine implements SqlProgramEngine {
   @override
   Future<SqlProgramExecutionResult> execute(SqlProgramRequest request) =>
       SqliteFfi.supported
-          ? const NativeSqliteEngine().execute(request)
-          : const NativeMySqlEngine().execute(request);
+      ? const NativeSqliteEngine().execute(request)
+      : const NativeMySqlEngine().execute(request);
 }
 
 /// SQL 版 App 的运行后端。
 class SqlProgramRunner implements ProgramRunner {
-  const SqlProgramRunner({this.engine = const NativeLocalSqlEngine()});
+  const SqlProgramRunner({this.engine = const PreferredSqlEngine()});
 
   final SqlProgramEngine engine;
 
@@ -275,5 +333,109 @@ class SqlProgramRunner implements ProgramRunner {
       stderr: Stream<String>.value(message),
       exitCode: Future<int>.value(kProgramNotRunExitCode),
     );
+  }
+}
+
+/// Local SQL commands shared by the standalone and embedded editor terminals.
+abstract final class SqlTerminalCommands {
+  static const help = '''SQL 本地终端
+  sql <文件.sql>           运行 SQL 文件
+  sql -e "SQL"             执行 SQL（也支持 --execute）
+  sql --help               显示帮助
+使用工作台选择的本地引擎和项目数据库；在项目目录内执行可与编辑器共享数据。
+SQL 参数需要引号；不提供交互式 mysql/sqlite3 客户端或远程连接。''';
+
+  static Future<bool> execute(
+    SandboxShellBackend backend,
+    String command, {
+    SqlProgramEngine engine = const PreferredSqlEngine(),
+  }) async {
+    final parsed = CommandParser.tokenize(
+      command,
+      escapePolicy: backend.escapePolicy,
+    );
+    if (parsed.tokens.firstOrNull?.text != 'sql') return false;
+
+    Future<bool> report(String message, {int code = 2}) async {
+      await backend.runStreams(
+        title: 'SQL',
+        stdout: code == 0 ? Stream.value(message) : const Stream.empty(),
+        stderr: code == 0 ? const Stream.empty() : Stream.value(message),
+        exitCode: Future.value(code),
+      );
+      return true;
+    }
+
+    if (!parsed.ok) return report('sql: ${parsed.error}');
+    if (CommandParser.classify(command, escapePolicy: backend.escapePolicy) !=
+        CommandSyntax.simple) {
+      return report('sql: 请用引号包住 SQL；不支持管道、重定向或命令串联。');
+    }
+    final args = parsed.tokens.skip(1).map((token) => token.text).toList();
+    if (args.isEmpty ||
+        (args.length == 1 &&
+            (args.single == '--help' || args.single == '-h'))) {
+      return report(help, code: 0);
+    }
+
+    final String source;
+    var directory = backend.cwd;
+    try {
+      if (args.length == 2 &&
+          (args.first == '-e' || args.first == '--execute')) {
+        source = args.last;
+      } else if (args.length == 1 && !args.single.startsWith('-')) {
+        final path = backend.resolveSandboxPath(args.single);
+        if (p.extension(path).toLowerCase() != '.sql') {
+          return report('sql: 请选择 .sql 文件。');
+        }
+        final file = File(path);
+        final resolved = await file.resolveSymbolicLinks();
+        final root = await Directory(
+          backend.sandboxRoot,
+        ).resolveSymbolicLinks();
+        if (!p.equals(root, resolved) && !p.isWithin(root, resolved)) {
+          return report('sql: 文件不能越出沙盒目录。');
+        }
+        source = await file.readAsString();
+        directory = p.dirname(path);
+      } else {
+        return report('sql: 参数无效。使用 sql --help 查看用法。');
+      }
+      if (source.trim().isEmpty) return report('sql: SQL 内容不能为空。');
+
+      // The app terminal starts at storage, while the editor starts at a
+      // project. Locate the same project for a script under e.g. src/main.sql.
+      var projectPath = backend.cwd;
+      var candidate = directory;
+      while (p.equals(candidate, backend.sandboxRoot) ||
+          p.isWithin(backend.sandboxRoot, candidate)) {
+        if (await File(p.join(candidate, '.qfli', 'project.json')).exists()) {
+          projectPath = candidate;
+          break;
+        }
+        final parent = p.dirname(candidate);
+        if (p.equals(parent, candidate)) break;
+        candidate = parent;
+      }
+      final result = await engine.execute(
+        SqlProgramRequest(projectPath: projectPath, source: source),
+      );
+      await backend.runStreams(
+        title: 'SQL',
+        stdout: Stream.fromIterable(result.stdout),
+        stderr: Stream.fromIterable(result.stderr),
+        exitCode: Future.value(
+          result.available ? result.exitCode : kProgramNotRunExitCode,
+        ),
+      );
+      return true;
+    } on SandboxEscapeException {
+      return report('sql: 文件不能越出沙盒目录。');
+    } on FileSystemException catch (error) {
+      return report('sql: 无法读取 SQL 文件：${error.message}', code: 127);
+    } on FormatException catch (error) {
+      return report('sql: SQL 文件必须是有效的 UTF-8 文本：${error.message}');
+    }
   }
 }

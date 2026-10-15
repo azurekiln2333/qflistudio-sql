@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:qfli_studio_core/services/api_client.dart';
 import 'package:qfli_studio_core/services/app_paths.dart';
 
+import 'cloud_mysql_database.dart';
 import 'mysql_database.dart';
 import 'sql_database.dart';
+import 'sql_engine_preference.dart';
 import 'sql_workspace_repository.dart';
 
 /// Oracle MySQL operations. The injected client owns the local server lifecycle.
@@ -14,7 +17,33 @@ class MySqlWorkspaceRepository extends SqlWorkspaceRepository {
   const MySqlWorkspaceRepository({
     required Directory runtimeDirectory,
     required super.database,
+    this.schemaPrefix,
   }) : super(root: runtimeDirectory);
+
+  /// Cloud accounts may only create schemas under their own prefix.
+  final String? schemaPrefix;
+
+  /// The cloud practice space; the server returns the account prefix.
+  static Future<MySqlWorkspaceRepository> openCloud({
+    required String Function() token,
+    ApiClient? client,
+  }) async {
+    if (!SqlEnginePreference.cloudEnabled) {
+      throw UnsupportedError(SqlEnginePreference.cloudUnavailableMessage);
+    }
+    final api = client ?? ApiClient.instance;
+    final info = await api.sqlInfo(token());
+    final prefix = info['prefix'];
+    if (prefix is! String || !RegExp(r'^qs_[0-9a-f]{20}_$').hasMatch(prefix)) {
+      throw const FormatException('云 MySQL 返回了无效的账号信息');
+    }
+    final storage = await AppPaths.storageDirectory();
+    return MySqlWorkspaceRepository(
+      runtimeDirectory: Directory(storage ?? Directory.systemTemp.path),
+      database: CloudMySqlDatabase(token: token, client: api),
+      schemaPrefix: prefix,
+    );
+  }
 
   static Future<MySqlWorkspaceRepository> openLocal() async {
     final storage = await AppPaths.storageDirectory();
@@ -69,9 +98,13 @@ class MySqlWorkspaceRepository extends SqlWorkspaceRepository {
 
   @override
   Future<void> createDatabase(String name) async {
+    final prefix = schemaPrefix;
+    final schema = prefix == null || name.startsWith(prefix)
+        ? name
+        : '$prefix$name';
     await _query(
       '',
-      'CREATE DATABASE ${_identifier(name)} '
+      'CREATE DATABASE ${_identifier(schema)} '
           'CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci',
     );
   }

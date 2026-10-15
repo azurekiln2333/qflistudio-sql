@@ -1,0 +1,77 @@
+00:00 +0: loading D:/MyNewProjects/qfli_sql/test/sql_terminal_commands_test.dart
+00:00 +0: D:/MyNewProjects/qfli_sql/test/sql_terminal_commands_test.dart: profile wires SQL commands into both shared terminal consumers
+00:00 +1: D:/MyNewProjects/qfli_sql/test/sql_terminal_commands_test.dart: standalone and editor terminals share a nested script project
+00:00 +2: D:/MyNewProjects/qfli_sql/test/sql_terminal_commands_test.dart: direct SQL preserves SQL syntax and engine failure status
+00:00 +3: D:/MyNewProjects/qfli_sql/test/sql_terminal_commands_test.dart: unavailable engine cannot report a successful terminal exit
+00:00 +4: D:/MyNewProjects/qfli_sql/test/sql_terminal_commands_test.dart: invalid input never executes SQL or a partial shell command
+00:00 +5: D:/MyNewProjects/qfli_sql/test/sql_terminal_commands_test.dart: non-SQL tools remain owned by the shared shell
+00:00 +6: D:/MyNewProjects/qfli_sql/test/sql_terminal_commands_test.dart: real terminal script and editor use one persisted SQLite database
+00:00 +7: D:/MyNewProjects/qfli_sql/test/sql_offline_policy_test.dart: stale cloud preference stays local and cannot be saved offline
+00:00 +8: D:/MyNewProjects/qfli_sql/test/sql_offline_policy_test.dart: stale cloud preference stays local and cannot be saved offline
+00:00 +9: D:/MyNewProjects/qfli_sql/test/sql_offline_policy_test.dart: cloud query and script stop before reading credentials or API
+00:00 +10: D:/MyNewProjects/qfli_sql/test/sql_offline_policy_test.dart: cloud workspace stops before its account-info API request
+00:00 +11: D:/MyNewProjects/qfli_sql/test/sql_runner_test.dart: SqlProgramRunner does not claim SQL ran when the native channel is absent
+00:00 +12: D:/MyNewProjects/qfli_sql/test/sql_runner_test.dart: SqlProgramRunner returns null for files outside the SQL backend
+00:00 +13: D:/MyNewProjects/qfli_sql/test/sql_runner_test.dart: SqlProgramRunner passes the source and project database boundary to an engine
+00:00 +14: D:/MyNewProjects/qfli_sql/test/sql_runner_test.dart: NativeSqliteEngine creates the database directory and passes source to native code
+00:00 +15: D:/MyNewProjects/qfli_sql/test/sql_runner_test.dart: NativeSqliteEngine preserves native SQL errors and truncated output
+00:00 +16: D:/MyNewProjects/qfli_sql/test/sql_runner_test.dart: NativeSqliteEngine rejects malformed native responses
+00:00 +17: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine script, grid and editor use the same persisted C database
+00:00 +18: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine binds quotes, UTF-8, embedded NUL and NULL without rewriting SQL
+00:00 +19: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine reports SQL and parameter errors and rejects a second statement
+00:00 +20: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine truncates rows and oversized cells without returning partial rows
+00:00 +21: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine structured scripts use native statement boundaries and one transaction
+00:00 +22: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +23: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +24: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +25: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +26: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +27: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +28: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +29: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +30: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +31: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +32: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +33: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +34: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +35: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +36: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +37: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +38: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +39: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +40: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +41: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +42: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +43: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +44: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +45: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +46: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +47: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +48: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:01 +49: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:02 +50: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:02 +51: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:02 +52: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:02 +53: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:02 +54: D:/MyNewProjects/qfli_studio_core/test/terminal_manager_delegate_test.dart: app terminal sessions receive the profile delegate
+00:03 +55: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: long output and the prompt scroll together in a short pane
+00:03 +56: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: stream output and exit status stay with their source session
+00:04 +57: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: session tabs support keyboard selection and accessible close
+00:04 +58: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: the stop action cancels an attached run and restores input
+00:04 +59: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: Enter executes a command and history stays with its session
+00:05 +60: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: Return keeps the input focused so the keyboard stays up
+00:05 +61: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: a hardware Return key submits the command
+00:05 +62: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: a quiet successful command still bounds the transcript
+00:08 +63: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: portable command errors keep cwd and stay quiet on success
+00:08 +64: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: ls lists real files in the session directory
+00:08 +65: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: clear empties the transcript but keeps the session and cwd
+00:08 +66: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: tapping the canvas focuses the input
+00:08 +67: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: tapping the canvas while focused keeps the input focused
+00:08 +68: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: long output scrolls back while a stream still runs
+00:09 +69: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: session switches retain each scroll offset
+00:10 +70: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: interruptActive forwards to the active session backend
+00:10 +71: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: the Stop control cancels a running local command
+00:10 +72: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: partial output stays on its own line across commands
+00:10 +73: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: double click on old output does not focus or jump to bottom
+00:10 +74: D:/MyNewProjects/qfli_studio_core/test/terminal_pane_test.dart: scrolling to the prompt can still focus the input
+00:11 +75: All tests passed!

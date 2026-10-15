@@ -6,6 +6,10 @@ import 'package:qfli_sql/sql_database.dart';
 import 'package:qfli_sql/sql_query_library.dart';
 import 'package:qfli_sql/sql_workbench_page.dart';
 import 'package:qfli_sql/sql_workspace_repository.dart';
+import 'package:qfli_sql/main.dart' show sqlProfile;
+import 'package:qfli_studio_core/content/content_repository.dart';
+import 'package:qfli_studio_core/pages/local_content_pages.dart';
+import 'package:qfli_studio_core/services/studio_profile.dart';
 import 'package:qfli_studio_core/store/auth_store.dart';
 import 'package:qfli_studio_core/store/project_store.dart';
 import 'package:qfli_studio_core/store/settings_store.dart';
@@ -16,8 +20,11 @@ void main() {
   late SettingsStore settings;
   late _FakeWorkspace workspace;
   late _FakeQueryLibrary queryLibrary;
+  late StudioProfile? previousProfile;
 
   setUp(() {
+    previousProfile = StudioProfile.current;
+    StudioProfile.current = sqlProfile;
     store = ProjectStore();
     auth = AuthStore();
     settings = SettingsStore();
@@ -26,18 +33,20 @@ void main() {
   });
 
   tearDown(() {
+    StudioProfile.current = previousProfile;
     store.dispose();
     auth.dispose();
     settings.dispose();
   });
 
-  Widget app() => MaterialApp(
+  Widget app({ContentRepository? content}) => MaterialApp(
     home: SqlWorkbenchPage(
       store: store,
       auth: auth,
       settings: settings,
       repositoryFactory: () async => workspace,
       queryLibraryFactory: () async => queryLibrary,
+      contentRepository: content,
     ),
   );
 
@@ -65,7 +74,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('uses a database drawer on a narrow viewport', (tester) async {
+  testWidgets('shows the database tree as the phone home body', (tester) async {
     tester.view.physicalSize = const Size(390, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -73,10 +82,239 @@ void main() {
 
     await tester.pumpWidget(app());
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.menu), findsOneWidget);
-    await tester.tap(find.byIcon(Icons.menu));
+    // The tree is the home body on a phone: no drawer, and the active database
+    // is shown expanded so its tables are immediately reachable.
+    expect(find.byIcon(Icons.menu), findsNothing);
+    expect(find.text('数据库'), findsOneWidget);
+    expect(find.text('work'), findsOneWidget);
+    expect(find.text('people'), findsOneWidget);
+
+    // Tapping a table enters the workspace; a back affordance returns to the
+    // tree.
+    await tester.tap(find.text('people'));
     await tester.pumpAndSettle();
-    expect(find.text('work'), findsWidgets);
+    expect(find.text('Ada'), findsOneWidget);
+    await tester.tap(find.byTooltip('返回数据库'));
+    await tester.pumpAndSettle();
+    expect(find.text('数据库'), findsOneWidget);
+    expect(find.byIcon(Icons.menu), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('expands and collapses databases independently', (tester) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+    // Row tap selects the database and keeps it expanded.
+    await tester.tap(find.text('work'));
+    await tester.pumpAndSettle();
+    expect(find.text('people'), findsOneWidget);
+    // The chevron collapses it independently of selection.
+    await tester.tap(find.byTooltip('收起'));
+    await tester.pumpAndSettle();
+    expect(find.text('people'), findsNothing);
+    await tester.tap(find.byTooltip('展开'));
+    await tester.pumpAndSettle();
+    expect(find.text('people'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('opens a single-toolbar standalone projects page', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    // Preload the store so the projects page shows its list, not a spinner.
+    await tester.runAsync(() => store.load());
+
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('项目'));
+    await tester.pumpAndSettle();
+
+    // A single project toolbar: the projects page title, not a nested home.
+    expect(find.byType(AppBar), findsOneWidget);
+    expect(find.text('QFLISQLab'), findsNothing);
+    expect(find.byType(NavigationRail), findsNothing);
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byTooltip('搜索项目'), findsOneWidget);
+    expect(find.byTooltip('返回数据库'), findsOneWidget);
+
+    // Search toggles into the same single toolbar.
+    await tester.tap(find.byTooltip('搜索项目'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AppBar), findsOneWidget);
+    expect(find.byTooltip('关闭搜索'), findsOneWidget);
+    await tester.tap(find.byTooltip('关闭搜索'));
+    await tester.pumpAndSettle();
+
+    // The original project-management actions stay in the 更多 menu.
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+    expect(find.text('移除失效项目'), findsOneWidget);
+    // Close the open menu before navigating back.
+    await tester.tapAt(const Offset(20, 400));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('返回数据库'));
+    await tester.pumpAndSettle();
+    expect(find.text('数据库'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('desktop 1280 keeps the tree side panel beside the workspace', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+    // Side panel and workspace coexist; no mobile back affordance.
+    expect(find.text('数据库'), findsOneWidget);
+    expect(find.text('work'), findsOneWidget);
+    expect(find.text('people'), findsOneWidget);
+    expect(find.byTooltip('返回数据库'), findsNothing);
+    expect(find.text('Ada'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('desktop 1280 at 2x text scale does not overflow', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+    expect(find.text('数据库'), findsOneWidget);
+    expect(find.text('work'), findsOneWidget);
+    expect(find.text('Ada'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('manual collapse of the active database survives refresh', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+    expect(find.text('people'), findsOneWidget);
+    await tester.tap(find.byTooltip('收起'));
+    await tester.pumpAndSettle();
+    expect(find.text('people'), findsNothing);
+    await tester.tap(find.byTooltip('刷新'));
+    await tester.pumpAndSettle();
+    expect(find.text('people'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'restores the 功能 entry so terminal and SQL tools stay reachable',
+    (tester) async {
+      tester.view.physicalSize = const Size(1100, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(app());
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('更多'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('功能'));
+      await tester.pumpAndSettle();
+      // FunctionsTab exposes the terminal entry and the SQL content tool. The
+      // shared ToolsGrid labels the quick entry 终端; the SQL section is 专用.
+      expect(find.text('终端'), findsOneWidget);
+      expect(find.text('SQL 查询'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('offline workbench exposes no cloud or login controls', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    // The SQL product profile is offline: no reachable control may offer a
+    // networked engine, login or Git action. With a repository injected the
+    // engine menu itself is not shown, so assert the reachable UI directly.
+    expect(sqlProfile.isOffline, isTrue);
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+
+    expect(find.text('云 MySQL'), findsNothing);
+    expect(find.textContaining('登录'), findsNothing);
+    expect(find.textContaining('Git'), findsNothing);
+    expect(find.byTooltip('退出登录'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('opens injected tutorial and example content from home', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final content = _FakeContentRepository();
+
+    await tester.pumpWidget(app(content: content));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('更多'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('教程'));
+    await tester.pumpAndSettle();
+    expect(content.tutorialQueries, greaterThan(0));
+    expect(find.text('教程'), findsWidgets);
+    expect(find.byType(AppBar), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('更多'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('示例'));
+    await tester.pumpAndSettle();
+    expect(content.exampleQueries, greaterThan(0));
+    expect(find.byType(ExampleCodeTab), findsOneWidget);
+    expect(find.byType(AppBar), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('phone home tree survives 2x text scale without overflow', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+    expect(find.text('数据库'), findsOneWidget);
+    expect(find.text('work'), findsOneWidget);
     expect(find.text('people'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -195,6 +433,31 @@ void main() {
     expect(find.text('重试'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+}
+
+class _FakeContentRepository implements ContentRepository {
+  int tutorialQueries = 0;
+  int exampleQueries = 0;
+
+  @override
+  Future<ContentCatalog> load() async =>
+      ContentCatalog(schemaVersion: 1, tutorials: const [], examples: const []);
+
+  @override
+  Future<List<TutorialContent>> tutorials({
+    ContentFilter filter = const ContentFilter(),
+  }) async {
+    tutorialQueries++;
+    return const [];
+  }
+
+  @override
+  Future<List<ExampleContent>> examples({
+    ContentFilter filter = const ContentFilter(),
+  }) async {
+    exampleQueries++;
+    return const [];
+  }
 }
 
 class _FakeWorkspace extends SqlWorkspaceRepository {

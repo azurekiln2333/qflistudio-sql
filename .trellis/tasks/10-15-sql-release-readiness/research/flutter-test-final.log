@@ -1,0 +1,98 @@
+00:00 +0: loading D:/MyNewProjects/qfli_sql/test/mysql_database_test.dart
+00:00 +0: D:/MyNewProjects/qfli_sql/test/mysql_database_test.dart: forwards a schema and bound values and retains Oracle column metadata
+00:00 +1: D:/MyNewProjects/qfli_sql/test/mysql_database_test.dart: server operations can use an empty schema
+00:00 +2: D:/MyNewProjects/qfli_sql/test/mysql_database_test.dart: preserves actual MySQL error number and SQLSTATE
+00:00 +3: D:/MyNewProjects/qfli_sql/test/mysql_database_test.dart: rejects mismatched column metadata
+00:00 +4: D:/MyNewProjects/qfli_sql/test/mysql_database_test.dart: missing plugin never reports a successful MySQL query
+00:00 +5: D:/MyNewProjects/qfli_sql/test/mysql_desktop_database_test.dart: real desktop Oracle adapter retains native exact values, NULL and binary metadata
+  Skip: Set QFLI_MYSQL_TEST_BUNDLE to a built Oracle bundle.
+00:00 +5 ~1: D:/MyNewProjects/qfli_sql/test/mysql_desktop_database_test.dart: real desktop Oracle adapter decodes ordered scripts and preserves errors after mutation
+  Skip: Set QFLI_MYSQL_TEST_BUNDLE to a built Oracle bundle.
+00:00 +5 ~2: D:/MyNewProjects/qfli_sql/test/mysql_desktop_database_test.dart: missing desktop bundle returns an unavailable typed result
+00:00 +6 ~2: D:/MyNewProjects/qfli_sql/test/mysql_workspace_repository_test.dart: composite key identifies one row even when visible values repeat
+00:00 +7 ~2: D:/MyNewProjects/qfli_sql/test/mysql_workspace_repository_test.dart: changed key metadata rejects old row identities before mutation
+00:00 +8 ~2: D:/MyNewProjects/qfli_sql/test/mysql_workspace_repository_test.dart: table without a primary key is readable and cannot mutate rows
+00:00 +9 ~2: D:/MyNewProjects/qfli_sql/test/mysql_workspace_repository_test.dart: paging adds primary-key tie breakers and binds filter text
+00:00 +10 ~2: D:/MyNewProjects/qfli_sql/test/mysql_workspace_repository_test.dart: truncation or unmatched mutations are failures
+00:00 +11 ~2: D:/MyNewProjects/qfli_sql/test/mysql_workspace_repository_test.dart: quotes MySQL identifiers and creates an auto-increment integer key
+00:00 +12 ~2: D:/MyNewProjects/qfli_sql/test/mysql_workspace_repository_test.dart: Oracle errors reach callers without a successful result
+00:00 +13 ~2: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine script, grid and editor use the same persisted C database
+00:00 +14 ~2: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine binds quotes, UTF-8, embedded NUL and NULL without rewriting SQL
+00:01 +15 ~2: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine reports SQL and parameter errors and rejects a second statement
+00:01 +16 ~2: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine truncates rows and oversized cells without returning partial rows
+00:01 +17 ~2: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine structured scripts use native statement boundaries and one transaction
+00:01 +18 ~2: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: retained upstream SQLite C engine workspace creates, edits and deletes persisted rows through default FFI
+00:01 +19 ~2: D:/MyNewProjects/qfli_sql/test/sqlite_ffi_test.dart: does not substitute another engine when the native library is missing
+00:01 +20 ~2: D:/MyNewProjects/qfli_sql/test/sql_app_test.dart: 档位收窄 新建项目只放行「空项目」和 SQL
+00:01 +21 ~2: D:/MyNewProjects/qfli_sql/test/sql_app_test.dart: 档位收窄 默认模板是 SQL 而不是空项目
+00:01 +22 ~2: D:/MyNewProjects/qfli_sql/test/sql_app_test.dart: 档位收窄 语言筛选芯片只剩 SQL
+00:01 +23 ~2: D:/MyNewProjects/qfli_sql/test/sql_app_test.dart: 档位收窄 产品名带 SQL 版后缀
+00:01 +24 ~2: D:/MyNewProjects/qfli_sql/test/sql_app_test.dart: 档位收窄 档位只使用本地能力
+00:01 +25 ~2: D:/MyNewProjects/qfli_sql/test/sql_app_test.dart: 入口文件识别 优先命中 main.sql
+00:01 +26 ~2: D:/MyNewProjects/qfli_sql/test/sql_app_test.dart: 入口文件识别 入口表覆盖了模板自带的入口文件
+00:01 +27 ~2: D:/MyNewProjects/qfli_sql/test/sql_app_test.dart: 入口文件识别 模板把源码放在 src/ 下时也能找到入口
+00:01 +28 ~2: D:/MyNewProjects/qfli_sql/test/sql_app_test.dart: 运行后端 本语言文件被接管，错误不会报告为成功
+00:01 +29 ~2: D:/MyNewProjects/qfli_sql/test/sql_app_test.dart: 运行后端 别的语言文件交回内核
+00:01 +30 ~2: D:/MyNewProjects/qfli_sql/test/sql_curriculum_test.dart: SQL curriculum assets tutorials.json parses via the shared catalog contract
+00:01 +31 ~2: D:/MyNewProjects/qfli_sql/test/sql_curriculum_test.dart: SQL curriculum assets tutorials.json parses via the shared catalog contract
+00:01 +32 ~2: D:/MyNewProjects/qfli_sql/test/sql_curriculum_test.dart: SQL curriculum assets every lesson has complete fields and a reference exercise
+00:01 +33 ~2: D:/MyNewProjects/qfli_sql/test/sql_curriculum_test.dart: SQL curriculum assets no placeholder tokens and no duplicated explain/code bodies
+00:01 +34 ~2: D:/MyNewProjects/qfli_sql/test/sql_curriculum_test.dart: SQL curriculum assets dialect/version is visible in display fields
+00:01 +35 ~2: D:/MyNewProjects/qfli_sql/test/sql_curriculum_test.dart: SQL curriculum assets examples carry their own runnable code and expected output
+00:01 +36 ~2: D:/MyNewProjects/qfli_sql/test/sql_curriculum_test.dart: SqlContentRepository loads, filters by sql, and memoizes the catalog
+00:01 +37 ~2: D:/MyNewProjects/qfli_sql/test/sql_curriculum_test.dart: SqlContentRepository examples filter returns sql examples
+00:01 +38 ~2: D:/MyNewProjects/qfli_sql/test/sql_curriculum_test.dart: SqlContentRepository missing asset surfaces a descriptive exception
+00:01 +39 ~2: D:/MyNewProjects/qfli_sql/test/sql_database_test.dart: decodes nullable rows and forwards bound parameters
+00:01 +40 ~2: D:/MyNewProjects/qfli_sql/test/sql_database_test.dart: rejects malformed row shapes
+00:02 +41 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:02 +42 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:02 +43 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:02 +44 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:02 +45 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:02 +46 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:02 +47 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +48 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +49 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +50 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +51 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +52 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +53 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +54 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +55 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +56 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +57 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: phone home exposes exactly five swipeable destinations
+00:03 +58 ~2: D:/MyNewProjects/qfli_sql/test/sql_projects_page_test.dart: project notifications refresh the visible list and search
+00:03 +59 ~2: D:/MyNewProjects/qfli_sql/test/sql_projects_page_test.dart: project notifications refresh the visible list and search
+00:03 +60 ~2: D:/MyNewProjects/qfli_sql/test/sql_projects_page_test.dart: project notifications refresh the visible list and search
+00:03 +61 ~2: D:/MyNewProjects/qfli_sql/test/sql_projects_page_test.dart: project notifications refresh the visible list and search
+00:03 +62 ~2: D:/MyNewProjects/qfli_sql/test/sql_projects_page_test.dart: project notifications refresh the visible list and search
+00:03 +63 ~2: D:/MyNewProjects/qfli_sql/test/sql_projects_page_test.dart: project notifications refresh the visible list and search
+00:03 +64 ~2: D:/MyNewProjects/qfli_sql/test/sql_projects_page_test.dart: project notifications refresh the visible list and search
+00:03 +65 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: shows real table data and saves a cell edit
+00:04 +66 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: shows real table data and saves a cell edit
+00:04 +67 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: shows real table data and saves a cell edit
+00:04 +68 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: shows real table data and saves a cell edit
+00:04 +69 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: shows real table data and saves a cell edit
+00:04 +70 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: shows real table data and saves a cell edit
+00:05 +71 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: database state survives distant tab switches and swipes
+00:05 +72 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: database state survives distant tab switches and swipes
+00:05 +73 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: expands and collapses databases independently
+00:05 +74 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: expands and collapses databases independently
+00:05 +75 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: content pages retain editor import dependencies
+00:06 +76 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: opens a single-toolbar standalone projects page
+00:06 +77 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: SQL tools retain every shared offline tool and its route
+00:06 +78 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: SQL tools retain every shared offline tool and its route
+00:06 +79 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: desktop 1280 at 2x text scale does not overflow
+00:06 +80 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: all five pages fit at width 390.0 with 2x text
+00:06 +81 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: all five pages fit at width 390.0 with 2x text
+00:06 +82 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: restores the 功能 entry so terminal and SQL tools stay reachable
+00:07 +83 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: all five pages fit at width 900.0 with 2x text
+00:07 +84 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: all five pages fit at width 900.0 with 2x text
+00:07 +85 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: opens injected tutorial and example content from home
+00:07 +86 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: all five pages fit at width 1280.0 with 2x text
+00:07 +87 ~2: D:/MyNewProjects/qfli_sql/test/sql_home_shell_test.dart: all five pages fit at width 1280.0 with 2x text
+00:07 +88 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: keeps empty table columns visible and permits row insertion
+00:07 +89 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: does not show old rows when switching to a table that fails to load
+00:08 +90 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: records SQL history and saves and restores a query
+00:08 +91 ~2: D:/MyNewProjects/qfli_sql/test/sql_workbench_page_test.dart: keeps SQL results visible when recording history fails
+00:09 +92 ~2: All tests passed!

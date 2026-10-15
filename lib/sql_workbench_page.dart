@@ -1,11 +1,22 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:qfli_studio_core/pages/home_page.dart';
+import 'package:qfli_studio_core/content/content_repository.dart';
+import 'package:qfli_studio_core/pages/local_content_pages.dart';
+import 'package:qfli_studio_core/pages/settings_page.dart';
+import 'package:qfli_studio_core/pages/quick_tools_page.dart'
+    show FunctionsTab, ContentToolsPage;
+import 'package:qfli_studio_core/pages/terminax_terminal_page.dart'
+    show TerminaxTerminalPage;
 import 'package:qfli_studio_core/services/picker_service.dart';
+import 'package:qfli_studio_core/services/studio_profile.dart';
 import 'package:qfli_studio_core/store/auth_store.dart';
 import 'package:qfli_studio_core/store/project_store.dart';
 import 'package:qfli_studio_core/store/settings_store.dart';
+
+import 'sql_content_repository.dart';
+import 'sql_projects_page.dart';
 
 import 'sql_database.dart';
 import 'mysql_workspace_repository.dart';
@@ -13,6 +24,9 @@ import 'sql_document_service.dart';
 import 'sql_query_library.dart';
 import 'sql_workspace_repository.dart';
 import 'sqlite_ffi.dart';
+import 'android_mysql_runtime.dart';
+import 'local_mysql_runtime.dart';
+import 'sql_engine_preference.dart';
 
 class SqlWorkbenchPage extends StatefulWidget {
   const SqlWorkbenchPage({
@@ -22,6 +36,8 @@ class SqlWorkbenchPage extends StatefulWidget {
     required this.settings,
     this.repositoryFactory,
     this.queryLibraryFactory,
+    this.contentRepository,
+    this.embedded = false,
   });
 
   final ProjectStore store;
@@ -29,6 +45,15 @@ class SqlWorkbenchPage extends StatefulWidget {
   final SettingsStore settings;
   final Future<SqlWorkspaceRepository> Function()? repositoryFactory;
   final Future<SqlQueryLibrary> Function()? queryLibraryFactory;
+  // SQL tutorial/example content source. Defaults to the app-local
+  // SqlContentRepository; injectable so tests avoid real assets.
+  final ContentRepository? contentRepository;
+
+  /// When true the workbench is the 数据库 destination of [SqlHomeShell]. It
+  /// keeps its toolbar and tree/workspace body; 项目 is reached through the
+  /// sibling tab, so the standalone "项目" push action is hidden and the
+  /// redundant 功能/教程/示例 更多 entries are dropped.
+  final bool embedded;
 
   @override
   State<SqlWorkbenchPage> createState() => _SqlWorkbenchPageState();
@@ -40,9 +65,15 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
   SqlWorkspaceRepository? _repository;
   SqlQueryLibrary? _queryLibrary;
   List<String> _databases = [];
-  List<String> _tables = [];
   String? _database;
   String? _table;
+  // Tree expand/collapse is independent of the selected database: each
+  // expanded database keeps its own table list. `_database` remains the active
+  // workspace context and `_expandedTables[_database]` its tables.
+  final Set<String> _expanded = <String>{};
+  final Map<String, List<String>> _expandedTables = <String, List<String>>{};
+  // Databases the user explicitly collapsed; a refresh must not re-expand them.
+  final Set<String> _collapsed = <String>{};
   SqlTablePage? _tablePage;
   List<SqlColumn>? _schemaColumns;
   SqlScriptResult? _queryResult;
@@ -55,13 +86,22 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
   String? _sortColumn;
   bool _descending = false;
   _WorkbenchView _view = _WorkbenchView.data;
+  // Phone layout: the home body shows the tree until a table is opened, then
+  // the workspace, with a back affordance returning to the tree.
+  bool _mobileShowWorkspace = false;
   bool _busy = true;
   bool _queryLibraryLoading = true;
   int _page = 0;
+  SqlEngineKind _engine = SqlEngineKind.sqlite;
+  // SQL tutorial/example content source; injectable for tests, otherwise the
+  // bundled SQL catalog.
+  late final ContentRepository _contentRepository =
+      widget.contentRepository ?? SqlContentRepository();
 
   @override
   void initState() {
     super.initState();
+    SqlEnginePreference.token = () => widget.auth.token;
     unawaited(_initialize());
     unawaited(_loadQueryLibrary());
   }
@@ -79,11 +119,36 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
       _loadError = null;
     });
     try {
-      final repository =
-          await (widget.repositoryFactory?.call() ??
-              (SqliteFfi.supported
-                  ? SqlWorkspaceRepository.openDefault()
-                  : MySqlWorkspaceRepository.openLocal()));
+      final factory = widget.repositoryFactory;
+      final SqlWorkspaceRepository repository;
+      if (factory != null) {
+        repository = await factory();
+      } else {
+        _engine = await SqlEnginePreference.load();
+        // Offline product: a stale persisted `cloud` choice must never open a
+        // network repository. Fall back to the local engine and report it as
+        // local, so the UI cannot be talked into cloud over the wire.
+        if (_engine == SqlEngineKind.cloud && _offlineOnly) {
+          _engine = SqliteFfi.supported
+              ? SqlEngineKind.sqlite
+              : SqlEngineKind.localMysql;
+        }
+        repository = await switch (_engine) {
+          SqlEngineKind.localMysql => MySqlWorkspaceRepository.openLocal(),
+          SqlEngineKind.sqlite =>
+            SqliteFfi.supported
+                ? SqlWorkspaceRepository.openDefault()
+                : MySqlWorkspaceRepository.openLocal(),
+          SqlEngineKind.cloud =>
+            widget.auth.token == null
+                ? Future<SqlWorkspaceRepository>.error(
+                    StateError('云 MySQL 需要登录。'),
+                  )
+                : MySqlWorkspaceRepository.openCloud(
+                    token: () => widget.auth.token ?? '',
+                  ),
+        };
+      }
       if (!mounted) return;
       _repository = repository;
       await _refreshTree();
@@ -97,6 +162,64 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
       }
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  String get _engineLabel => switch (_engine) {
+    SqlEngineKind.sqlite => SqliteFfi.supported ? 'SQLite' : '本机 MySQL',
+    SqlEngineKind.localMysql => '本机 MySQL',
+    SqlEngineKind.cloud => '云 MySQL',
+  };
+
+  /// The offline policy from the active product profile. The SQL app is an
+  /// offline product, so no reachable action may open a networked engine.
+  bool get _offlineOnly => StudioProfile.current?.isOffline == true;
+
+  Future<void> _selectEngine(SqlEngineKind kind) async {
+    if (_busy || kind == _engine) return;
+    // Offline products never offer the cloud engine; ignore a stale request
+    // instead of saving it and reconnecting later.
+    if (_offlineOnly && kind == SqlEngineKind.cloud) return;
+    final previous = _engine;
+    setState(() {
+      _busy = true;
+      _repository = null;
+      _loadError = null;
+      _databases = [];
+      _expanded.clear();
+      _expandedTables.clear();
+      _collapsed.clear();
+      _database = null;
+      _table = null;
+      _tablePage = null;
+      _schemaColumns = null;
+      _queryResult = null;
+      _indexes = [];
+      _tableError = null;
+      _schemaError = null;
+      _filterColumn = null;
+      _sortColumn = null;
+      _descending = false;
+      _page = 0;
+      _filterController.clear();
+    });
+    try {
+      await SqlEnginePreference.save(kind);
+      if (previous == SqlEngineKind.localMysql) {
+        if (Platform.isAndroid) {
+          await AndroidMySqlRuntime.stop();
+        } else if (LocalMySqlRuntime.supported) {
+          await LocalMySqlRuntime.shared.stop();
+        }
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_message(error))));
+      }
+    } finally {
+      if (mounted) await _initialize();
     }
   }
 
@@ -187,9 +310,20 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
         _descending = false;
       }
       _databases = databases;
-      _tables = tables;
       _database = selectedDatabase;
       _table = selectedTable;
+      // Keep the tree's expanded caches consistent with the fresh listing.
+      _expanded.removeWhere((name) => !databases.contains(name));
+      _expandedTables.removeWhere((name, _) => !databases.contains(name));
+      _collapsed.removeWhere((name) => !databases.contains(name));
+      if (selectedDatabase != null) {
+        _expandedTables[selectedDatabase] = tables;
+        // Show the active database expanded by default, but never re-expand a
+        // database the user explicitly collapsed.
+        if (!_collapsed.contains(selectedDatabase)) {
+          _expanded.add(selectedDatabase);
+        }
+      }
       if (selectedTable == null && _view == _WorkbenchView.schema) {
         _view = _WorkbenchView.data;
       }
@@ -262,6 +396,29 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     }
   }
 
+  // Expands/collapses one database in the tree independently of selection.
+  // Tables are loaded lazily on first expand and cached.
+  void _toggleDatabase(String name) => unawaited(
+    _perform(() async {
+      if (_expanded.contains(name)) {
+        setState(() {
+          _expanded.remove(name);
+          _collapsed.add(name);
+        });
+        return;
+      }
+      if (!_expandedTables.containsKey(name)) {
+        final tables = await _repository!.listTables(name);
+        if (!mounted) return;
+        _expandedTables[name] = tables;
+      }
+      setState(() {
+        _expanded.add(name);
+        _collapsed.remove(name);
+      });
+    }),
+  );
+
   void _selectDatabase(String name) => unawaited(
     _perform(() async {
       setState(() {
@@ -297,6 +454,7 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
         _filterColumn = null;
         _filterController.clear();
         _sortColumn = null;
+        _mobileShowWorkspace = true;
       });
       await _refreshTable();
     }),
@@ -428,8 +586,9 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     final database = _database;
     final table = _table;
     if (_busy || database == null || table == null) return;
-    if (!await _confirm('删除列', '确定删除“${column.name}”及该列的所有数据吗？关联索引也可能被修改。'))
+    if (!await _confirm('删除列', '确定删除“${column.name}”及该列的所有数据吗？关联索引也可能被修改。')) {
       return;
+    }
     await _perform(() async {
       await _repository!.deleteColumn(database, table, column.name);
       _resetTableFilters();
@@ -464,8 +623,9 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
       '删除索引',
       '确定删除“${index.name}”吗？'
           '${index.primary ? '该表将失去主键，现有行可能无法编辑。' : ''}',
-    ))
+    )) {
       return;
+    }
     await _perform(() async {
       await _repository!.deleteIndex(database, table, index.name);
       await _refreshTable();
@@ -513,8 +673,9 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
             '目标：${_database ?? 'MySQL 服务器'}。'
             '脚本可能修改或删除数据；执行失败时，前面的语句可能已经生效。',
         actionLabel: '导入',
-      ))
+      )) {
         return;
+      }
       if (!mounted) return;
       _queryController.text = source;
       setState(() => _view = _WorkbenchView.sql);
@@ -1120,20 +1281,79 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
   @override
   Widget build(BuildContext context) {
     final narrow = MediaQuery.sizeOf(context).width < 700;
+    final showWorkspace = !narrow || _mobileShowWorkspace;
     return Scaffold(
-      drawer: narrow
-          ? Drawer(
-              child: SafeArea(
-                child: Builder(
-                  builder: (drawerContext) =>
-                      _explorer(drawerContext: drawerContext),
-                ),
-              ),
-            )
-          : null,
       appBar: AppBar(
-        title: const Text('QFLISQLab'),
+        leading: narrow && _mobileShowWorkspace
+            ? IconButton(
+                tooltip: '返回数据库',
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => setState(() => _mobileShowWorkspace = false),
+              )
+            : null,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'QFLISQLab',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(_engineLabel, style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
         actions: [
+          if (widget.repositoryFactory == null)
+            PopupMenuButton<SqlEngineKind>(
+              tooltip: '数据库引擎',
+              enabled: !_busy,
+              icon: const Icon(Icons.storage_outlined),
+              onSelected: (kind) => unawaited(_selectEngine(kind)),
+              itemBuilder: (_) => [
+                for (final kind in [
+                  if (SqliteFfi.supported) SqlEngineKind.sqlite,
+                  SqlEngineKind.localMysql,
+                ])
+                  PopupMenuItem(
+                    value: kind,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 28,
+                          child: kind == _engine
+                              ? const Icon(Icons.check, size: 18)
+                              : null,
+                        ),
+                        Text(
+                          kind == SqlEngineKind.sqlite ? 'SQLite' : '本机 MySQL',
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          // Standalone mode keeps the 更多 menu that reaches 功能/教程/示例,
+          // because it has no sibling tabs. Embedded mode (inside the home
+          // shell) drops it: those destinations are tabs now, and keeping both
+          // would be the duplicate navigation this task removes.
+          if (!widget.embedded)
+            PopupMenuButton<String>(
+              tooltip: '更多',
+              onSelected: (action) {
+                if (action == 'tutorials') {
+                  unawaited(_openTutorials());
+                } else if (action == 'examples') {
+                  unawaited(_openExamples());
+                } else if (action == 'functions') {
+                  unawaited(_openFunctions());
+                }
+              },
+              itemBuilder: (_) => const [
+                PopupMenuItem(value: 'functions', child: Text('功能')),
+                PopupMenuItem(value: 'tutorials', child: Text('教程')),
+                PopupMenuItem(value: 'examples', child: Text('示例')),
+              ],
+            ),
           IconButton(
             tooltip: '刷新',
             onPressed: _busy || _repository == null
@@ -1142,36 +1362,56 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
             icon: const Icon(Icons.refresh),
           ),
           IconButton(
-            tooltip: '项目编辑器',
+            tooltip: '设置',
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (_) => HomePage(
-                  store: widget.store,
-                  auth: widget.auth,
+                builder: (_) => SettingsPage(
                   settings: widget.settings,
+                  auth: widget.auth,
+                  store: widget.store,
+                  showAi: !_offlineOnly,
                 ),
               ),
             ),
-            icon: const Icon(Icons.folder_open_outlined),
+            icon: const Icon(Icons.settings_outlined),
           ),
+          // Embedded mode reaches 项目 through the sibling tab; a second
+          // in-toolbar push would be duplicated navigation.
+          if (!widget.embedded)
+            IconButton(
+              tooltip: '项目',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => SqlProjectsPage(
+                    store: widget.store,
+                    auth: widget.auth,
+                    settings: widget.settings,
+                  ),
+                ),
+              ),
+              icon: const Icon(Icons.folder_open_outlined),
+            ),
         ],
       ),
       body: _repository == null
           ? Center(
               child: _loadError == null
                   ? const CircularProgressIndicator()
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(_loadError!),
-                        TextButton.icon(
-                          onPressed: _busy
-                              ? null
-                              : () => unawaited(_initialize()),
-                          icon: const Icon(Icons.refresh),
-                          label: const Text('重试'),
-                        ),
-                      ],
+                  : SingleChildScrollView(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(_loadError!),
+                          TextButton.icon(
+                            onPressed: _busy
+                                ? null
+                                : () => unawaited(_initialize()),
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('重试'),
+                          ),
+                        ],
+                      ),
                     ),
             )
           : Row(
@@ -1180,9 +1420,66 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
                   SizedBox(width: 252, child: _explorer()),
                   const VerticalDivider(width: 1),
                 ],
-                Expanded(child: _workspace()),
+                if (showWorkspace)
+                  Expanded(child: _workspace())
+                else
+                  Expanded(child: SafeArea(child: _explorer())),
               ],
             ),
+    );
+  }
+
+  // Opens the shared Functions page (terminal + SQL content tools) so those
+  // product entries stay reachable after the shared HomePage shell was removed
+  // from the SQL app. The callbacks push ordinary routes.
+  Future<void> _openFunctions() async {
+    if (!mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (routeContext) => FunctionsTab(
+          store: widget.store,
+          onOpenTerminal: () => Navigator.of(routeContext).push(
+            MaterialPageRoute<void>(
+              builder: (_) => TerminaxTerminalPage(store: widget.store),
+            ),
+          ),
+          onOpenContentTool: () => Navigator.of(routeContext).push(
+            MaterialPageRoute<void>(
+              builder: (_) => ContentToolsPage(store: widget.store),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openTutorials() async {
+    if (!mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => LocalTutorialsTab(
+          language: 'sql',
+          repository: _contentRepository,
+          store: widget.store,
+          auth: widget.auth,
+          settings: widget.settings,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openExamples() async {
+    if (!mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ExampleCodeTab(
+          language: 'sql',
+          repository: _contentRepository,
+          store: widget.store,
+          auth: widget.auth,
+          settings: widget.settings,
+        ),
+      ),
     );
   }
 
@@ -1205,30 +1502,53 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
           ],
         ),
       ),
+      if (_databases.isEmpty && !_busy)
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 24, 16, 24),
+          child: Text('暂无数据库，点击右上角 + 新建。'),
+        ),
       Expanded(
         child: ListView(
           children: [
             for (final database in _databases) ...[
-              ListTile(
-                dense: true,
-                leading: const Icon(Icons.storage_outlined, size: 20),
-                title: Text(database, overflow: TextOverflow.ellipsis),
-                selected: database == _database,
-                onTap: _busy ? null : () => _selectDatabase(database),
-                trailing: PopupMenuButton<String>(
-                  enabled: !_busy,
-                  tooltip: '数据库操作',
-                  onSelected: (action) {
-                    if (action == 'delete') {
-                      unawaited(_deleteDatabase(database));
-                    }
-                  },
-                  itemBuilder: (_) => const [
-                    PopupMenuItem(value: 'delete', child: Text('删除数据库')),
-                  ],
-                ),
+              Builder(
+                builder: (context) {
+                  final expanded = _expanded.contains(database);
+                  return ListTile(
+                    dense: true,
+                    leading: IconButton(
+                      tooltip: expanded ? '收起' : '展开',
+                      iconSize: 20,
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
+                      icon: Icon(
+                        expanded ? Icons.expand_more : Icons.chevron_right,
+                      ),
+                      onPressed: _busy ? null : () => _toggleDatabase(database),
+                    ),
+                    title: Text(database, overflow: TextOverflow.ellipsis),
+                    selected: database == _database,
+                    onTap: _busy ? null : () => _selectDatabase(database),
+                    trailing: PopupMenuButton<String>(
+                      enabled: !_busy,
+                      tooltip: '数据库操作',
+                      onSelected: (action) {
+                        if (action == 'delete') {
+                          unawaited(_deleteDatabase(database));
+                        }
+                      },
+                      itemBuilder: (_) => const [
+                        PopupMenuItem(value: 'delete', child: Text('删除数据库')),
+                      ],
+                    ),
+                  );
+                },
               ),
-              if (database == _database) ...[
+              if (_expanded.contains(database)) ...[
                 Padding(
                   padding: const EdgeInsets.only(left: 38, right: 8),
                   child: Row(
@@ -1236,7 +1556,7 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
                       const Expanded(child: Text('数据表')),
                       IconButton(
                         tooltip: '新建数据表',
-                        onPressed: _busy
+                        onPressed: (_busy || database != _database)
                             ? null
                             : () => unawaited(_createTable()),
                         icon: const Icon(Icons.add, size: 20),
@@ -1244,13 +1564,19 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
                     ],
                   ),
                 ),
-                for (final table in _tables)
+                if ((_expandedTables[database] ?? const <String>[]).isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 42, bottom: 8),
+                    child: Text('（无数据表）'),
+                  ),
+                for (final table
+                    in _expandedTables[database] ?? const <String>[])
                   ListTile(
                     dense: true,
                     contentPadding: const EdgeInsets.only(left: 42, right: 4),
                     leading: const Icon(Icons.table_chart_outlined, size: 18),
                     title: Text(table, overflow: TextOverflow.ellipsis),
-                    selected: table == _table,
+                    selected: database == _database && table == _table,
                     onTap: _busy
                         ? null
                         : () {

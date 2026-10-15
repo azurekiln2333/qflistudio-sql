@@ -9,7 +9,7 @@ import 'package:qfli_studio_core/store/project_store.dart';
 import 'package:qfli_studio_core/store/settings_store.dart';
 import 'package:qfli_studio_core/theme/app_theme.dart';
 
-import 'sql_workbench_page.dart';
+import 'sql_home_shell.dart';
 
 class SqlLabApp extends StatelessWidget {
   const SqlLabApp({
@@ -45,7 +45,7 @@ class SqlLabApp extends StatelessWidget {
       darkTheme: AppTheme.dark,
       themeMode: settings.themeModeValue,
       home: ready.value
-          ? SqlWorkbenchPage(store: store, auth: auth, settings: settings)
+          ? SqlHomeShell(store: store, auth: auth, settings: settings)
           : const SplashScreen(),
     ),
   );

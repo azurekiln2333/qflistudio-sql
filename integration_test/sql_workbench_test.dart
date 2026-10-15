@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:qfli_sql/sql_query_library.dart';
+import 'package:qfli_sql/sql_engine_preference.dart';
 import 'package:qfli_sql/sql_workbench_page.dart';
 import 'package:qfli_sql/sql_workspace_repository.dart';
 import 'package:qfli_studio_core/store/auth_store.dart';
@@ -13,16 +15,20 @@ import 'package:qfli_studio_core/store/settings_store.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(_requireAndroidTestSandbox);
 
-  testWidgets('workbench edits native rows and persists saved SQL', (
+  testWidgets('Android SQLite workbench edits rows and persists saved SQL', (
     tester,
   ) async {
     final root = await Directory.systemTemp.createTemp(
       'qfli_workbench_device_',
     );
     addTearDown(() => root.delete(recursive: true));
+    final previousEngine = await SqlEnginePreference.load();
+    addTearDown(() => SqlEnginePreference.save(previousEngine));
+    await SqlEnginePreference.save(SqlEngineKind.sqlite);
     final repository = await SqlWorkspaceRepository.openDefault();
-    final databaseName = 'device_work_${DateTime.now().millisecondsSinceEpoch}';
+    final databaseName = 'device_work_${DateTime.now().microsecondsSinceEpoch}';
     await repository.createDatabase(databaseName);
     addTearDown(() => repository.deleteDatabase(databaseName));
     await repository.createTable(databaseName, 'people', const [
@@ -38,6 +44,7 @@ void main() {
     addTearDown(store.dispose);
     addTearDown(auth.dispose);
     addTearDown(settings.dispose);
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
 
     await tester.pumpWidget(
       MaterialApp(
@@ -49,6 +56,14 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
+    final databaseTile = find.widgetWithText(ListTile, databaseName).first;
+    await tester.ensureVisible(databaseTile);
+    await tester.tap(databaseTile);
+    await tester.pumpAndSettle();
+    final tableTile = find.widgetWithText(ListTile, 'people').first;
+    await tester.ensureVisible(tableTile);
+    await tester.tap(tableTile);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Before'));
     await tester.pumpAndSettle();
@@ -80,4 +95,22 @@ void main() {
     expect(reopened.history.single.database, databaseName);
     expect(tester.takeException(), isNull);
   });
+}
+
+const _testPackage = 'com.azurekiln.qfli.sqlab.integrationtest';
+
+Future<void> _requireAndroidTestSandbox() async {
+  if (!Platform.isAndroid) {
+    throw UnsupportedError(
+      'This target requires the isolated Android test app.',
+    );
+  }
+  final process = utf8.decode(
+    (await File(
+      '/proc/self/cmdline',
+    ).readAsBytes()).takeWhile((byte) => byte != 0).toList(),
+  );
+  if (process != _testPackage) {
+    throw StateError('Refusing the production Android application sandbox.');
+  }
 }

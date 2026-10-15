@@ -13,7 +13,10 @@ application pass. Apple and ARM execution require their own available hosts.
   `serverPath`, `launcherPath`, `libraryPath`.
 - `AndroidMySqlRuntime.prepare()` caches only successful preparation.
   `stop()` stops a prepared server without triggering new installation.
-- `LocalMySqlRuntime` adds optional `libraryDirectory` and `temporaryDirectory`.
+- `LocalMySqlRuntime` adds optional `libraryDirectory`, `pluginDirectory` and
+  `temporaryDirectory`. A supplied plugin directory must be used for both
+  initialization and normal startup; isolated native tests can retain the
+  packaged plugins while keeping their own private data directory.
   The query/script result and existing OHOS C++ signatures remain unchanged.
 - `stage.ps1 -Abi <arm64-v8a|x86_64> -Runtime <export> -ReadElf <NDK tool>`
   audits native inputs and writes ignored Android jniLibs/assets.
@@ -65,6 +68,16 @@ not only build outputs. Restore the normal application and preserve its data.
 An x86_64 pass does not establish ARM execution; missing Apple hosts are skips.
 Flutter integration-test targets use the separate .integrationtest application
 ID because the test tool uninstalls its application after execution.
+Flutter may replace the target with a generated listener path. Decode the
+standard Base64 `dart-defines` and detect the
+`INTEGRATION_TEST_SHOULD_REPORT_RESULTS_TO_NATIVE` key regardless of its value.
+Direct `integration_test/` targets and the process-local
+`QFLI_SQL_INTEGRATION_TEST=1` override also select the suffix. A listener without
+any integration signal must fail the build. Never make this switch global.
+Verify actual merged manifests for marker=false, marker=true, absent signals
+and ordinary main builds; inspect the actual APK package with `aapt2` before
+any integration installation. Keep the Dart runtime sandbox guard as an
+independent check. Never uninstall or clear the production application.
 The API 37 x86_64 emulator with 16 KiB pages passed both actual-engine integration
 tests on 2026-10-02. Both x86_64 and ARM64 Oracle/OpenSSL builds and four-file
 staging audits passed. No ARM or Apple execution result is established.

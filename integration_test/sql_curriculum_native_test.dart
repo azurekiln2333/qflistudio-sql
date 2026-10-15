@@ -97,6 +97,7 @@ class _OwnedRuntime {
   _OwnedRuntime({
     required this.runId,
     required this.project,
+    required this.ownedProjectPath,
     required this.runtimeRoot,
     required this.database,
     required this.stop,
@@ -104,6 +105,7 @@ class _OwnedRuntime {
 
   final String runId;
   final Directory project;
+  final String ownedProjectPath;
   final Directory runtimeRoot;
   final NativeMySqlDatabase database;
   final Future<void> Function() stop;
@@ -122,24 +124,31 @@ class _OwnedRuntime {
     if (storage == null) {
       throw StateError('App-private storage is unavailable.');
     }
-    final parent = await Directory(
-      p.join(storage, 'curriculum-native'),
-    ).create(recursive: true);
-    final project = await parent.createTemp('$runId-');
+    final layout = Platform.isAndroid
+        ? await AndroidMySqlRuntime.prepare()
+        : null;
+    if (layout != null &&
+        !p
+            .split(layout.dataDirectory.path)
+            .contains('com.azurekiln.qfli.sqlab.integrationtest')) {
+      throw StateError('Refusing the production Android application sandbox.');
+    }
+    // Android Unix socket names must fit in 108 bytes including the NUL.
+    // Keep this owned fixture directly under private cache: the descriptive
+    // storage/run-id hierarchy made its socket path over 130 bytes long.
+    final parent = layout != null
+        ? layout.temporaryDirectory!.parent
+        : await Directory(
+            p.join(storage, 'curriculum-native'),
+          ).create(recursive: true);
+    final project = await parent.createTemp(layout != null ? 'qc' : '$runId-');
+    final ownedProjectPath = await project.resolveSymbolicLinks();
     late _OwnedRuntime owned;
-    if (Platform.isAndroid) {
-      final layout = await AndroidMySqlRuntime.prepare();
-      if (!p
-          .split(layout.dataDirectory.path)
-          .contains('com.azurekiln.qfli.sqlab.integrationtest')) {
-        throw StateError(
-          'Refusing the production Android application sandbox.',
-        );
-      }
+    if (layout != null) {
       final runtime = LocalMySqlRuntime(
         bundleDirectory: layout.bundleDirectory,
         dataDirectory: Directory(p.join(project.path, 'mysql')),
-        temporaryDirectory: Directory(p.join(project.path, 'tmp')),
+        temporaryDirectory: Directory(p.join(project.path, 't')),
         libraryDirectory: layout.libraryDirectory,
         pluginDirectory: layout.pluginDirectory,
         libraryPath: layout.libraryPath,
@@ -149,6 +158,7 @@ class _OwnedRuntime {
       owned = _OwnedRuntime(
         runId: runId,
         project: project,
+        ownedProjectPath: ownedProjectPath,
         runtimeRoot: runtime.dataDirectory,
         database: NativeMySqlDatabase(runtime: runtime),
         stop: runtime.stop,
@@ -170,6 +180,7 @@ class _OwnedRuntime {
       owned = _OwnedRuntime(
         runId: runId,
         project: project,
+        ownedProjectPath: ownedProjectPath,
         runtimeRoot: Directory(root),
         database: const NativeMySqlDatabase(channel: mysqlNativeChannel),
         stop: () => mysqlNativeChannel.invokeMethod<void>('stop'),
@@ -300,13 +311,14 @@ class _OwnedRuntime {
       );
     }
     final actual = await project.resolveSymbolicLinks();
-    expect(p.basename(p.dirname(actual)), 'curriculum-native');
-    expect(p.basename(actual).startsWith('$runId-'), isTrue);
-    final root = runtimeRoot.path;
-    if (!p.isWithin(actual, root)) {
-      expect(p.basename(p.dirname(root)), 'mysql-probe');
-      expect(p.basename(root), runId);
-      if (await runtimeRoot.exists()) await runtimeRoot.delete(recursive: true);
+    expect(actual, ownedProjectPath);
+    if (await runtimeRoot.exists()) {
+      final root = await runtimeRoot.resolveSymbolicLinks();
+      if (!p.isWithin(actual, root)) {
+        expect(p.basename(p.dirname(root)), 'mysql-probe');
+        expect(p.basename(root), runId);
+        await Directory(root).delete(recursive: true);
+      }
     }
     await Directory(actual).delete(recursive: true);
     _log('CLEANUP', {

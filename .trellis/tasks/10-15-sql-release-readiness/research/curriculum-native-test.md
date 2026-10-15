@@ -82,6 +82,17 @@ has no `IF NOT EXISTS`; only a successful creation establishes cleanup ownership
 Each schema is dropped after comparison, then the runtime is stopped and its
 PID file must disappear before recursively deleting the newly owned roots.
 
+Android fixtures now use a short, newly created private-cache `qcXXXXXX`
+directory with a `t` temporary subdirectory. The previous descriptive
+storage/run-ID hierarchy produced a roughly 137-byte Unix socket name, exceeding
+the 108-byte limit including NUL; the new package-specific path requires about
+100 bytes. Cleanup records the canonical project identity immediately after
+creation and requires an exact match before deletion. Canonical runtime-root
+containment also handles Android's `/data/user/0` and `/data/data` aliases;
+external OHOS roots still require the `mysql-probe/<runId>` ownership guard.
+Independent read-only review and focused Dart analysis pass
+(`curriculum-short-socket-analyze.log`). Device execution remains separate.
+
 Native requests have a four-minute deadline. A timeout is a failure, blocks
 further mutations, and retains the fixture with a RETAINED log: Dart timeout
 does not prove native SQL was cancelled, so the test never deletes an active

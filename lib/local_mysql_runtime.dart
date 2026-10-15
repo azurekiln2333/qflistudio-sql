@@ -17,6 +17,7 @@ class LocalMySqlRuntime {
     this.serverPath,
     this.serverUser,
     this.libraryDirectory,
+    this.pluginDirectory,
     this.temporaryDirectory,
     this.readinessTimeout = const Duration(seconds: 45),
   });
@@ -38,6 +39,7 @@ class LocalMySqlRuntime {
   // Only explicit host fixtures may ask mysqld to run as root.
   final String? serverUser;
   final String? libraryDirectory;
+  final String? pluginDirectory;
   final Directory? temporaryDirectory;
   final Duration readinessTimeout;
   Future<void> _tail = Future<void>.value();
@@ -161,6 +163,7 @@ class LocalMySqlRuntime {
             '--no-defaults',
             '--initialize-insecure',
             '--basedir=${bundleDirectory.path}',
+            if (pluginDirectory != null) '--plugin-dir=$pluginDirectory',
             if (Platform.isAndroid)
               '--lc-messages-dir=${p.join(bundleDirectory.path, 'share')}',
             '--datadir=${staging.path}',
@@ -206,7 +209,7 @@ class LocalMySqlRuntime {
         '--no-defaults',
         '--basedir=${bundleDirectory.path}',
         '--datadir=${data.path}',
-        '--plugin-dir=${p.join(bundleDirectory.path, 'lib', 'plugin')}',
+        '--plugin-dir=${pluginDirectory ?? p.join(bundleDirectory.path, 'lib', 'plugin')}',
         '--lc-messages-dir=${p.join(bundleDirectory.path, 'share')}',
         '--socket=$_socket',
         '--skip-networking',

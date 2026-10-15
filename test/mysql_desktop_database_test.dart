@@ -24,7 +24,7 @@ void main() {
             Platform.isWindows ? 'bin' : 'lib',
             Platform.isWindows
                 ? 'qfli_mysql_bridge.dll'
-                : 'libqfli_mysql_bridge.so',
+                : 'libqfli_mysql_bridge.${Platform.isMacOS ? 'dylib' : 'so'}',
           ),
           launcherPath: p.join(
             bundle,
@@ -34,6 +34,9 @@ void main() {
                 : 'qfli_mysql_launcher',
           ),
           serverUser: Platform.environment['QFLI_MYSQL_TEST_USER'],
+          serverPath: Platform.environment['QFLI_MYSQL_TEST_SERVER'],
+          pluginDirectory:
+              Platform.environment['QFLI_MYSQL_TEST_PLUGIN_DIRECTORY'],
         );
         database = NativeMySqlDatabase(runtime: runtime);
       });

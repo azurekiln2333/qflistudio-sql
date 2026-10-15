@@ -24,13 +24,15 @@ Future<void> main(List<String> arguments) async {
       ? Directory(args[3])
       : await Directory.systemTemp.createTemp('qfli-mysql-test-');
   LocalMySqlRuntime createRuntime() => LocalMySqlRuntime(
-    bundleDirectory: Directory(args[0]),
-    dataDirectory: root,
-    libraryPath: args[1],
-    launcherPath: args[2],
-    serverPath: Platform.environment['QFLI_MYSQL_TEST_SERVER'],
-    serverUser: Platform.environment['QFLI_MYSQL_TEST_USER'],
-  );
+        bundleDirectory: Directory(args[0]),
+        dataDirectory: root,
+        libraryPath: args[1],
+        launcherPath: args[2],
+        serverPath: Platform.environment['QFLI_MYSQL_TEST_SERVER'],
+        serverUser: Platform.environment['QFLI_MYSQL_TEST_USER'],
+        pluginDirectory:
+            Platform.environment['QFLI_MYSQL_TEST_PLUGIN_DIRECTORY'],
+      );
   var runtime = createRuntime();
   Future<Map<String, Object?>> query(
     String source, [

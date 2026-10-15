@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/sql-workbench.md","reason":"Existing local workbench and navigation contracts; latest PRD supersedes no-tabs requirement"}
+{"file":".trellis/spec/frontend/sql-content-repository.md","reason":"Local curriculum and shared content integration"}
+{"file":".trellis/spec/backend/mysql-android-runtime.md","reason":"Android build/runtime and data preservation contract"}
+{"file":".trellis/spec/backend/mysql-ohos-runtime.md","reason":"OHOS phone runtime and actual-device evidence requirements"}

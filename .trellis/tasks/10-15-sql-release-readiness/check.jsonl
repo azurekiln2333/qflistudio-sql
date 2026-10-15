@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/sql-workbench.md","reason":"Review navigation and SQL state consistency"}
+{"file":".trellis/spec/frontend/sql-content-repository.md","reason":"Validate curriculum completeness and import wiring"}
+{"file":".trellis/spec/backend/mysql-android-runtime.md","reason":"Require real build and distinguish device evidence"}
+{"file":".trellis/spec/backend/mysql-ohos-runtime.md","reason":"Verify OHOS production sandbox behavior"}

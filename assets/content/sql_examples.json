@@ -27,7 +27,9 @@
       "expectedOutput": "Carol|15000.0\nAlice|12000.0\nBob|9000.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT NOT NULL, salary REAL NOT NULL);\nINSERT INTO employees (id, name, salary) VALUES\n  (1, 'Alice', 12000.0),\n  (2, 'Bob', 9000.0),\n  (3, 'Carol', 15000.0);",
+        "exerciseExpectedOutputs": "[\"Alice\\nBob\\nCarol\", \"1|Alice\\n2|Bob\\n3|Carol\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-001-lesson"
@@ -53,7 +55,9 @@
       "expectedOutput": "1|键盘|199.0\n3|显示器|899.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT NOT NULL, price REAL NOT NULL);\nINSERT INTO products VALUES\n  (1, '键盘', 199.0),\n  (2, '鼠标', 89.0),\n  (3, '显示器', 899.0),\n  (4, 'U盘', 100.0);",
+        "exerciseExpectedOutputs": "[\"2|鼠标\", \"1\\n3\\n4\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-002-lesson"
@@ -81,7 +85,9 @@
       "expectedOutput": "1|Alice\n3|Carol",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE staff (id INTEGER PRIMARY KEY, name TEXT, department TEXT, active INTEGER);\nINSERT INTO staff VALUES\n  (1, 'Alice', 'sales', 1),\n  (2, 'Bob', 'sales', 0),\n  (3, 'Carol', 'support', 1),\n  (4, 'Dave', 'engineering', 1);",
+        "exerciseExpectedOutputs": "[\"2\\n4\", \"(no rows)\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-003-lesson"
@@ -108,7 +114,9 @@
       "expectedOutput": "Dave|60\nAlice|75\nBob|80",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE scores (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);\nINSERT INTO scores VALUES\n  (1, 'Alice', 75),\n  (2, 'Bob', 80),\n  (3, 'Carol', 59),\n  (4, 'Dave', 60),\n  (5, 'Eve', 95);",
+        "exerciseExpectedOutputs": "[\"1|Alice\\n5|Eve\", \"Carol|59\\nEve|95\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-004-lesson"
@@ -135,7 +143,9 @@
       "expectedOutput": "1|alice@example.com\n4|adam@example.com",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT);\nINSERT INTO users VALUES\n  (1, 'alice@example.com'),\n  (2, 'bob@example.com'),\n  (3, 'amy@test.org'),\n  (4, 'adam@example.com');",
+        "exerciseExpectedOutputs": "[\"1\\n2\\n4\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-005-lesson"
@@ -162,7 +172,9 @@
       "expectedOutput": "engineering|Dave|15000\nengineering|Carol|8000\nsales|Bob|12000\nsales|Alice|9000",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE emp (id INTEGER PRIMARY KEY, name TEXT, dept TEXT, salary INTEGER);\nINSERT INTO emp VALUES\n  (1, 'Alice', 'sales', 9000),\n  (2, 'Bob', 'sales', 12000),\n  (3, 'Carol', 'engineering', 8000),\n  (4, 'Dave', 'engineering', 15000);",
+        "exerciseExpectedOutputs": "[\"Dave|15000\\nBob|12000\\nAlice|9000\\nCarol|8000\", \"Carol\\nAlice\\nBob\\nDave\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-006-lesson"
@@ -189,7 +201,9 @@
       "expectedOutput": "3|c\n4|d",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE logs (id INTEGER PRIMARY KEY, message TEXT);\nINSERT INTO logs VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');",
+        "exerciseExpectedOutputs": "[\"1|a\\n2|b\\n3|c\", \"5\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-007-lesson"
@@ -215,7 +229,9 @@
       "expectedOutput": "alice\nbob",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'alice',100),(2,'alice',200),(3,'bob',150),(4,'bob',150);",
+        "exerciseExpectedOutputs": "[\"alice|100\\nalice|200\\nbob|150\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-008-lesson"
@@ -242,7 +258,9 @@
       "expectedOutput": "1|19.5|3|58.5\n2|100.0|2|200.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE order_items (id INTEGER PRIMARY KEY, price REAL, qty INTEGER);\nINSERT INTO order_items VALUES (1, 19.5, 3), (2, 100.0, 2);",
+        "exerciseExpectedOutputs": "[\"1|22.5\\n2|102.0\", \"1|21.45\\n2|110.0\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-009-lesson"
@@ -269,7 +287,9 @@
       "expectedOutput": "1|43\n2|8",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE raw (id INTEGER PRIMARY KEY, value TEXT);\nINSERT INTO raw VALUES (1, '42'), (2, '7');",
+        "exerciseExpectedOutputs": "[\"49\", \"1-42\\n2-7\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-010-lesson"
@@ -295,7 +315,9 @@
       "expectedOutput": "Bob|12000",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, salary INTEGER);\nINSERT INTO employees VALUES (1,'Alice',9000),(2,'Bob',12000);",
+        "exerciseExpectedOutputs": "[\"1|Alice\\n2|Bob\", \"Alice\\nBob\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-011-lesson"
@@ -321,7 +343,9 @@
       "expectedOutput": "Alice|1\nBob|2",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE t (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO t VALUES (1,'Alice'),(2,'Bob');",
+        "exerciseExpectedOutputs": "[\"2|Bob\\n1|Alice\", \"Bob\\nAlice\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-012-lesson"
@@ -348,7 +372,9 @@
       "expectedOutput": "Carol|60\nAlice|90\nBob|",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE exam (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);\nINSERT INTO exam VALUES (1,'Alice',90),(2,'Bob',NULL),(3,'Carol',60);",
+        "exerciseExpectedOutputs": "[\"Bob|\\nCarol|60\\nAlice|90\", \"Alice\\nCarol\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-013-lesson"
@@ -376,7 +402,9 @@
       "expectedOutput": "5|south|500\n3|north|300\n1|north|150",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES\n  (1,'north',150),(2,'south',90),(3,'north',300),\n  (4,'east',120),(5,'south',500),(6,'east',80);",
+        "exerciseExpectedOutputs": "[\"east\\nnorth\\nsouth\", \"6\\n2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-014-lesson"
@@ -403,7 +431,9 @@
       "expectedOutput": "1|Alice|5|A\n2|Bob|3|B\n3|Charlotte|9|C",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE people (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO people VALUES (1,'Alice'),(2,'Bob'),(3,'Charlotte');",
+        "exerciseExpectedOutputs": "[\"Ali\\nBob\\nCha\", \"1\\n3\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-015-lesson"
@@ -432,7 +462,9 @@
       "expectedOutput": "1|ALICE|alice@example.com\n2|BOB|bob@test.org",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE accounts (id INTEGER PRIMARY KEY, user_name TEXT, domain TEXT);\nINSERT INTO accounts VALUES (1,'alice','example.com'),(2,'  bob  ','test.org');",
+        "exerciseExpectedOutputs": "[\"sample.net\\ntest.org\", \"5\\n3\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-016-lesson"
@@ -460,7 +492,9 @@
       "expectedOutput": "1|10.456|10.456|10.5\n2|-3.2|3.2|3.2\n3|5.0|5.0|5.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE txn (id INTEGER PRIMARY KEY, balance REAL);\nINSERT INTO txn VALUES (1, 10.456), (2, -3.2), (3, 5.0);",
+        "exerciseExpectedOutputs": "[\"1|10\\n2|-3\\n3|5\", \"10.456\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-017-lesson"
@@ -487,7 +521,9 @@
       "expectedOutput": "1|2026-01-01|2026-01-02\n2|2026-02-28|2026-03-01",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE shipments (id INTEGER PRIMARY KEY, shipped_at TEXT);\nINSERT INTO shipments VALUES (1,'2026-01-01'),(2,'2026-02-28');",
+        "exerciseExpectedOutputs": "[\"1|2026\\n2|2026\", \"2026-03-02\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-018-lesson"
@@ -514,7 +550,9 @@
       "expectedOutput": "1|4|2026-01\n2|10|2026-03",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE trips (id INTEGER PRIMARY KEY, start_date TEXT, end_date TEXT);\nINSERT INTO trips VALUES (1,'2026-01-01','2026-01-05'),(2,'2026-03-01','2026-03-11');",
+        "exerciseExpectedOutputs": "[\"2\", \"1|4\\n2|0\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-019-lesson"
@@ -541,7 +579,9 @@
       "expectedOutput": "1|Alice\n4|Dave",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE emp (id INTEGER PRIMARY KEY, name TEXT, manager_id INTEGER);\nINSERT INTO emp VALUES (1,'Alice',NULL),(2,'Bob',1),(3,'Carol',1),(4,'Dave',NULL);",
+        "exerciseExpectedOutputs": "[\"2\\n3\", \"2|4\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-020-lesson"
@@ -568,7 +608,9 @@
       "expectedOutput": "1|100.0|0|100.0\n2|200.0|10.0|190.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE items (id INTEGER PRIMARY KEY, price REAL, discount REAL);\nINSERT INTO items VALUES (1,100.0,NULL),(2,200.0,10.0);",
+        "exerciseExpectedOutputs": "[\"1|-1\\n2|10.0\", \"290.0\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-021-lesson"
@@ -595,7 +637,9 @@
       "expectedOutput": "1|5\n2|\n3|0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE ratio (id INTEGER PRIMARY KEY, num INTEGER, den INTEGER);\nINSERT INTO ratio VALUES (1,10,2),(2,10,0),(3,0,5);",
+        "exerciseExpectedOutputs": "[\"1|\\n2|\\n3|\", \"1|5\\n2|-1\\n3|0\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-022-lesson"
@@ -621,7 +665,9 @@
       "expectedOutput": "1|新建\n2|已支付\n3|已发货\n4|未知",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, code INTEGER);\nINSERT INTO orders VALUES (1,1),(2,2),(3,3),(4,9);",
+        "exerciseExpectedOutputs": "[\"1|A\\n2|B\\n3|B\\n4|B\", \"已支付\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-023-lesson"
@@ -648,7 +694,9 @@
       "expectedOutput": "Alice|95|A\nBob|82|B\nCarol|60|C\nDave|45|D",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE grades (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);\nINSERT INTO grades VALUES (1,'Alice',95),(2,'Bob',82),(3,'Carol',60),(4,'Dave',45);",
+        "exerciseExpectedOutputs": "[\"1|pass\\n2|pass\\n3|pass\\n4|fail\", \"A|1\\nB|1\\nC|1\\nD|1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-024-lesson"
@@ -674,7 +722,9 @@
       "expectedOutput": "1|pen|缺货\n2|book|有货\n3|bag|缺货",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE stock (id INTEGER PRIMARY KEY, name TEXT, qty INTEGER);\nINSERT INTO stock VALUES (1,'pen',0),(2,'book',10),(3,'bag',0);",
+        "exerciseExpectedOutputs": "[\"1|0\\n2|1\\n3|0\", \"1\\n3\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-025-lesson"
@@ -701,7 +751,9 @@
       "expectedOutput": "1|2.6|3.0|2\n2|-2.6|-3.0|-2\n3|2.4|2.0|2",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE vals (id INTEGER PRIMARY KEY, v REAL);\nINSERT INTO vals VALUES (1,2.6),(2,-2.6),(3,2.4);",
+        "exerciseExpectedOutputs": "[\"1|260\\n2|-260\\n3|240\", \"1|3.0\\n2|3.0\\n3|2.0\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-026-lesson"
@@ -728,7 +780,9 @@
       "expectedOutput": "1|name|alice\n2|city|beijing",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE kv (id INTEGER PRIMARY KEY, pair TEXT);\nINSERT INTO kv VALUES (1,'name:alice'),(2,'city:beijing');",
+        "exerciseExpectedOutputs": "[\"alice\\nbeijing\", \"1|10\\n2|12\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-027-lesson"
@@ -755,7 +809,9 @@
       "expectedOutput": "1|32\n2|32",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE tokens (id INTEGER PRIMARY KEY, token TEXT);\nINSERT INTO tokens VALUES (1,'') ,(2,'');",
+        "exerciseExpectedOutputs": "[\"8\", \"1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-028-lesson"
@@ -782,7 +838,9 @@
       "expectedOutput": "1|Apple\n3|Apricot",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE words (id INTEGER PRIMARY KEY, w TEXT);\nINSERT INTO words VALUES (1,'Apple'),(2,'apple'),(3,'Apricot'),(4,'banana');",
+        "exerciseExpectedOutputs": "[\"2\", \"4\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-029-lesson"
@@ -810,7 +868,9 @@
       "expectedOutput": "1|ALICE|100|低\n2|BOB|0|低\n3|CAROL|250|高",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE raw_orders (id INTEGER PRIMARY KEY, customer TEXT, amount TEXT);\nINSERT INTO raw_orders VALUES (1,' alice ', '100'),(2,'BOB',''),(3,'Carol','250');",
+        "exerciseExpectedOutputs": "[\"1\\n3\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-030-lesson"
@@ -837,7 +897,9 @@
       "expectedOutput": "4|2|3",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE members (id INTEGER PRIMARY KEY, city TEXT, email TEXT);\nINSERT INTO members VALUES (1,'beijing','a@x.com'),(2,'beijing',NULL),(3,'shanghai','c@x.com'),(4,'shenzhen',NULL);",
+        "exerciseExpectedOutputs": "[\"2\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-031-lesson"
@@ -865,7 +927,9 @@
       "expectedOutput": "530.0|132.5|80.0|250.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, amount REAL);\nINSERT INTO orders VALUES (1,100),(2,80),(3,250),(4,NULL),(5,100);",
+        "exerciseExpectedOutputs": "[\"4\", \"530.0\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-032-lesson"
@@ -891,7 +955,9 @@
       "expectedOutput": "north|250\nsouth|250",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'north',150),(4,'south',50);",
+        "exerciseExpectedOutputs": "[\"north|2\\nsouth|2\", \"north|125.0\\nsouth|125.0\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-033-lesson"
@@ -917,7 +983,9 @@
       "expectedOutput": "east|500\nsouth|200",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'north',50),(4,'east',500);",
+        "exerciseExpectedOutputs": "[\"north\", \"east\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-034-lesson"
@@ -943,7 +1011,9 @@
       "expectedOutput": "north|book|50\nnorth|pen|30\nsouth|pen|5",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, product TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north','pen',10),(2,'north','pen',20),(3,'north','book',50),(4,'south','pen',5);",
+        "exerciseExpectedOutputs": "[\"north|book|1\\nnorth|pen|2\\nsouth|pen|1\", \"book|50\\npen|35\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-035-lesson"
@@ -970,7 +1040,9 @@
       "expectedOutput": "3|2|180|90.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE scores (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);\nINSERT INTO scores VALUES (1,'Alice',90),(2,'Bob',NULL),(3,'Carol',90);",
+        "exerciseExpectedOutputs": "[\"180\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-036-lesson"
@@ -996,7 +1068,9 @@
       "expectedOutput": "north|pen,book\nsouth|bag",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, product TEXT);\nINSERT INTO sales VALUES (1,'north','pen'),(2,'north','book'),(3,'south','bag');",
+        "exerciseExpectedOutputs": "[\"north|pen;book\\nsouth|bag\", \"north|2\\nsouth|1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-037-lesson"
@@ -1023,7 +1097,9 @@
       "expectedOutput": "north|150\nsouth|200\nTOTAL|350",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'north',50);",
+        "exerciseExpectedOutputs": "[\"350\", \"150\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-038-lesson"
@@ -1050,7 +1126,9 @@
       "expectedOutput": "east|500\nsouth|200",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'east',500),(4,'west',50);",
+        "exerciseExpectedOutputs": "[\"west|50\", \"east\\nsouth\\nnorth\\nwest\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-039-lesson"
@@ -1078,7 +1156,9 @@
       "expectedOutput": "south|pen|40\nnorth|pen|30",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, region TEXT, product TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'north','pen',10),(2,'north','pen',20),(3,'north','book',15),(4,'south','pen',40),(5,'south','book',5);",
+        "exerciseExpectedOutputs": "[\"north|45\\nsouth|45\", \"70\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-040-lesson"
@@ -1104,7 +1184,9 @@
       "expectedOutput": "red|S\nred|M\ngreen|S\ngreen|M\nblue|S\nblue|M",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE colors (name TEXT);\nINSERT INTO colors VALUES ('red'),('green'),('blue');\nCREATE TABLE sizes (label TEXT);\nINSERT INTO sizes VALUES ('S'),('M');",
+        "exerciseExpectedOutputs": "[\"M|3\\nS|3\", \"red|M\\nred|S\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-041-lesson"
@@ -1131,7 +1213,9 @@
       "expectedOutput": "SQL Basic|Alice\nSQL Advanced|Alice\nData 101|Bob",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE authors (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO authors VALUES (1,'Alice'),(2,'Bob'),(3,'Carol');\nCREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT, author_id INTEGER);\nINSERT INTO books VALUES (1,'SQL Basic',1),(2,'SQL Advanced',1),(3,'Data 101',2),(4,'Mystery',99);",
+        "exerciseExpectedOutputs": "[\"Alice|2\\nBob|1\", \"SQL Basic\\nSQL Advanced\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-042-lesson"
@@ -1157,7 +1241,9 @@
       "expectedOutput": "1|Ann|pen|5\n2|Ann|book|50\n3|Ben|pen|5",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO customers VALUES (1,'Ann'),(2,'Ben');\nCREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price INTEGER);\nINSERT INTO products VALUES (10,'pen',5),(20,'book',50);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, product_id INTEGER);\nINSERT INTO orders VALUES (1,1,10),(2,1,20),(3,2,10);",
+        "exerciseExpectedOutputs": "[\"Ann|55\\nBen|5\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-043-lesson"
@@ -1183,7 +1269,9 @@
       "expectedOutput": "Ann|101\nBen|102\nBen|103\nCara|\nDan|",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO customers VALUES (1,'Ann'),(2,'Ben'),(3,'Cara'),(4,'Dan');\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, amount INTEGER);\nINSERT INTO orders VALUES (101,1,30),(102,2,40),(103,2,60);",
+        "exerciseExpectedOutputs": "[\"Ann|1\\nBen|2\\nCara|0\\nDan|0\", \"Cara\\nDan\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-044-lesson"
@@ -1210,7 +1298,9 @@
       "expectedOutput": "5|",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO products VALUES (1,'pen'),(2,'book');\nCREATE TABLE orders (id INTEGER PRIMARY KEY, product_id INTEGER);\nINSERT INTO orders VALUES (1,1),(2,2),(3,1),(4,1),(5,99);",
+        "exerciseExpectedOutputs": "[\"1\", \"1\\n2\\n3\\n4\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-045-lesson"
@@ -1236,7 +1326,9 @@
       "expectedOutput": "Alice|SQL Basic\nBob|Data 101\nCarol|Mystery",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE authors (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO authors VALUES (1,'Alice'),(2,'Bob'),(3,'Carol');\nCREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT, author_id INTEGER);\nINSERT INTO books VALUES (1,'SQL Basic',1),(2,'Data 101',2),(3,'Mystery',3);",
+        "exerciseExpectedOutputs": "[\"Alice|SQL Basic\\nBob|Data 101\\nCarol|Mystery\", \"Alice|1\\nBob|1\\nCarol|1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-046-lesson"
@@ -1263,7 +1355,9 @@
       "expectedOutput": "|4\n1|\n2|2\n3|3",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE a (id INTEGER);\nINSERT INTO a VALUES (1),(2),(3);\nCREATE TABLE b (id INTEGER);\nINSERT INTO b VALUES (2),(3),(4);",
+        "exerciseExpectedOutputs": "[\"1\", \"2\\n3\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-047-lesson"
@@ -1289,7 +1383,9 @@
       "expectedOutput": "Ben|Alice\nCara|Alice\nDan|Ben",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, manager_id INTEGER);\nINSERT INTO employees VALUES (1,'Alice',NULL),(2,'Ben',1),(3,'Cara',1),(4,'Dan',2);",
+        "exerciseExpectedOutputs": "[\"Alice|2\\nBen|1\", \"Alice\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-048-lesson"
@@ -1316,7 +1412,9 @@
       "expectedOutput": "Ann|95|S\nBen|85|A\nCara|72|B",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE grades (label TEXT, lo INTEGER, hi INTEGER);\nINSERT INTO grades VALUES ('C',60,70),('B',70,80),('A',80,90),('S',90,100);\nCREATE TABLE scores (student TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Ann',95),('Ben',85),('Cara',72);",
+        "exerciseExpectedOutputs": "[\"Ann|S\\nBen|A\", \"A|1\\nB|1\\nS|1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-049-lesson"
@@ -1343,7 +1441,9 @@
       "expectedOutput": "1|Ann|book\n1|Ann|pen\n2|Ben|bag",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (order_id INTEGER, customer TEXT);\nINSERT INTO orders VALUES (1,'Ann'),(2,'Ben');\nCREATE TABLE items (order_id INTEGER, product TEXT);\nINSERT INTO items VALUES (1,'pen'),(1,'book'),(2,'bag');",
+        "exerciseExpectedOutputs": "[\"1|2\\n2|1\", \"Ann|book\\nAnn|pen\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-050-lesson"
@@ -1370,7 +1470,9 @@
       "expectedOutput": "beijing|250\nshanghai|200",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, city TEXT);\nINSERT INTO customers VALUES (1,'Ann','beijing'),(2,'Ben','shanghai'),(3,'Cara','beijing');\nCREATE TABLE sales (id INTEGER PRIMARY KEY, customer_id INTEGER, amount INTEGER);\nINSERT INTO sales VALUES (1,1,100),(2,3,150),(3,2,200);",
+        "exerciseExpectedOutputs": "[\"Ben|200\\nCara|150\\nAnn|100\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-051-lesson"
@@ -1398,7 +1500,9 @@
       "expectedOutput": "beijing|pen|90\nshanghai|book|80",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, city TEXT);\nINSERT INTO customers VALUES (1,'Ann','beijing'),(2,'Ben','shanghai'),(3,'Cara','beijing');\nCREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price INTEGER);\nINSERT INTO products VALUES (10,'pen',30),(20,'book',80);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, product_id INTEGER, qty INTEGER);\nINSERT INTO orders VALUES (1,1,10,1),(2,3,10,1),(3,2,20,1),(4,1,10,1);",
+        "exerciseExpectedOutputs": "[\"Ben|80\\nAnn|60\\nCara|30\", \"Ann\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-052-lesson"
@@ -1424,7 +1528,9 @@
       "expectedOutput": "Ann|95|10.0\nBen|85|0.0\nCara|75|-10.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE scores (name TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Ann',95),('Ben',85),('Cara',75);",
+        "exerciseExpectedOutputs": "[\"Ann\", \"255\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-053-lesson"
@@ -1450,7 +1556,9 @@
       "expectedOutput": "Ann\nCara",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO customers VALUES (1,'Ann'),(2,'Ben'),(3,'Cara'),(4,'Dan');\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER);\nINSERT INTO orders VALUES (1,1),(2,3),(3,1);",
+        "exerciseExpectedOutputs": "[\"1\\n3\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-054-lesson"
@@ -1477,7 +1585,9 @@
       "expectedOutput": "(no rows)",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT);\nINSERT INTO users VALUES (1,'a@x.com'),(2,'b@x.com'),(3,'c@x.com');\nCREATE TABLE blocked (email TEXT);\nINSERT INTO blocked VALUES ('b@x.com'),(NULL);",
+        "exerciseExpectedOutputs": "[\"1\\n3\", \"1\\n3\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-055-lesson"
@@ -1503,7 +1613,9 @@
       "expectedOutput": "Ann\nCara",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO customers VALUES (1,'Ann'),(2,'Ben'),(3,'Cara');\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, amount INTEGER);\nINSERT INTO orders VALUES (1,1,30),(2,3,40),(3,3,50);",
+        "exerciseExpectedOutputs": "[\"Cara\", \"Cara\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-056-lesson"
@@ -1529,7 +1641,9 @@
       "expectedOutput": "Ben",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO customers VALUES (1,'Ann'),(2,'Ben'),(3,'Cara');\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER);\nINSERT INTO orders VALUES (1,1),(2,3),(3,1);",
+        "exerciseExpectedOutputs": "[\"2\", \"Ben\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-057-lesson"
@@ -1555,7 +1669,9 @@
       "expectedOutput": "Ann|beijing\nCara|shanghai",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE scores (name TEXT, city TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Ann','beijing',95),('Ben','beijing',80),('Cara','shanghai',88),('Dan','shanghai',70);",
+        "exerciseExpectedOutputs": "[\"Ben|beijing\\nDan|shanghai\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-058-lesson"
@@ -1582,7 +1698,9 @@
       "expectedOutput": "south|200\nnorth|150",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'north',50),(3,'south',200),(4,'east',40);",
+        "exerciseExpectedOutputs": "[\"east|40\", \"north|2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-059-lesson"
@@ -1608,7 +1726,9 @@
       "expectedOutput": "Ann|60\nBen|40",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',40),(4,'Ben',10);",
+        "exerciseExpectedOutputs": "[\"Ann|90\\nBen|50\", \"Ann\\nBen\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-060-lesson"
@@ -1635,7 +1755,9 @@
       "expectedOutput": "Ann|95",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE scores (name TEXT, city TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Ann','beijing',95),('Ben','beijing',80),('Cara','shanghai',88),('Dan','shanghai',70);",
+        "exerciseExpectedOutputs": "[\"Dan\", \"Ann\\nCara\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-061-lesson"
@@ -1662,7 +1784,9 @@
       "expectedOutput": "Ann|90\nCara|50",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',40),(4,'Cara',50);",
+        "exerciseExpectedOutputs": "[\"2\\n4\", \"Ann\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-062-lesson"
@@ -1689,7 +1813,9 @@
       "expectedOutput": "south|200\nnorth|150",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'north',50),(3,'south',200),(4,'east',40);",
+        "exerciseExpectedOutputs": "[\"east|40\", \"north|2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-063-lesson"
@@ -1715,7 +1841,9 @@
       "expectedOutput": "Ann|90\nCara|50",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',20),(4,'Cara',50);",
+        "exerciseExpectedOutputs": "[\"Ben|20\", \"3\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-064-lesson"
@@ -1742,7 +1870,9 @@
       "expectedOutput": "90|3",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',20),(4,'Cara',50);",
+        "exerciseExpectedOutputs": "[\"3|53.3333333333333\", \"Ben\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-065-lesson"
@@ -1769,7 +1899,9 @@
       "expectedOutput": "1\n2\n3\n4\n5",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE seed (n INTEGER);\nINSERT INTO seed VALUES (1);",
+        "exerciseExpectedOutputs": "[\"2\\n4\\n6\\n8\", \"3\\n2\\n1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-066-lesson"
@@ -1796,7 +1928,9 @@
       "expectedOutput": "CEO|0\nDept-A|1\nDept-B|1\nTeam-1|2",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE org (id INTEGER PRIMARY KEY, name TEXT, parent_id INTEGER);\nINSERT INTO org VALUES (1,'CEO',NULL),(2,'Dept-A',1),(3,'Dept-B',1),(4,'Team-1',2);",
+        "exerciseExpectedOutputs": "[\"Team-1\", \"4\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-067-lesson"
@@ -1823,7 +1957,9 @@
       "expectedOutput": "2026-10-01\n2026-10-02\n2026-10-03\n2026-10-04\n2026-10-05",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE holidays (d TEXT);\nINSERT INTO holidays VALUES ('2026-10-01');",
+        "exerciseExpectedOutputs": "[\"2026-12-30\\n2026-12-31\\n2027-01-01\", \"2026-10-01\\n2026-10-02\\n2026-10-05\\n2026-10-06\\n2026-10-07\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-068-lesson"
@@ -1850,7 +1986,9 @@
       "expectedOutput": "A\nB\nC",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE edges (src TEXT, dst TEXT);\nINSERT INTO edges VALUES ('A','B'),('B','C');",
+        "exerciseExpectedOutputs": "[\"2\", \"C\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-069-lesson"
@@ -1877,7 +2015,9 @@
       "expectedOutput": "CEO|0\nCEO > Dept-A|1\nCEO > Dept-B|1\nCEO > Dept-A > Team-1|2",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE org (id INTEGER PRIMARY KEY, name TEXT, parent_id INTEGER);\nINSERT INTO org VALUES (1,'CEO',NULL),(2,'Dept-A',1),(3,'Dept-B',1),(4,'Team-1',2);",
+        "exerciseExpectedOutputs": "[\"CEO > Dept-A\\nCEO > Dept-B\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-070-lesson"
@@ -1904,7 +2044,9 @@
       "expectedOutput": "1|30|250\n2|60|250\n3|80|250\n4|80|250",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',80),(4,'Cara',80);",
+        "exerciseExpectedOutputs": "[\"1|-32.5\\n2|-2.5\\n3|17.5\\n4|17.5\", \"1|80\\n2|80\\n3|80\\n4|80\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-071-lesson"
@@ -1930,7 +2072,9 @@
       "expectedOutput": "Ann|30|90\nAnn|60|90\nBen|80|80\nCara|80|80",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',80),(4,'Cara',80);",
+        "exerciseExpectedOutputs": "[\"Ann|45.0\\nAnn|45.0\\nBen|80.0\\nCara|80.0\", \"Ann|90\\nBen|80\\nCara|80\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-072-lesson"
@@ -1958,7 +2102,9 @@
       "expectedOutput": "1|30|30\n2|60|90\n3|80|170\n4|80|250",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO orders VALUES (1,30),(2,60),(3,80),(4,80);",
+        "exerciseExpectedOutputs": "[\"1|30\\n2|90\\n3|170\\n4|250\", \"1|250\\n2|250\\n3|250\\n4|250\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-073-lesson"
@@ -1984,7 +2130,9 @@
       "expectedOutput": "2|80|1\n3|80|2\n4|50|3\n1|30|4",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO orders VALUES (1,30),(2,80),(3,80),(4,50);",
+        "exerciseExpectedOutputs": "[\"1|1\\n2|2\\n3|3\\n4|4\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-074-lesson"
@@ -2011,7 +2159,9 @@
       "expectedOutput": "Ann|80|1|1\nBen|80|1|1\nCara|50|3|2\nDan|30|4|3",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE scores (name TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Ann',80),('Ben',80),('Cara',50),('Dan',30);",
+        "exerciseExpectedOutputs": "[\"Ann\\nBen\", \"Cara\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-075-lesson"
@@ -2037,7 +2187,9 @@
       "expectedOutput": "1|1\n2|1\n3|2\n4|2\n5|3",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE t (id INTEGER PRIMARY KEY);\nINSERT INTO t VALUES (1),(2),(3),(4),(5);",
+        "exerciseExpectedOutputs": "[\"1|1\\n2|1\\n3|1\\n4|2\\n5|2\", \"5\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-076-lesson"
@@ -2064,7 +2216,9 @@
       "expectedOutput": "1|30||\n2|60|30|30\n3|80|60|20",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO sales VALUES (1,30),(2,60),(3,80);",
+        "exerciseExpectedOutputs": "[\"1|60\\n2|80\\n3|\", \"50\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-077-lesson"
@@ -2091,7 +2245,9 @@
       "expectedOutput": "1|30|80\n2|30|80\n3|30|80",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO sales VALUES (1,30),(2,60),(3,80);",
+        "exerciseExpectedOutputs": "[\"1|30\\n2|60\\n3|80\", \"1|30\\n2|30\\n3|30\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-078-lesson"
@@ -2118,7 +2274,9 @@
       "expectedOutput": "1|30|30.0\n2|90|45.0\n3|170|56.6666666666667\n4|250|73.3333333333333",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO sales VALUES (1,30),(2,60),(3,80),(4,80);",
+        "exerciseExpectedOutputs": "[\"1|30.0\\n2|45.0\\n3|56.6666666666667\\n4|73.3333333333333\", \"1|30\\n2|90\\n3|170\\n4|250\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-079-lesson"
@@ -2145,7 +2303,9 @@
       "expectedOutput": "2026-01|100||\n2026-02|120|20|0.2\n2026-03|90|-30|-0.25\n2026-04|150|60|0.666666666666667",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE monthly (m TEXT, amount INTEGER);\nINSERT INTO monthly VALUES ('2026-01',100),('2026-02',120),('2026-03',90),('2026-04',150);",
+        "exerciseExpectedOutputs": "[\"2026-01|\\n2026-02|20\\n2026-03|-30\\n2026-04|60\", \"2026-01|\\n2026-02|100\\n2026-03|120\\n2026-04|90\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-080-lesson"
@@ -2173,7 +2333,9 @@
       "expectedOutput": "Ann|90\nAnn|60\nBen|40\nBen|25",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',90),(3,'Ann',60),(4,'Ben',40),(5,'Ben',25);",
+        "exerciseExpectedOutputs": "[\"Ann|30\\nBen|25\", \"Ann|90\\nBen|40\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-081-lesson"
@@ -2201,7 +2363,9 @@
       "expectedOutput": "1|Ann|30|0.3333|2|30\n2|Ann|60|0.6667|1|90\n3|Ben|40|0.4211|2|130\n4|Ben|55|0.5789|1|185",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',40),(4,'Ben',55);",
+        "exerciseExpectedOutputs": "[\"1|30\\n2|90\\n3|130\\n4|185\", \"Ann|90|60\\nBen|95|55\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-082-lesson"
@@ -2228,7 +2392,9 @@
       "expectedOutput": "1|SQL 入门|3|59.9\n2|数据库原理||79.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL, qty INTEGER, price REAL);\nINSERT INTO books VALUES (1,'SQL 入门',3,59.9),(2,'数据库原理',NULL,79.0);",
+        "exerciseExpectedOutputs": "[\"1\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-083-lesson"
@@ -2255,7 +2421,9 @@
       "expectedOutput": "10|a\n11|b\n12|c",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nINSERT INTO t (id, v) VALUES (10,'a');\nINSERT INTO t (v) VALUES ('b'),('c');",
+        "exerciseExpectedOutputs": "[\"12\", \"3\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-084-lesson"
@@ -2281,7 +2449,9 @@
       "expectedOutput": "1|写文档|new\n2|评审|doing",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'new');\nINSERT INTO tasks (id, title) VALUES (1,'写文档');\nINSERT INTO tasks (id, title, status) VALUES (2,'评审','doing');",
+        "exerciseExpectedOutputs": "[\"1\", \"1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-085-lesson"
@@ -2307,7 +2477,9 @@
       "expectedOutput": "1|alice|a@x.com\n2|bob|-",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT UNIQUE NOT NULL, email TEXT);\nINSERT INTO users VALUES (1,'alice','a@x.com'),(2,'bob',NULL);",
+        "exerciseExpectedOutputs": "[\"2\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-086-lesson"
@@ -2333,7 +2505,9 @@
       "expectedOutput": "1|pen|10\n2|book|0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE stock (id INTEGER PRIMARY KEY, name TEXT, qty INTEGER CHECK (qty >= 0));\nINSERT INTO stock VALUES (1,'pen',10),(2,'book',0);",
+        "exerciseExpectedOutputs": "[\"2\", \"pen\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-087-lesson"
@@ -2360,7 +2534,9 @@
       "expectedOutput": "1|alice|100\n2|bob|200",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "PRAGMA foreign_keys = ON;\nCREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER REFERENCES customers(id), amount INTEGER);\nINSERT INTO customers VALUES (1,'alice'),(2,'bob');\nINSERT INTO orders VALUES (1,1,100),(2,2,200);",
+        "exerciseExpectedOutputs": "[\"100\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-088-lesson"
@@ -2387,7 +2563,9 @@
       "expectedOutput": "1|10.0|3|30.0\n2|5.0|4|20.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE items (id INTEGER PRIMARY KEY, price REAL, qty INTEGER, total REAL GENERATED ALWAYS AS (price * qty) STORED);\nINSERT INTO items (id, price, qty) VALUES (1, 10.0, 3), (2, 5.0, 4);",
+        "exerciseExpectedOutputs": "[\"1\", \"50.0\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-089-lesson"
@@ -2413,7 +2591,9 @@
       "expectedOutput": "1|start|info\n2|stop|warn",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE logs (id INTEGER PRIMARY KEY, msg TEXT);\nINSERT INTO logs VALUES (1,'start'),(2,'stop');\nALTER TABLE logs ADD COLUMN level TEXT DEFAULT 'info';\nUPDATE logs SET level = 'warn' WHERE id = 2;",
+        "exerciseExpectedOutputs": "[\"2\", \"1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-090-lesson"
@@ -2440,7 +2620,9 @@
       "expectedOutput": "keep",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE keep (id INTEGER PRIMARY KEY);\nCREATE TABLE tmp (id INTEGER PRIMARY KEY);\nINSERT INTO keep VALUES (1);\nDROP TABLE IF EXISTS tmp;",
+        "exerciseExpectedOutputs": "[\"1\", \"1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-091-lesson"
@@ -2467,7 +2649,9 @@
       "expectedOutput": "3|60",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TEMP TABLE stage (id INTEGER, amount INTEGER);\nINSERT INTO stage VALUES (1,10),(2,20),(3,30);",
+        "exerciseExpectedOutputs": "[\"3\", \"20.0\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-092-lesson"
@@ -2494,7 +2678,9 @@
       "expectedOutput": "1|a\n3|b",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE t (id INTEGER PRIMARY KEY, u TEXT UNIQUE);\nINSERT INTO t VALUES (1,'a');\nINSERT OR IGNORE INTO t VALUES (2,'a');\nINSERT OR IGNORE INTO t VALUES (3,'b');",
+        "exerciseExpectedOutputs": "[\"1\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-093-lesson"
@@ -2522,7 +2708,9 @@
       "expectedOutput": "1|alice|35.0\n2|bob|20.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "PRAGMA foreign_keys = ON;\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT NOT NULL);\nCREATE TABLE order_items (id INTEGER PRIMARY KEY, order_id INTEGER NOT NULL REFERENCES orders(id), price REAL NOT NULL CHECK (price >= 0), qty INTEGER NOT NULL CHECK (qty > 0), subtotal REAL GENERATED ALWAYS AS (price * qty) STORED);\nINSERT INTO orders VALUES (1,'alice'),(2,'bob');\nINSERT INTO order_items (order_id, price, qty) VALUES (1,10.0,2),(1,5.0,3),(2,20.0,1);",
+        "exerciseExpectedOutputs": "[\"2\", \"55.0\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-094-lesson"
@@ -2549,7 +2737,9 @@
       "expectedOutput": "3|3",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nINSERT INTO t (v) VALUES ('a'),('b'),('c');",
+        "exerciseExpectedOutputs": "[\"a\\nb\\nc\", \"b\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-095-lesson"
@@ -2575,7 +2765,9 @@
       "expectedOutput": "2|150\n3|200",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, amount INTEGER);\nCREATE TABLE big_orders (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO orders VALUES (1,50),(2,150),(3,200);\nINSERT INTO big_orders (id, amount) SELECT id, amount FROM orders WHERE amount >= 100;",
+        "exerciseExpectedOutputs": "[\"3\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-096-lesson"
@@ -2601,7 +2793,9 @@
       "expectedOutput": "1|55.0\n2|100.0\n3|88.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE products (id INTEGER PRIMARY KEY, price REAL);\nINSERT INTO products VALUES (1,50.0),(2,100.0),(3,80.0);\nUPDATE products SET price = price * 1.1 WHERE price < 100;",
+        "exerciseExpectedOutputs": "[\"1\\n3\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-097-lesson"
@@ -2628,7 +2822,9 @@
       "expectedOutput": "1|pen|12.0\n2|book|20.0",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price REAL);\nCREATE TABLE prices (product_id INTEGER PRIMARY KEY, price REAL);\nINSERT INTO products VALUES (1,'pen',10.0),(2,'book',20.0);\nINSERT INTO prices VALUES (1,12.0);\nUPDATE products SET price = (SELECT price FROM prices WHERE prices.product_id = products.id) WHERE EXISTS (SELECT 1 FROM prices WHERE prices.product_id = products.id);",
+        "exerciseExpectedOutputs": "[\"1\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-098-lesson"
@@ -2655,7 +2851,9 @@
       "expectedOutput": "2|book|5",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE stock (id INTEGER PRIMARY KEY, name TEXT, qty INTEGER);\nINSERT INTO stock VALUES (1,'pen',0),(2,'book',5),(3,'bag',0);\nDELETE FROM stock WHERE qty = 0;",
+        "exerciseExpectedOutputs": "[\"1\", \"book\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-099-lesson"
@@ -2682,7 +2880,9 @@
       "expectedOutput": "a|1\nb|2",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE kv (u TEXT PRIMARY KEY, v INTEGER);\nINSERT INTO kv VALUES ('a',1);\nINSERT OR REPLACE INTO kv VALUES ('b',1);\nINSERT OR REPLACE INTO kv VALUES ('b',2);",
+        "exerciseExpectedOutputs": "[\"2\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-100-lesson"
@@ -2709,7 +2909,9 @@
       "expectedOutput": "a|3",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE counters (name TEXT PRIMARY KEY, v INTEGER);\nINSERT INTO counters VALUES ('a',1)\nON CONFLICT(name) DO UPDATE SET v = v + excluded.v;\nINSERT INTO counters VALUES ('a',2)\nON CONFLICT(name) DO UPDATE SET v = v + excluded.v;",
+        "exerciseExpectedOutputs": "[\"3\", \"1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-101-lesson"
@@ -2737,7 +2939,9 @@
       "expectedOutput": "A|150\nB|70",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE ledger (id INTEGER PRIMARY KEY, account TEXT, amount INTEGER);\nINSERT INTO ledger VALUES (1,'A',100),(2,'A',50),(3,'B',20),(4,'B',0),(5,'B',50)\nON CONFLICT(id) DO UPDATE SET account=excluded.account, amount=excluded.amount;\nDELETE FROM ledger WHERE amount = 0;",
+        "exerciseExpectedOutputs": "[\"4\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-102-lesson"
@@ -2765,7 +2969,9 @@
       "expectedOutput": "1|kept",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nINSERT INTO t VALUES (1,'kept');\nBEGIN;\nINSERT INTO t VALUES (2,'rolled-back');\nROLLBACK;",
+        "exerciseExpectedOutputs": "[\"1\", \"kept\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-103-lesson"
@@ -2792,7 +2998,9 @@
       "expectedOutput": "1|A",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nBEGIN;\nINSERT INTO t VALUES (1,'A');\nSAVEPOINT sp1;\nINSERT INTO t VALUES (2,'B');\nROLLBACK TO sp1;\nRELEASE sp1;\nCOMMIT;",
+        "exerciseExpectedOutputs": "[\"1\", \"A\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-104-lesson"
@@ -2819,7 +3027,9 @@
       "expectedOutput": "1|a",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE t (id INTEGER PRIMARY KEY, u TEXT NOT NULL);\nBEGIN;\nINSERT INTO t VALUES (1,'a');\nSAVEPOINT sp;\nINSERT OR IGNORE INTO t VALUES (2,NULL);\nROLLBACK TO sp;\nRELEASE sp;\nCOMMIT;",
+        "exerciseExpectedOutputs": "[\"1\", \"1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-105-lesson"
@@ -2846,7 +3056,9 @@
       "expectedOutput": "1|10",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE t (id INTEGER PRIMARY KEY, v INTEGER);\nBEGIN IMMEDIATE;\nINSERT INTO t VALUES (1,10);\nCOMMIT;",
+        "exerciseExpectedOutputs": "[\"1\", \"10\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-106-lesson"
@@ -2873,7 +3085,9 @@
       "expectedOutput": "1|1\n2|2",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE t (id INTEGER PRIMARY KEY, v INTEGER);\nBEGIN IMMEDIATE;\nINSERT INTO t VALUES (1,1);\nCOMMIT;\nBEGIN IMMEDIATE;\nINSERT INTO t VALUES (2,2);\nCOMMIT;",
+        "exerciseExpectedOutputs": "[\"2\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-107-lesson"
@@ -2900,7 +3114,9 @@
       "expectedOutput": "alice|70\nbob|80",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE accounts (id INTEGER PRIMARY KEY, name TEXT UNIQUE, balance INTEGER NOT NULL CHECK (balance >= 0));\nINSERT INTO accounts VALUES (1,'alice',100),(2,'bob',50);\nBEGIN IMMEDIATE;\nUPDATE accounts SET balance = balance - 30 WHERE name = 'alice';\nUPDATE accounts SET balance = balance + 30 WHERE name = 'bob';\nCOMMIT;",
+        "exerciseExpectedOutputs": "[\"150\", \"bob\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-108-lesson"
@@ -2927,7 +3143,9 @@
       "expectedOutput": "2|bob",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, city TEXT);\nINSERT INTO users VALUES (1,'alice','beijing'),(2,'bob','shanghai'),(3,'carol','beijing');\nCREATE INDEX idx_users_name ON users(name);",
+        "exerciseExpectedOutputs": "[\"1\\n3\", \"3\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-109-lesson"
@@ -2953,7 +3171,9 @@
       "expectedOutput": "2|150\n3|200",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO orders VALUES (1,50),(2,150),(3,200),(4,80);\nCREATE INDEX idx_orders_amount ON orders(amount);",
+        "exerciseExpectedOutputs": "[\"2\\n4\", \"50\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-110-lesson"
@@ -2979,7 +3199,9 @@
       "expectedOutput": "1|beijing|30",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE people (id INTEGER PRIMARY KEY, city TEXT, age INTEGER);\nINSERT INTO people VALUES (1,'beijing',30),(2,'beijing',18),(3,'shanghai',25);\nCREATE INDEX idx_people_city_age ON people(city, age);",
+        "exerciseExpectedOutputs": "[\"2\", \"1\\n3\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-111-lesson"
@@ -3005,7 +3227,9 @@
       "expectedOutput": "beijing|18\nbeijing|30",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE people (id INTEGER PRIMARY KEY, city TEXT, age INTEGER, note TEXT);\nINSERT INTO people VALUES (1,'beijing',30,'x'),(2,'beijing',18,'y'),(3,'shanghai',25,'z');\nCREATE INDEX idx_people_city_age ON people(city, age);",
+        "exerciseExpectedOutputs": "[\"30\", \"beijing\\nshanghai\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-112-lesson"
@@ -3032,7 +3256,9 @@
       "expectedOutput": "sqlite_autoindex_users_1",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT UNIQUE, name TEXT);\nINSERT INTO users VALUES (1,'a@x.com','alice'),(2,'b@x.com','bob');",
+        "exerciseExpectedOutputs": "[\"2\", \"1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-113-lesson"
@@ -3059,7 +3285,9 @@
       "expectedOutput": "1|alice",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO users VALUES (1,'alice'),(2,'bob');\nCREATE INDEX idx_users_name ON users(name);",
+        "exerciseExpectedOutputs": "[\"1\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-114-lesson"
@@ -3086,7 +3314,9 @@
       "expectedOutput": "1|alice|100",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE accounts (id INTEGER PRIMARY KEY, owner TEXT, balance INTEGER);\nINSERT INTO accounts VALUES (1,'alice',100),(2,'bob',50);\nCREATE INDEX idx_accounts_owner ON accounts(owner);",
+        "exerciseExpectedOutputs": "[\"2\", \"idx_accounts_owner\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-115-lesson"
@@ -3113,7 +3343,9 @@
       "expectedOutput": "2|beijing|150",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE orders (id INTEGER PRIMARY KEY, city TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'beijing',50),(2,'beijing',150),(3,'shanghai',200);\nCREATE INDEX idx_orders_city_amount ON orders(city, amount);",
+        "exerciseExpectedOutputs": "[\"2\", \"400\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-116-lesson"
@@ -3140,7 +3372,9 @@
       "expectedOutput": "1|alice|beijing|100\n2|alice|beijing|50\n3|bob|shanghai|200",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, city TEXT);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, amount INTEGER);\nINSERT INTO customers VALUES (1,'alice','beijing'),(2,'bob','shanghai');\nINSERT INTO orders VALUES (1,1,100),(2,1,50),(3,2,200);",
+        "exerciseExpectedOutputs": "[\"150\", \"1|2\\n2|1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-117-lesson"
@@ -3167,7 +3401,9 @@
       "expectedOutput": "1|start@2026-01-02\n2|stop@2026-01-03",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE events (id INTEGER PRIMARY KEY, name TEXT, at TEXT);\nINSERT INTO events VALUES (1,'start','2026-01-01'),(2,'stop','2026-01-02');",
+        "exerciseExpectedOutputs": "[\"1\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-118-lesson"
@@ -3194,7 +3430,9 @@
       "expectedOutput": "1|alice|150\n2|bob|200",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, amount INTEGER);\nINSERT INTO customers VALUES (1,'alice'),(2,'bob');\nINSERT INTO orders VALUES (1,1,100),(2,1,50),(3,2,200);\nCREATE VIEW v_customer_totals AS SELECT c.id AS customer_id, c.name AS name, SUM(o.amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.id, c.name;",
+        "exerciseExpectedOutputs": "[\"bob\", \"2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-119-lesson"
@@ -3223,7 +3461,9 @@
       "expectedOutput": "north|pen|100|1\nnorth|book|60|2\nnorth|bag|40|3\nsouth|book|120|1\nsouth|pen|80|2\nsouth|bag|30|3",
       "inputFixtures": {
         "engine": "sqlite",
-        "version": "3.50"
+        "version": "3.50",
+        "exerciseSetup": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, product TEXT, amount INTEGER);\nINSERT INTO sales VALUES\n  (1,'north','pen',100),(2,'north','book',60),(3,'north','bag',40),\n  (4,'south','pen',80),(5,'south','book',120),(6,'south','bag',30);",
+        "exerciseExpectedOutputs": "[\"north|pen\\nsouth|book\", \"430\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-120-lesson"
@@ -3249,7 +3489,9 @@
       "expectedOutput": "a|3",
       "inputFixtures": {
         "engine": "mysql",
-        "version": "8.0"
+        "version": "8.0",
+        "exerciseSetup": "CREATE TABLE counters (name VARCHAR(32) PRIMARY KEY, v INT NOT NULL);\nINSERT INTO counters VALUES ('a', 1);",
+        "exerciseExpectedOutputs": "[\"1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-121-lesson"
@@ -3276,7 +3518,9 @@
       "expectedOutput": "1|Alice@example.com|5",
       "inputFixtures": {
         "engine": "mysql",
-        "version": "8.0"
+        "version": "8.0",
+        "exerciseSetup": "CREATE TABLE t (id INT PRIMARY KEY, s VARCHAR(64));\nINSERT INTO t VALUES (1,'Alice');",
+        "exerciseExpectedOutputs": "[\"6|2\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-122-lesson"
@@ -3302,7 +3546,9 @@
       "expectedOutput": "1|2026-01-02|4",
       "inputFixtures": {
         "engine": "mysql",
-        "version": "8.0"
+        "version": "8.0",
+        "exerciseSetup": "CREATE TABLE shipments (id INT PRIMARY KEY, shipped_at DATE);\nINSERT INTO shipments VALUES (1,'2026-01-01');",
+        "exerciseExpectedOutputs": "[\"4\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-123-lesson"
@@ -3328,7 +3574,9 @@
       "expectedOutput": "REPEATABLE-READ",
       "inputFixtures": {
         "engine": "mysql",
-        "version": "8.0"
+        "version": "8.0",
+        "exerciseSetup": "CREATE TABLE t (id INT PRIMARY KEY, v INT);\nINSERT INTO t VALUES (1,10);",
+        "exerciseExpectedOutputs": "[\"REPEATABLE-READ\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-124-lesson"
@@ -3354,7 +3602,9 @@
       "expectedOutput": "north|book,pen\nsouth|bag",
       "inputFixtures": {
         "engine": "mysql",
-        "version": "8.0"
+        "version": "8.0",
+        "exerciseSetup": "CREATE TABLE s (id INT PRIMARY KEY, region VARCHAR(16), product VARCHAR(16));\nINSERT INTO s VALUES (1,'north','pen'),(2,'north','book'),(3,'south','bag');",
+        "exerciseExpectedOutputs": "[\"pen,book,bag\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-125-lesson"
@@ -3380,7 +3630,9 @@
       "expectedOutput": "1|x|\n2|y|p\n3||q",
       "inputFixtures": {
         "engine": "mysql",
-        "version": "8.0"
+        "version": "8.0",
+        "exerciseSetup": "CREATE TABLE a (id INT PRIMARY KEY, v VARCHAR(8));\nCREATE TABLE b (id INT PRIMARY KEY, v VARCHAR(8));\nINSERT INTO a VALUES (1,'x'),(2,'y');\nINSERT INTO b VALUES (2,'p'),(3,'q');",
+        "exerciseExpectedOutputs": "[\"1\"]"
       },
       "templateType": "sql",
       "sourceLessonId": "sql-tutorial-126-lesson"

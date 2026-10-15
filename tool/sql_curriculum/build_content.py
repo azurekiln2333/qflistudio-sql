@@ -10,6 +10,7 @@ problems so a broken asset never reaches the app.
 from __future__ import annotations
 
 import importlib
+import json
 import pkgutil
 import sys
 from pathlib import Path
@@ -78,6 +79,11 @@ def audit(lessons: list[schema.Lesson]) -> None:
         for ex in lesson.exercises:
             if not ex.prompt.strip() or not ex.answer.strip():
                 raise SystemExit(f"{lesson.tid}: incomplete exercise")
+            if not ex.expected.strip():
+                raise SystemExit(
+                    f"{lesson.tid}: missing authored exercise expectation "
+                    "(use '(no rows)' for an empty result)"
+                )
         joined = " ".join(
             [
                 lesson.title,
@@ -105,6 +111,20 @@ def audit(lessons: list[schema.Lesson]) -> None:
                 raise SystemExit(f"{entry.get('id')}: empty entry field {field}")
 
 
+def render_example(lesson: schema.Lesson) -> dict:
+    entry = lesson.example_entry()
+    # Shared ContentCatalog preserves only string fixture values. Keep the
+    # authored exercise outputs as JSON text rather than losing a nested list.
+    entry["inputFixtures"].update(
+        exerciseSetup=lesson.setup,
+        exerciseExpectedOutputs=json.dumps(
+            [exercise.expected for exercise in lesson.exercises],
+            ensure_ascii=False,
+        ),
+    )
+    return entry
+
+
 def main() -> int:
     lessons = sorted(load_lessons(), key=lambda lesson: lesson.number)
     audit(lessons)
@@ -123,7 +143,7 @@ def main() -> int:
         "type": "sql",
         "locale": schema.LOCALE,
         "updatedAt": schema.UPDATED_AT,
-        "entries": [lesson.example_entry() for lesson in lessons],
+        "entries": [render_example(lesson) for lesson in lessons],
     }
 
     schema.ASSET_DIR.mkdir(parents=True, exist_ok=True)

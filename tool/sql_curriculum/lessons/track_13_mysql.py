@@ -39,7 +39,7 @@ LESSONS = [
         ],
         exercises=[
             E("按本课逻辑，冲突时应把新值累加还是覆盖？", "看 ON DUPLICATE KEY UPDATE 的表达式。",
-              "SELECT v FROM counters;", "", verify_query=False),
+              "SELECT v FROM counters;", "1"),
         ],
         engine="mysql", version="8.0",
     ),
@@ -68,7 +68,7 @@ LESSONS = [
         ],
         exercises=[
             E("MySQL 中 LENGTH('你好') 与 CHAR_LENGTH('你好') 是否相等？", "UTF-8 下中文 3 字节/字。",
-              "SELECT LENGTH('你好'), CHAR_LENGTH('你好');", "", verify_query=False),
+              "SELECT LENGTH('你好'), CHAR_LENGTH('你好');", "6|2"),
         ],
         engine="mysql", version="8.0",
     ),
@@ -97,7 +97,7 @@ LESSONS = [
         ],
         exercises=[
             E("DATEDIFF('2026-01-05','2026-01-01') 的结果是多少？", "日期差。",
-              "SELECT DATEDIFF('2026-01-05','2026-01-01');", "", verify_query=False),
+              "SELECT DATEDIFF('2026-01-05','2026-01-01');", "4"),
         ],
         engine="mysql", version="8.0",
     ),
@@ -124,7 +124,7 @@ LESSONS = [
         ],
         exercises=[
             E("MySQL 8.0 默认隔离级别是哪个？", "查看 @@transaction_isolation。",
-              "SELECT @@transaction_isolation;", "", verify_query=False),
+              "SELECT @@transaction_isolation;", "REPEATABLE-READ"),
         ],
         engine="mysql", version="8.0",
     ),
@@ -154,7 +154,7 @@ LESSONS = [
         ],
         exercises=[
             E("GROUP_CONCAT 不写 SEPARATOR 时默认分隔符是什么？", "查 MySQL 文档。",
-              "SELECT GROUP_CONCAT(product) FROM s;", "", verify_query=False),
+              "SELECT GROUP_CONCAT(product ORDER BY id) FROM s;", "pen,book,bag"),
         ],
         engine="mysql", version="8.0",
     ),
@@ -188,7 +188,7 @@ LESSONS = [
         ],
         exercises=[
             E("MySQL 8.0 是否有原生 FULL OUTER JOIN 关键字？", "查 MySQL 文档。",
-              "SELECT 1;", "", verify_query=False),
+              "SELECT 1;", "1"),
         ],
         engine="mysql", version="8.0",
     ),

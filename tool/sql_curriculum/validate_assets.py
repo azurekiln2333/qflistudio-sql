@@ -17,7 +17,6 @@ Run:  python tool/sql_curriculum/validate_assets.py
 from __future__ import annotations
 
 import json
-import re
 import shutil
 import subprocess
 import sys
@@ -55,25 +54,6 @@ def normalize_expected(text: str) -> str:
     return "" if text.strip() == NO_ROWS else normalize(text)
 
 
-def split_setup_and_query(code: str) -> tuple[str, str]:
-    """Split a full script into (setup, final query), as the app imports it.
-
-    The authoring model guarantees ``code == setup + query`` where ``setup`` is
-    the last statement boundary. Everything up to and including the final
-    non-query statement is the setup; the trailing query is the teaching query.
-    We split on the last top-level ``;`` that precedes a query-only tail.
-    """
-    statements = [s.strip() for s in code.split(";")]
-    # Drop a possible trailing empty fragment after the final ';'.
-    statements = [s for s in statements if s]
-    # The last statement is the query; everything before is setup.
-    setup = ";\n".join(statements[:-1])
-    query = statements[-1]
-    if setup:
-        setup += ";\n"
-    return setup, query
-
-
 def main() -> int:
     if not SQLITE.exists():
         print(f"sqlite3 CLI not found at {SQLITE}", file=sys.stderr)
@@ -87,23 +67,47 @@ def main() -> int:
     exercise_total = 0
     failed: list[str] = []
     not_executed: list[str] = []
+    example_by_lesson: dict[str, dict] = {}
+    for example in examples["entries"]:
+        lesson_id = example["sourceLessonId"]
+        if lesson_id in example_by_lesson:
+            failed.append(f"duplicate example for {lesson_id}")
+        example_by_lesson[lesson_id] = example
 
     workdir = Path(tempfile.mkdtemp(prefix="qfli_sql_assets_"))
     try:
         for entry in tutorials["entries"]:
-            fixtures = entry.get("inputFixtures", {})
-            engine = (
-                fixtures.get("engine")
-                or entry.get("runtime", {}).get("engine", "sqlite")
-            )
-            engine = str(engine).lower()
-            dialect = entry.get("runtime", {}).get("engine", "")
-            if "mysql" in engine or "mysql" in dialect.lower():
-                not_executed.append(f"{entry['id']} ({dialect}): requires MySQL")
-                continue
             for lesson in entry["lessons"]:
                 code = lesson["code"]
                 tid = entry["id"]
+                example = example_by_lesson.pop(lesson["id"], None)
+                if example is None:
+                    failed.append(f"{tid}: missing matching packaged example")
+                    continue
+                if example["code"] != code or example["expectedOutput"] != lesson["output"]:
+                    failed.append(f"{tid}: tutorial/example code or expectation drift")
+                fixtures = example.get("inputFixtures", {})
+                setup = fixtures.get("exerciseSetup")
+                try:
+                    expected_outputs = json.loads(fixtures["exerciseExpectedOutputs"])
+                except (KeyError, TypeError, ValueError):
+                    failed.append(f"{tid}: invalid packaged exercise expectations")
+                    continue
+                exercises = lesson.get("exercises", [])
+                if (not isinstance(setup, str)
+                    or not isinstance(expected_outputs, list)
+                    or len(expected_outputs) != len(exercises)
+                    or any(not isinstance(value, str) or not value.strip()
+                           for value in expected_outputs)):
+                    failed.append(f"{tid}: incomplete packaged exercise fixtures")
+                    continue
+                engine = fixtures.get("engine")
+                if engine == "mysql":
+                    not_executed.append(f"{tid}: requires native MySQL execution")
+                    continue
+                if engine != "sqlite":
+                    failed.append(f"{tid}: unknown packaged engine {engine!r}")
+                    continue
                 db = workdir / f"{tid}.db"
                 rc, out, err = run_sqlite(db, code)
                 if rc != 0:
@@ -119,8 +123,7 @@ def main() -> int:
                     else:
                         passed += 1
 
-                setup, _query = split_setup_and_query(code)
-                for index, exercise in enumerate(lesson.get("exercises", []), 1):
+                for index, exercise in enumerate(exercises, 1):
                     answer = exercise.get("answer", "")
                     if not answer.strip():
                         failed.append(f"{tid} exercise {index}: empty answer")
@@ -128,7 +131,7 @@ def main() -> int:
                     exercise_total += 1
                     ex_db = workdir / f"{tid}_ex{index}.db"
                     rc_ex, out_ex, err_ex = run_sqlite(
-                        ex_db, f"{setup}{answer}"
+                        ex_db, f"{setup.rstrip()}\n{answer}"
                     )
                     if rc_ex != 0:
                         failed.append(
@@ -136,17 +139,22 @@ def main() -> int:
                             f"{err_ex.strip()}"
                         )
                         continue
-                    # The packaged JSON does not carry an authored expectation
-                    # for exercise answers (only the answer SQL). We assert the
-                    # answer executes cleanly and returns rows/no-rows, which is
-                    # the drift guard; the authored-expectation comparison runs
-                    # in validate_content.py against the source modules.
-                    exercise_passed += 1
+                    actual_ex = normalize(out_ex)
+                    expected_ex = normalize_expected(expected_outputs[index - 1])
+                    if actual_ex != expected_ex:
+                        failed.append(
+                            f"{tid} exercise {index}: mismatch\n"
+                            f"  expected: {expected_ex!r}\n  actual:   {actual_ex!r}"
+                        )
+                    else:
+                        exercise_passed += 1
+        for lesson_id in example_by_lesson:
+            failed.append(f"{lesson_id}: example has no matching tutorial lesson")
     finally:
         shutil.rmtree(workdir, ignore_errors=True)
 
     print(f"packaged-JSON sqlite examples passed: {passed}")
-    print(f"packaged-JSON exercise answers executed cleanly: {exercise_passed}/{exercise_total}")
+    print(f"packaged-JSON exercise expectations matched: {exercise_passed}/{exercise_total}")
     print(f"mysql not executed: {len(not_executed)}")
     for item in not_executed:
         print(f"  SKIP {item}")
@@ -155,7 +163,7 @@ def main() -> int:
         for item in failed:
             print(f"  FAIL {item}")
         return 1
-    print("all packaged-JSON script executions matched the authored lesson output")
+    print("all packaged-JSON executions matched authored lesson and exercise outputs")
     return 0
 
 

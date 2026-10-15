@@ -7307,7 +7307,7 @@
             {
               "prompt": "GROUP_CONCAT 不写 SEPARATOR 时默认分隔符是什么？",
               "hint": "查 MySQL 文档。",
-              "answer": "SELECT GROUP_CONCAT(product) FROM s;"
+              "answer": "SELECT GROUP_CONCAT(product ORDER BY id) FROM s;"
             }
           ]
         }

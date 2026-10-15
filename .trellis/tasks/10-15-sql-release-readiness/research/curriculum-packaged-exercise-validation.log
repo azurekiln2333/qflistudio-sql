@@ -1,0 +1,10 @@
+packaged-JSON sqlite examples passed: 120
+packaged-JSON exercise expectations matched: 240/240
+mysql not executed: 6
+  SKIP sql-tutorial-121: requires native MySQL execution
+  SKIP sql-tutorial-122: requires native MySQL execution
+  SKIP sql-tutorial-123: requires native MySQL execution
+  SKIP sql-tutorial-124: requires native MySQL execution
+  SKIP sql-tutorial-125: requires native MySQL execution
+  SKIP sql-tutorial-126: requires native MySQL execution
+all packaged-JSON executions matched authored lesson and exercise outputs

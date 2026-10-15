@@ -96,10 +96,10 @@ Residual shared API behavior is separate from reachable mobile release UI:
 - On desktop, `createSandboxShell` forwards unrecognized commands to the real
   host shell. That permits manually entered host commands such as Git/curl;
   mobile has no such fallback. No strict desktop network isolation is claimed.
-- Shared `SandboxShellBackend.helpText` and unsupported-command copy still name
-  Java even for other language products. `sql --help` documents SQL correctly,
-  but the profile delegate cannot override the shared `help` builtin. Generic
-  language-toolchain wording is a shared copy follow-up.
+- Final direct inspection at core `8b33443` confirms shared sandbox `help` and
+  unsupported-command messages already use generic toolchain wording. The
+  earlier report that these strings still named Java was incorrect and is
+  withdrawn; `sql --help` supplies the product-specific command syntax.
 
 ## Executed validation
 

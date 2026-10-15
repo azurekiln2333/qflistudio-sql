@@ -93,12 +93,33 @@ Use explicit live device serials from the platform worker. The following are
 target templates, not execution evidence from this worker:
 
 ```powershell
-# Android: Gradle detects integration_test/ and uses .integrationtest.
-flutter test --no-pub -d <android-serial> integration_test/sql_curriculum_native_test.dart --reporter expanded
+# Android: keep the override local; inspect the built APK before installation.
+$savedSqlIntegrationSwitch = $env:QFLI_SQL_INTEGRATION_TEST
+try {
+  $env:QFLI_SQL_INTEGRATION_TEST = '1'
+  flutter build apk --debug --target-platform android-arm64 -t integration_test/sql_curriculum_native_test.dart
+  if ($LASTEXITCODE -ne 0) { throw 'Integration APK build failed' }
+  $sqlApkBadging = & <aapt2-path> dump badging build/app/outputs/flutter-apk/app-debug.apk
+  if ($LASTEXITCODE -ne 0 -or
+      ($sqlApkBadging -join [Environment]::NewLine) -notmatch "package: name='com\.azurekiln\.qfli\.sqlab\.integrationtest'") {
+    throw 'Unexpected integration APK package'
+  }
+  flutter test --no-pub -d <android-serial> integration_test/sql_curriculum_native_test.dart --reporter expanded
+  if ($LASTEXITCODE -ne 0) { throw 'Native curriculum failed' }
+} finally {
+  $env:QFLI_SQL_INTEGRATION_TEST = $savedSqlIntegrationSwitch
+}
 
 # OHOS: build debug target, then install/launch preserving existing app data.
 flutter build hap --debug -t integration_test/sql_curriculum_native_test.dart
 ```
+
+The Gradle target may be a generated `flutter_test_listener` wrapper. Isolation
+therefore detects the standard Base64 Dart-define integration marker as well as
+the explicit process switch/direct target; it rejects an unmarked listener.
+The four actual manifest cases and the final APK/device evidence belong in
+`android-final-report.md`. Never infer the installed package solely from the
+original Dart target filename. The runtime guard remains independent.
 
 For OHOS, the repository's bundle name remains
 `com.azurekiln.qfli.sqlab`. Use the platform worker's existing explicit-device

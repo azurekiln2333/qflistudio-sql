@@ -14,6 +14,12 @@
 - [x] Review complete owned source diffs and update SQL frontend/runtime specs; conventionally commit verified deliveries (8461bd6 and prior implementation batches).
 - [x] Record final evidence and remaining work. Preserve the active release task because production signing and OHOS device acceptance remain external requirements; do not archive it as store-ready.
 
+## Git publication follow-up (2026-10-16)
+
+- [x] Configure origin to fetch from CNB and push main to CNB, GitHub, Gitee, GitCode and GitLab; use existing GitLab SSH authentication where HTTPS credentials are unavailable.
+- [x] Publish the reviewed main history to all five repositories without force; preserve the unrelated dirty tree and consume shared core read-only.
+- [x] Record publication configuration and evidence in `research/git-publication.md`; require synchronization of the documentation commit and explicit comparison of all five remote main hashes with final local HEAD.
+
 ## Remaining external acceptance requirements
 
 - OHOS SignHap references a missing sqlab .p12/.p7b/.cer set; every available profile belongs to another product. Await a valid com.azurekiln.qfli.sqlab signing configuration before signing, in-place installation or actual phone acceptance. The unsigned HAP is compiled/packaged and verified; it is not an install/run pass.

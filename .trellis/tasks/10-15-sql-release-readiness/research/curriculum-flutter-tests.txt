@@ -1,0 +1,10 @@
+00:00 +0: loading D:/MyNewProjects/qfli_sql/test/sql_curriculum_test.dart
+00:00 +0: SQL curriculum assets tutorials.json parses via the shared catalog contract
+00:00 +1: SQL curriculum assets every lesson has complete fields and a reference exercise
+00:00 +2: SQL curriculum assets no placeholder tokens and no duplicated explain/code bodies
+00:00 +3: SQL curriculum assets dialect/version is visible in display fields
+00:00 +4: SQL curriculum assets examples carry their own runnable code and expected output
+00:00 +5: SqlContentRepository loads, filters by sql, and memoizes the catalog
+00:00 +6: SqlContentRepository examples filter returns sql examples
+00:00 +7: SqlContentRepository missing asset surfaces a descriptive exception
+00:00 +8: All tests passed!

@@ -1,0 +1,10 @@
+sqlite examples passed: 120/120
+exercise answers passed: 240/240
+mysql not executed: 6
+  SKIP sql-tutorial-121 (MySQL 8.0): requires MySQL
+  SKIP sql-tutorial-122 (MySQL 8.0): requires MySQL
+  SKIP sql-tutorial-123 (MySQL 8.0): requires MySQL
+  SKIP sql-tutorial-124 (MySQL 8.0): requires MySQL
+  SKIP sql-tutorial-125 (MySQL 8.0): requires MySQL
+  SKIP sql-tutorial-126 (MySQL 8.0): requires MySQL
+all authored expectations matched execution

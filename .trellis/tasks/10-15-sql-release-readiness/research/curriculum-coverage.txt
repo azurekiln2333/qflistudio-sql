@@ -1,0 +1,16 @@
+total lessons: 126
+  aggregation: 10
+  basics: 14
+  cte: 8
+  ddl: 12
+  dml: 8
+  functions: 16
+  indexes: 8
+  joins: 12
+  modeling: 4
+  mysql: 6
+  subqueries: 10
+  transactions: 6
+  windows: 12
+sqlite: 120  mysql: 6
+coverage checks passed

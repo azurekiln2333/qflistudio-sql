@@ -38,3 +38,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/app_icon.png
+    - assets/content/sql_tutorials.json
+    - assets/content/sql_examples.json

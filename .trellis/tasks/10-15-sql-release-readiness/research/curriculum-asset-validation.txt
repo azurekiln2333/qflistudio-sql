@@ -1,0 +1,10 @@
+packaged-JSON sqlite examples passed: 120
+packaged-JSON exercise answers executed cleanly: 240/240
+mysql not executed: 6
+  SKIP sql-tutorial-121 (MySQL 8.0): requires MySQL
+  SKIP sql-tutorial-122 (MySQL 8.0): requires MySQL
+  SKIP sql-tutorial-123 (MySQL 8.0): requires MySQL
+  SKIP sql-tutorial-124 (MySQL 8.0): requires MySQL
+  SKIP sql-tutorial-125 (MySQL 8.0): requires MySQL
+  SKIP sql-tutorial-126 (MySQL 8.0): requires MySQL
+all packaged-JSON script executions matched the authored lesson output

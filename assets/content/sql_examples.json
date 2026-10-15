@@ -1,0 +1,3389 @@
+{
+  "schemaVersion": 1,
+  "language": "sql",
+  "type": "sql",
+  "locale": "zh-CN",
+  "updatedAt": "2026-10-12",
+  "entries": [
+    {
+      "id": "sql-example-001",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 1：SELECT 基础与列选择",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 SELECT 指定要返回的列，并给列起别名",
+      "concepts": [
+        "SQLite 3.50",
+        "SELECT",
+        "投影",
+        "列别名"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT NOT NULL, salary REAL NOT NULL);\nINSERT INTO employees (id, name, salary) VALUES\n  (1, 'Alice', 12000.0),\n  (2, 'Bob', 9000.0),\n  (3, 'Carol', 15000.0);\nSELECT name AS 姓名, salary AS 月薪 FROM employees ORDER BY salary DESC;\n",
+      "output": "Carol|15000.0\nAlice|12000.0\nBob|9000.0",
+      "expectedOutput": "Carol|15000.0\nAlice|12000.0\nBob|9000.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-001-lesson"
+    },
+    {
+      "id": "sql-example-002",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 2：WHERE 行过滤入门",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 WHERE 和比较运算符筛选满足条件的行",
+      "concepts": [
+        "SQLite 3.50",
+        "WHERE",
+        "比较运算符"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT NOT NULL, price REAL NOT NULL);\nINSERT INTO products VALUES\n  (1, '键盘', 199.0),\n  (2, '鼠标', 89.0),\n  (3, '显示器', 899.0),\n  (4, 'U盘', 100.0);\nSELECT id, name, price FROM products WHERE price > 100 ORDER BY id;\n",
+      "output": "1|键盘|199.0\n3|显示器|899.0",
+      "expectedOutput": "1|键盘|199.0\n3|显示器|899.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-002-lesson"
+    },
+    {
+      "id": "sql-example-003",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 3：逻辑运算符与优先级",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：组合多个条件并用括号控制优先级",
+      "concepts": [
+        "SQLite 3.50",
+        "AND",
+        "OR",
+        "NOT",
+        "括号"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE staff (id INTEGER PRIMARY KEY, name TEXT, department TEXT, active INTEGER);\nINSERT INTO staff VALUES\n  (1, 'Alice', 'sales', 1),\n  (2, 'Bob', 'sales', 0),\n  (3, 'Carol', 'support', 1),\n  (4, 'Dave', 'engineering', 1);\nSELECT id, name FROM staff WHERE (department = 'sales' OR department = 'support') AND active = 1 ORDER BY id;\n",
+      "output": "1|Alice\n3|Carol",
+      "expectedOutput": "1|Alice\n3|Carol",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-003-lesson"
+    },
+    {
+      "id": "sql-example-004",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 4：BETWEEN 与 IN 区间判断",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 BETWEEN 表示闭区间、用 IN 表示集合成员",
+      "concepts": [
+        "SQLite 3.50",
+        "BETWEEN",
+        "IN",
+        "范围"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE scores (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);\nINSERT INTO scores VALUES\n  (1, 'Alice', 75),\n  (2, 'Bob', 80),\n  (3, 'Carol', 59),\n  (4, 'Dave', 60),\n  (5, 'Eve', 95);\nSELECT name, score FROM scores WHERE score BETWEEN 60 AND 80 ORDER BY score, name;\n",
+      "output": "Dave|60\nAlice|75\nBob|80",
+      "expectedOutput": "Dave|60\nAlice|75\nBob|80",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-004-lesson"
+    },
+    {
+      "id": "sql-example-005",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 5：LIKE 模式匹配",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 LIKE 的 % 与 _ 通配符做模糊匹配",
+      "concepts": [
+        "SQLite 3.50",
+        "LIKE",
+        "通配符",
+        "ESCAPE"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT);\nINSERT INTO users VALUES\n  (1, 'alice@example.com'),\n  (2, 'bob@example.com'),\n  (3, 'amy@test.org'),\n  (4, 'adam@example.com');\nSELECT id, email FROM users WHERE email LIKE 'a%.com' ORDER BY id;\n",
+      "output": "1|alice@example.com\n4|adam@example.com",
+      "expectedOutput": "1|alice@example.com\n4|adam@example.com",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-005-lesson"
+    },
+    {
+      "id": "sql-example-006",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 6：ORDER BY 排序与多列排序",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用单列和多列排序并指定升降序",
+      "concepts": [
+        "SQLite 3.50",
+        "ORDER BY",
+        "ASC",
+        "DESC"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE emp (id INTEGER PRIMARY KEY, name TEXT, dept TEXT, salary INTEGER);\nINSERT INTO emp VALUES\n  (1, 'Alice', 'sales', 9000),\n  (2, 'Bob', 'sales', 12000),\n  (3, 'Carol', 'engineering', 8000),\n  (4, 'Dave', 'engineering', 15000);\nSELECT dept, name, salary FROM emp ORDER BY dept ASC, salary DESC;\n",
+      "output": "engineering|Dave|15000\nengineering|Carol|8000\nsales|Bob|12000\nsales|Alice|9000",
+      "expectedOutput": "engineering|Dave|15000\nengineering|Carol|8000\nsales|Bob|12000\nsales|Alice|9000",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-006-lesson"
+    },
+    {
+      "id": "sql-example-007",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 7：LIMIT 与 OFFSET 分页",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 LIMIT/OFFSET 取前 N 行并分页",
+      "concepts": [
+        "SQLite 3.50",
+        "LIMIT",
+        "OFFSET",
+        "分页"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE logs (id INTEGER PRIMARY KEY, message TEXT);\nINSERT INTO logs VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');\nSELECT id, message FROM logs ORDER BY id LIMIT 2 OFFSET 2;\n",
+      "output": "3|c\n4|d",
+      "expectedOutput": "3|c\n4|d",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-007-lesson"
+    },
+    {
+      "id": "sql-example-008",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 8：DISTINCT 去重",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 DISTINCT 去掉结果中的重复行",
+      "concepts": [
+        "SQLite 3.50",
+        "DISTINCT",
+        "去重"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'alice',100),(2,'alice',200),(3,'bob',150),(4,'bob',150);\nSELECT DISTINCT customer FROM orders ORDER BY customer;\n",
+      "output": "alice\nbob",
+      "expectedOutput": "alice\nbob",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-008-lesson"
+    },
+    {
+      "id": "sql-example-009",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 9：表达式与计算列",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：在 SELECT 中做算术运算并理解优先级",
+      "concepts": [
+        "SQLite 3.50",
+        "算术表达式",
+        "运算符优先级",
+        "计算列"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE order_items (id INTEGER PRIMARY KEY, price REAL, qty INTEGER);\nINSERT INTO order_items VALUES (1, 19.5, 3), (2, 100.0, 2);\nSELECT id, price, qty, price * qty AS subtotal FROM order_items ORDER BY id;\n",
+      "output": "1|19.5|3|58.5\n2|100.0|2|200.0",
+      "expectedOutput": "1|19.5|3|58.5\n2|100.0|2|200.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-009-lesson"
+    },
+    {
+      "id": "sql-example-010",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 10：类型亲和与 CAST",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解 SQLite 动态类型并用 CAST 显式转换",
+      "concepts": [
+        "SQLite 3.50",
+        "类型亲和",
+        "CAST",
+        "隐式转换"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE raw (id INTEGER PRIMARY KEY, value TEXT);\nINSERT INTO raw VALUES (1, '42'), (2, '7');\nSELECT id, CAST(value AS INTEGER) + 1 AS next_int FROM raw ORDER BY id;\n",
+      "output": "1|43\n2|8",
+      "expectedOutput": "1|43\n2|8",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-010-lesson"
+    },
+    {
+      "id": "sql-example-011",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 11：表别名与列限定名",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用表别名简写并消除列名歧义",
+      "concepts": [
+        "SQLite 3.50",
+        "表别名",
+        "限定列名"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, salary INTEGER);\nINSERT INTO employees VALUES (1,'Alice',9000),(2,'Bob',12000);\nSELECT e.name, e.salary FROM employees AS e WHERE e.salary > 10000 ORDER BY e.id;\n",
+      "output": "Bob|12000",
+      "expectedOutput": "Bob|12000",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-011-lesson"
+    },
+    {
+      "id": "sql-example-012",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 12：SELECT 结果集与列顺序",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解结果列顺序由 SELECT 决定并可显式控制",
+      "concepts": [
+        "SQLite 3.50",
+        "投影",
+        "结果稳定性"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO t VALUES (1,'Alice'),(2,'Bob');\nSELECT name, id FROM t ORDER BY id;\n",
+      "output": "Alice|1\nBob|2",
+      "expectedOutput": "Alice|1\nBob|2",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-012-lesson"
+    },
+    {
+      "id": "sql-example-013",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 13：排序中的 NULL 位置",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：控制 NULL 在排序结果中的位置",
+      "concepts": [
+        "SQLite 3.50",
+        "NULL",
+        "NULLS FIRST",
+        "NULLS LAST"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE exam (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);\nINSERT INTO exam VALUES (1,'Alice',90),(2,'Bob',NULL),(3,'Carol',60);\nSELECT name, score FROM exam ORDER BY score ASC NULLS LAST, name;\n",
+      "output": "Carol|60\nAlice|90\nBob|",
+      "expectedOutput": "Carol|60\nAlice|90\nBob|",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-013-lesson"
+    },
+    {
+      "id": "sql-example-014",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 14：综合练习：单表查询",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：组合过滤、排序与分页完成单表查询",
+      "concepts": [
+        "SQLite 3.50",
+        "WHERE",
+        "ORDER BY",
+        "LIMIT",
+        "DISTINCT"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES\n  (1,'north',150),(2,'south',90),(3,'north',300),\n  (4,'east',120),(5,'south',500),(6,'east',80);\nSELECT id, region, amount FROM sales WHERE amount >= 100 ORDER BY amount DESC LIMIT 3;\n",
+      "output": "5|south|500\n3|north|300\n1|north|150",
+      "expectedOutput": "5|south|500\n3|north|300\n1|north|150",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-014-lesson"
+    },
+    {
+      "id": "sql-example-015",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 15：字符串函数（上）：长度与截取",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 length、substr 处理字符串长度与子串",
+      "concepts": [
+        "SQLite 3.50",
+        "length",
+        "substr",
+        "字符串"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE people (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO people VALUES (1,'Alice'),(2,'Bob'),(3,'Charlotte');\nSELECT id, name, length(name) AS len, substr(name,1,1) AS initial FROM people ORDER BY id;\n",
+      "output": "1|Alice|5|A\n2|Bob|3|B\n3|Charlotte|9|C",
+      "expectedOutput": "1|Alice|5|A\n2|Bob|3|B\n3|Charlotte|9|C",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-015-lesson"
+    },
+    {
+      "id": "sql-example-016",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 16：字符串函数（下）：拼接、替换、大小写",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用拼接、替换、大小写和去空白函数清洗文本",
+      "concepts": [
+        "SQLite 3.50",
+        "||",
+        "replace",
+        "upper",
+        "lower",
+        "trim"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE accounts (id INTEGER PRIMARY KEY, user_name TEXT, domain TEXT);\nINSERT INTO accounts VALUES (1,'alice','example.com'),(2,'  bob  ','test.org');\nSELECT id, upper(trim(user_name)) AS uname, trim(user_name) || '@' || domain AS email FROM accounts ORDER BY id;\n",
+      "output": "1|ALICE|alice@example.com\n2|BOB|bob@test.org",
+      "expectedOutput": "1|ALICE|alice@example.com\n2|BOB|bob@test.org",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-016-lesson"
+    },
+    {
+      "id": "sql-example-017",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 17：数值函数与舍入",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用数值函数处理取绝对值与舍入",
+      "concepts": [
+        "SQLite 3.50",
+        "abs",
+        "round",
+        "max",
+        "min"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE txn (id INTEGER PRIMARY KEY, balance REAL);\nINSERT INTO txn VALUES (1, 10.456), (2, -3.2), (3, 5.0);\nSELECT id, balance, abs(balance) AS a, round(abs(balance), 1) AS r FROM txn ORDER BY id;\n",
+      "output": "1|10.456|10.456|10.5\n2|-3.2|3.2|3.2\n3|5.0|5.0|5.0",
+      "expectedOutput": "1|10.456|10.456|10.5\n2|-3.2|3.2|3.2\n3|5.0|5.0|5.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-017-lesson"
+    },
+    {
+      "id": "sql-example-018",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 18：日期时间函数入门",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用日期函数提取日期部分并做时间运算",
+      "concepts": [
+        "SQLite 3.50",
+        "date",
+        "datetime",
+        "julianday"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE shipments (id INTEGER PRIMARY KEY, shipped_at TEXT);\nINSERT INTO shipments VALUES (1,'2026-01-01'),(2,'2026-02-28');\nSELECT id, shipped_at, date(shipped_at, '+1 day') AS eta FROM shipments ORDER BY id;\n",
+      "output": "1|2026-01-01|2026-01-02\n2|2026-02-28|2026-03-01",
+      "expectedOutput": "1|2026-01-01|2026-01-02\n2|2026-02-28|2026-03-01",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-018-lesson"
+    },
+    {
+      "id": "sql-example-019",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 19：日期时间运算与格式化",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：计算两个日期之间的天数并按格式输出",
+      "concepts": [
+        "SQLite 3.50",
+        "julianday",
+        "strftime",
+        "日期差"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE trips (id INTEGER PRIMARY KEY, start_date TEXT, end_date TEXT);\nINSERT INTO trips VALUES (1,'2026-01-01','2026-01-05'),(2,'2026-03-01','2026-03-11');\nSELECT id, CAST(julianday(end_date) - julianday(start_date) AS INTEGER) AS days, strftime('%Y-%m', start_date) AS ym FROM trips ORDER BY id;\n",
+      "output": "1|4|2026-01\n2|10|2026-03",
+      "expectedOutput": "1|4|2026-01\n2|10|2026-03",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-019-lesson"
+    },
+    {
+      "id": "sql-example-020",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 20：NULL 语义与三值逻辑",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解 NULL 表示未知以及三值逻辑的判定",
+      "concepts": [
+        "SQLite 3.50",
+        "NULL",
+        "IS NULL",
+        "三值逻辑"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE emp (id INTEGER PRIMARY KEY, name TEXT, manager_id INTEGER);\nINSERT INTO emp VALUES (1,'Alice',NULL),(2,'Bob',1),(3,'Carol',1),(4,'Dave',NULL);\nSELECT id, name FROM emp WHERE manager_id IS NULL ORDER BY id;\n",
+      "output": "1|Alice\n4|Dave",
+      "expectedOutput": "1|Alice\n4|Dave",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-020-lesson"
+    },
+    {
+      "id": "sql-example-021",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 21：COALESCE 与 IFNULL",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 COALESCE/IFNULL 为 NULL 提供默认值",
+      "concepts": [
+        "SQLite 3.50",
+        "COALESCE",
+        "IFNULL",
+        "默认值"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE items (id INTEGER PRIMARY KEY, price REAL, discount REAL);\nINSERT INTO items VALUES (1,100.0,NULL),(2,200.0,10.0);\nSELECT id, price, COALESCE(discount,0) AS d, price - COALESCE(discount,0) AS net FROM items ORDER BY id;\n",
+      "output": "1|100.0|0|100.0\n2|200.0|10.0|190.0",
+      "expectedOutput": "1|100.0|0|100.0\n2|200.0|10.0|190.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-021-lesson"
+    },
+    {
+      "id": "sql-example-022",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 22：NULLIF 与空字符串处理",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 NULLIF 把特定值转为 NULL，常用于除零保护",
+      "concepts": [
+        "SQLite 3.50",
+        "NULLIF",
+        "空字符串",
+        "除零保护"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE ratio (id INTEGER PRIMARY KEY, num INTEGER, den INTEGER);\nINSERT INTO ratio VALUES (1,10,2),(2,10,0),(3,0,5);\nSELECT id, num / NULLIF(den,0) AS q FROM ratio ORDER BY id;\n",
+      "output": "1|5\n2|\n3|0",
+      "expectedOutput": "1|5\n2|\n3|0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-022-lesson"
+    },
+    {
+      "id": "sql-example-023",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 23：CASE 简单表达式",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用简单 CASE 把取值映射为标签",
+      "concepts": [
+        "SQLite 3.50",
+        "CASE",
+        "映射"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, code INTEGER);\nINSERT INTO orders VALUES (1,1),(2,2),(3,3),(4,9);\nSELECT id, CASE code WHEN 1 THEN '新建' WHEN 2 THEN '已支付' WHEN 3 THEN '已发货' ELSE '未知' END AS status FROM orders ORDER BY id;\n",
+      "output": "1|新建\n2|已支付\n3|已发货\n4|未知",
+      "expectedOutput": "1|新建\n2|已支付\n3|已发货\n4|未知",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-023-lesson"
+    },
+    {
+      "id": "sql-example-024",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 24：CASE 搜索表达式与分桶",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用搜索 CASE 按区间把数值分桶",
+      "concepts": [
+        "SQLite 3.50",
+        "CASE",
+        "分桶",
+        "区间"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE grades (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);\nINSERT INTO grades VALUES (1,'Alice',95),(2,'Bob',82),(3,'Carol',60),(4,'Dave',45);\nSELECT name, score, CASE WHEN score >= 90 THEN 'A' WHEN score >= 80 THEN 'B' WHEN score >= 60 THEN 'C' ELSE 'D' END AS grade FROM grades ORDER BY id;\n",
+      "output": "Alice|95|A\nBob|82|B\nCarol|60|C\nDave|45|D",
+      "expectedOutput": "Alice|95|A\nBob|82|B\nCarol|60|C\nDave|45|D",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-024-lesson"
+    },
+    {
+      "id": "sql-example-025",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 25：IIF 与条件表达式",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 IIF 写简洁的二元条件",
+      "concepts": [
+        "SQLite 3.50",
+        "IIF",
+        "条件"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE stock (id INTEGER PRIMARY KEY, name TEXT, qty INTEGER);\nINSERT INTO stock VALUES (1,'pen',0),(2,'book',10),(3,'bag',0);\nSELECT id, name, IIF(qty = 0, '缺货', '有货') AS label FROM stock ORDER BY id;\n",
+      "output": "1|pen|缺货\n2|book|有货\n3|bag|缺货",
+      "expectedOutput": "1|pen|缺货\n2|book|有货\n3|bag|缺货",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-025-lesson"
+    },
+    {
+      "id": "sql-example-026",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 26：类型转换与 ROUND/TRUNC 取舍",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：区分四舍五入与截断并选择合适转换",
+      "concepts": [
+        "SQLite 3.50",
+        "CAST",
+        "ROUND",
+        "截断"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE vals (id INTEGER PRIMARY KEY, v REAL);\nINSERT INTO vals VALUES (1,2.6),(2,-2.6),(3,2.4);\nSELECT id, v, round(v) AS r, CAST(v AS INTEGER) AS t FROM vals ORDER BY id;\n",
+      "output": "1|2.6|3.0|2\n2|-2.6|-3.0|-2\n3|2.4|2.0|2",
+      "expectedOutput": "1|2.6|3.0|2\n2|-2.6|-3.0|-2\n3|2.4|2.0|2",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-026-lesson"
+    },
+    {
+      "id": "sql-example-027",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 27：字符串分割与拼接技巧",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 instr/substr 解析简单分隔字符串",
+      "concepts": [
+        "SQLite 3.50",
+        "instr",
+        "substr",
+        "group_concat"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE kv (id INTEGER PRIMARY KEY, pair TEXT);\nINSERT INTO kv VALUES (1,'name:alice'),(2,'city:beijing');\nSELECT id, substr(pair,1,instr(pair,':')-1) AS k, substr(pair,instr(pair,':')+1) AS v FROM kv ORDER BY id;\n",
+      "output": "1|name|alice\n2|city|beijing",
+      "expectedOutput": "1|name|alice\n2|city|beijing",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-027-lesson"
+    },
+    {
+      "id": "sql-example-028",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 28：随机数与唯一标识生成",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 random/hex/randomblob 生成随机数与伪 UUID",
+      "concepts": [
+        "SQLite 3.50",
+        "random",
+        "hex",
+        "randomblob"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE tokens (id INTEGER PRIMARY KEY, token TEXT);\nINSERT INTO tokens VALUES (1,'') ,(2,'');\nSELECT id, length(lower(hex(randomblob(16)))) AS n FROM tokens ORDER BY id;\n",
+      "output": "1|32\n2|32",
+      "expectedOutput": "1|32\n2|32",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-028-lesson"
+    },
+    {
+      "id": "sql-example-029",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 29：GLOB 与模式匹配差异",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：区分 LIKE 与 GLOB 的匹配规则",
+      "concepts": [
+        "SQLite 3.50",
+        "GLOB",
+        "通配符",
+        "大小写"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE words (id INTEGER PRIMARY KEY, w TEXT);\nINSERT INTO words VALUES (1,'Apple'),(2,'apple'),(3,'Apricot'),(4,'banana');\nSELECT id, w FROM words WHERE w GLOB 'A*' ORDER BY id;\n",
+      "output": "1|Apple\n3|Apricot",
+      "expectedOutput": "1|Apple\n3|Apricot",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-029-lesson"
+    },
+    {
+      "id": "sql-example-030",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 30：综合练习：表达式与函数",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：组合函数完成一个清洗与分类查询",
+      "concepts": [
+        "SQLite 3.50",
+        "CASE",
+        "COALESCE",
+        "字符串",
+        "函数组合"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE raw_orders (id INTEGER PRIMARY KEY, customer TEXT, amount TEXT);\nINSERT INTO raw_orders VALUES (1,' alice ', '100'),(2,'BOB',''),(3,'Carol','250');\nSELECT id, upper(trim(customer)) AS c, COALESCE(CAST(amount AS INTEGER),0) AS a, CASE WHEN COALESCE(CAST(amount AS INTEGER),0) >= 200 THEN '高' ELSE '低' END AS tier FROM raw_orders ORDER BY id;\n",
+      "output": "1|ALICE|100|低\n2|BOB|0|低\n3|CAROL|250|高",
+      "expectedOutput": "1|ALICE|100|低\n2|BOB|0|低\n3|CAROL|250|高",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-030-lesson"
+    },
+    {
+      "id": "sql-example-031",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 31：COUNT 的三种写法与差异",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：区分 COUNT(*)、COUNT(列) 与 COUNT(DISTINCT 列)",
+      "concepts": [
+        "SQLite 3.50",
+        "COUNT(*)",
+        "COUNT(col)",
+        "COUNT(DISTINCT)"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE members (id INTEGER PRIMARY KEY, city TEXT, email TEXT);\nINSERT INTO members VALUES (1,'beijing','a@x.com'),(2,'beijing',NULL),(3,'shanghai','c@x.com'),(4,'shenzhen',NULL);\nSELECT COUNT(*) AS rows, COUNT(email) AS with_email, COUNT(DISTINCT city) AS cities FROM members;\n",
+      "output": "4|2|3",
+      "expectedOutput": "4|2|3",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-031-lesson"
+    },
+    {
+      "id": "sql-example-032",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 32：SUM/AVG/MIN/MAX",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用四个基本聚合函数做汇总",
+      "concepts": [
+        "SQLite 3.50",
+        "SUM",
+        "AVG",
+        "MIN",
+        "MAX"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, amount REAL);\nINSERT INTO orders VALUES (1,100),(2,80),(3,250),(4,NULL),(5,100);\nSELECT SUM(amount) AS total, AVG(amount) AS avg_amt, MIN(amount) AS lo, MAX(amount) AS hi FROM orders;\n",
+      "output": "530.0|132.5|80.0|250.0",
+      "expectedOutput": "530.0|132.5|80.0|250.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-032-lesson"
+    },
+    {
+      "id": "sql-example-033",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 33：GROUP BY 分组基础",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：按分组列对数据分组并聚合",
+      "concepts": [
+        "SQLite 3.50",
+        "GROUP BY",
+        "分组聚合"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'north',150),(4,'south',50);\nSELECT region, SUM(amount) AS total FROM sales GROUP BY region ORDER BY region;\n",
+      "output": "north|250\nsouth|250",
+      "expectedOutput": "north|250\nsouth|250",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-033-lesson"
+    },
+    {
+      "id": "sql-example-034",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 34：HAVING 过滤分组",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 HAVING 在聚合后过滤分组",
+      "concepts": [
+        "SQLite 3.50",
+        "HAVING",
+        "分组过滤"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'north',50),(4,'east',500);\nSELECT region, SUM(amount) AS total FROM sales GROUP BY region HAVING SUM(amount) >= 200 ORDER BY region;\n",
+      "output": "east|500\nsouth|200",
+      "expectedOutput": "east|500\nsouth|200",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-034-lesson"
+    },
+    {
+      "id": "sql-example-035",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 35：GROUP BY 多列与聚合顺序",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：按多列组合分组并理解分组粒度",
+      "concepts": [
+        "SQLite 3.50",
+        "GROUP BY 多列",
+        "组合键"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, product TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north','pen',10),(2,'north','pen',20),(3,'north','book',50),(4,'south','pen',5);\nSELECT region, product, SUM(amount) AS total FROM sales GROUP BY region, product ORDER BY region, product;\n",
+      "output": "north|book|50\nnorth|pen|30\nsouth|pen|5",
+      "expectedOutput": "north|book|50\nnorth|pen|30\nsouth|pen|5",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-035-lesson"
+    },
+    {
+      "id": "sql-example-036",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 36：聚合与 NULL 的交互",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解聚合函数对 NULL 的处理规则",
+      "concepts": [
+        "SQLite 3.50",
+        "NULL",
+        "聚合",
+        "COUNT"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE scores (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);\nINSERT INTO scores VALUES (1,'Alice',90),(2,'Bob',NULL),(3,'Carol',90);\nSELECT COUNT(*) AS rows, COUNT(score) AS n, SUM(score) AS s, AVG(score) AS a FROM scores;\n",
+      "output": "3|2|180|90.0",
+      "expectedOutput": "3|2|180|90.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-036-lesson"
+    },
+    {
+      "id": "sql-example-037",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 37：GROUP_CONCAT 分组拼接",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 GROUP_CONCAT 把组内值拼成一个字符串",
+      "concepts": [
+        "SQLite 3.50",
+        "GROUP_CONCAT",
+        "分隔符"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, product TEXT);\nINSERT INTO sales VALUES (1,'north','pen'),(2,'north','book'),(3,'south','bag');\nSELECT region, GROUP_CONCAT(product, ',') AS products FROM sales GROUP BY region ORDER BY region;\n",
+      "output": "north|pen,book\nsouth|bag",
+      "expectedOutput": "north|pen,book\nsouth|bag",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-037-lesson"
+    },
+    {
+      "id": "sql-example-038",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 38：小计与总计（ROLLUP 思路）",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 UNION ALL 手工构造分组小计",
+      "concepts": [
+        "SQLite 3.50",
+        "ROLLUP",
+        "UNION ALL",
+        "小计"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'north',50);\nSELECT region, SUM(amount) AS total FROM sales GROUP BY region UNION ALL SELECT 'TOTAL', SUM(amount) FROM sales;\n",
+      "output": "north|150\nsouth|200\nTOTAL|350",
+      "expectedOutput": "north|150\nsouth|200\nTOTAL|350",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-038-lesson"
+    },
+    {
+      "id": "sql-example-039",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 39：聚合结果排序与分页",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：对分组结果排序后取前几名",
+      "concepts": [
+        "SQLite 3.50",
+        "ORDER BY",
+        "LIMIT",
+        "聚合"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'east',500),(4,'west',50);\nSELECT region, SUM(amount) AS total FROM sales GROUP BY region ORDER BY total DESC LIMIT 2;\n",
+      "output": "east|500\nsouth|200",
+      "expectedOutput": "east|500\nsouth|200",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-039-lesson"
+    },
+    {
+      "id": "sql-example-040",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 40：综合练习：销售汇总报表",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：组合分组、聚合、过滤与排序生成汇总报表",
+      "concepts": [
+        "SQLite 3.50",
+        "GROUP BY",
+        "HAVING",
+        "聚合",
+        "排序"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, region TEXT, product TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'north','pen',10),(2,'north','pen',20),(3,'north','book',15),(4,'south','pen',40),(5,'south','book',5);\nSELECT region, product, SUM(amount) AS total FROM orders GROUP BY region, product HAVING SUM(amount) >= 30 ORDER BY total DESC, region, product;\n",
+      "output": "south|pen|40\nnorth|pen|30",
+      "expectedOutput": "south|pen|40\nnorth|pen|30",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-040-lesson"
+    },
+    {
+      "id": "sql-example-041",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 41：CROSS JOIN 与笛卡尔积",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解 CROSS JOIN 生成所有组合的语义",
+      "concepts": [
+        "SQLite 3.50",
+        "CROSS JOIN",
+        "笛卡尔积"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE colors (name TEXT);\nINSERT INTO colors VALUES ('red'),('green'),('blue');\nCREATE TABLE sizes (label TEXT);\nINSERT INTO sizes VALUES ('S'),('M');\nSELECT colors.name, sizes.label FROM colors CROSS JOIN sizes;\n",
+      "output": "red|S\nred|M\ngreen|S\ngreen|M\nblue|S\nblue|M",
+      "expectedOutput": "red|S\nred|M\ngreen|S\ngreen|M\nblue|S\nblue|M",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-041-lesson"
+    },
+    {
+      "id": "sql-example-042",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 42：INNER JOIN 等值连接",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 INNER JOIN 按外键匹配两表并只保留匹配行",
+      "concepts": [
+        "SQLite 3.50",
+        "INNER JOIN",
+        "ON",
+        "等值连接"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE authors (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO authors VALUES (1,'Alice'),(2,'Bob'),(3,'Carol');\nCREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT, author_id INTEGER);\nINSERT INTO books VALUES (1,'SQL Basic',1),(2,'SQL Advanced',1),(3,'Data 101',2),(4,'Mystery',99);\nSELECT books.title, authors.name FROM books INNER JOIN authors ON books.author_id = authors.id ORDER BY books.id;\n",
+      "output": "SQL Basic|Alice\nSQL Advanced|Alice\nData 101|Bob",
+      "expectedOutput": "SQL Basic|Alice\nSQL Advanced|Alice\nData 101|Bob",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-042-lesson"
+    },
+    {
+      "id": "sql-example-043",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 43：三表连接与连接顺序",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：在一条语句里按顺序连接三张表",
+      "concepts": [
+        "SQLite 3.50",
+        "多表连接",
+        "ON 链"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO customers VALUES (1,'Ann'),(2,'Ben');\nCREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price INTEGER);\nINSERT INTO products VALUES (10,'pen',5),(20,'book',50);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, product_id INTEGER);\nINSERT INTO orders VALUES (1,1,10),(2,1,20),(3,2,10);\nSELECT orders.id, customers.name, products.name, products.price FROM orders INNER JOIN customers ON customers.id = orders.customer_id INNER JOIN products ON products.id = orders.product_id ORDER BY orders.id;\n",
+      "output": "1|Ann|pen|5\n2|Ann|book|50\n3|Ben|pen|5",
+      "expectedOutput": "1|Ann|pen|5\n2|Ann|book|50\n3|Ben|pen|5",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-043-lesson"
+    },
+    {
+      "id": "sql-example-044",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 44：LEFT JOIN 保留左表缺失行",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 LEFT JOIN 保留左表全部行，缺失的右表列填 NULL",
+      "concepts": [
+        "SQLite 3.50",
+        "LEFT JOIN",
+        "NULL 补位"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO customers VALUES (1,'Ann'),(2,'Ben'),(3,'Cara'),(4,'Dan');\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, amount INTEGER);\nINSERT INTO orders VALUES (101,1,30),(102,2,40),(103,2,60);\nSELECT customers.name, orders.id FROM customers LEFT JOIN orders ON orders.customer_id = customers.id ORDER BY customers.id;\n",
+      "output": "Ann|101\nBen|102\nBen|103\nCara|\nDan|",
+      "expectedOutput": "Ann|101\nBen|102\nBen|103\nCara|\nDan|",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-044-lesson"
+    },
+    {
+      "id": "sql-example-045",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 45：LEFT JOIN + IS NULL 反连接",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 LEFT JOIN 加 IS NULL 找出右表没有匹配的行",
+      "concepts": [
+        "SQLite 3.50",
+        "反连接",
+        "IS NULL",
+        "NOT EXISTS 等价"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO products VALUES (1,'pen'),(2,'book');\nCREATE TABLE orders (id INTEGER PRIMARY KEY, product_id INTEGER);\nINSERT INTO orders VALUES (1,1),(2,2),(3,1),(4,1),(5,99);\nSELECT orders.id, products.name FROM orders LEFT JOIN products ON products.id = orders.product_id WHERE products.id IS NULL ORDER BY orders.id;\n",
+      "output": "5|",
+      "expectedOutput": "5|",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-045-lesson"
+    },
+    {
+      "id": "sql-example-046",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 46：RIGHT JOIN 与左右对称",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解 RIGHT JOIN 语义并知道如何改写成 LEFT JOIN",
+      "concepts": [
+        "SQLite 3.50",
+        "RIGHT JOIN",
+        "改写为 LEFT JOIN"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE authors (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO authors VALUES (1,'Alice'),(2,'Bob'),(3,'Carol');\nCREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT, author_id INTEGER);\nINSERT INTO books VALUES (1,'SQL Basic',1),(2,'Data 101',2),(3,'Mystery',3);\nSELECT authors.name, books.title FROM books RIGHT JOIN authors ON books.author_id = authors.id ORDER BY authors.id;\n",
+      "output": "Alice|SQL Basic\nBob|Data 101\nCarol|Mystery",
+      "expectedOutput": "Alice|SQL Basic\nBob|Data 101\nCarol|Mystery",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-046-lesson"
+    },
+    {
+      "id": "sql-example-047",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 47：FULL OUTER JOIN 与方言说明",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：在 SQLite 中用 LEFT + RIGHT JOIN 的 UNION 模拟 FULL OUTER JOIN",
+      "concepts": [
+        "SQLite 3.50",
+        "FULL OUTER JOIN",
+        "UNION ALL",
+        "方言差异"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE a (id INTEGER);\nINSERT INTO a VALUES (1),(2),(3);\nCREATE TABLE b (id INTEGER);\nINSERT INTO b VALUES (2),(3),(4);\nSELECT a.id AS aid, b.id AS bid FROM a LEFT JOIN b ON a.id = b.id UNION SELECT a.id, b.id FROM a RIGHT JOIN b ON a.id = b.id ORDER BY 1, 2;\n",
+      "output": "|4\n1|\n2|2\n3|3",
+      "expectedOutput": "|4\n1|\n2|2\n3|3",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-047-lesson"
+    },
+    {
+      "id": "sql-example-048",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 48：自连接：同表比较",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：对同一张表做自连接以比较行之间的关系",
+      "concepts": [
+        "SQLite 3.50",
+        "自连接",
+        "别名"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, manager_id INTEGER);\nINSERT INTO employees VALUES (1,'Alice',NULL),(2,'Ben',1),(3,'Cara',1),(4,'Dan',2);\nSELECT e.name AS employee, m.name AS manager FROM employees e INNER JOIN employees m ON e.manager_id = m.id ORDER BY e.id;\n",
+      "output": "Ben|Alice\nCara|Alice\nDan|Ben",
+      "expectedOutput": "Ben|Alice\nCara|Alice\nDan|Ben",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-048-lesson"
+    },
+    {
+      "id": "sql-example-049",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 49：非等值（范围）连接",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用不等式或区间条件代替等值条件做连接",
+      "concepts": [
+        "SQLite 3.50",
+        "非等值连接",
+        "BETWEEN",
+        "范围匹配"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE grades (label TEXT, lo INTEGER, hi INTEGER);\nINSERT INTO grades VALUES ('C',60,70),('B',70,80),('A',80,90),('S',90,100);\nCREATE TABLE scores (student TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Ann',95),('Ben',85),('Cara',72);\nSELECT scores.student, scores.score, grades.label FROM scores INNER JOIN grades ON scores.score >= grades.lo AND scores.score < grades.hi ORDER BY scores.score DESC;\n",
+      "output": "Ann|95|S\nBen|85|A\nCara|72|B",
+      "expectedOutput": "Ann|95|S\nBen|85|A\nCara|72|B",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-049-lesson"
+    },
+    {
+      "id": "sql-example-050",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 50：USING 与 ON 的对比",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解 USING 对同名列的简写及其结果列合并行为",
+      "concepts": [
+        "SQLite 3.50",
+        "USING",
+        "ON",
+        "同名列"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (order_id INTEGER, customer TEXT);\nINSERT INTO orders VALUES (1,'Ann'),(2,'Ben');\nCREATE TABLE items (order_id INTEGER, product TEXT);\nINSERT INTO items VALUES (1,'pen'),(1,'book'),(2,'bag');\nSELECT order_id, customer, product FROM orders INNER JOIN items USING (order_id) ORDER BY order_id, product;\n",
+      "output": "1|Ann|book\n1|Ann|pen\n2|Ben|bag",
+      "expectedOutput": "1|Ann|book\n1|Ann|pen\n2|Ben|bag",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-050-lesson"
+    },
+    {
+      "id": "sql-example-051",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 51：连接后聚合",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：在连接结果上做分组聚合生成统计",
+      "concepts": [
+        "SQLite 3.50",
+        "JOIN",
+        "GROUP BY",
+        "聚合"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, city TEXT);\nINSERT INTO customers VALUES (1,'Ann','beijing'),(2,'Ben','shanghai'),(3,'Cara','beijing');\nCREATE TABLE sales (id INTEGER PRIMARY KEY, customer_id INTEGER, amount INTEGER);\nINSERT INTO sales VALUES (1,1,100),(2,3,150),(3,2,200);\nSELECT customers.city, SUM(sales.amount) AS total FROM sales INNER JOIN customers ON customers.id = sales.customer_id GROUP BY customers.city ORDER BY customers.city;\n",
+      "output": "beijing|250\nshanghai|200",
+      "expectedOutput": "beijing|250\nshanghai|200",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-051-lesson"
+    },
+    {
+      "id": "sql-example-052",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 52：综合练习：多表销售报表",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：综合多表连接、聚合、过滤与排序输出报表",
+      "concepts": [
+        "SQLite 3.50",
+        "多表连接",
+        "聚合",
+        "HAVING",
+        "排序"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, city TEXT);\nINSERT INTO customers VALUES (1,'Ann','beijing'),(2,'Ben','shanghai'),(3,'Cara','beijing');\nCREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price INTEGER);\nINSERT INTO products VALUES (10,'pen',30),(20,'book',80);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, product_id INTEGER, qty INTEGER);\nINSERT INTO orders VALUES (1,1,10,1),(2,3,10,1),(3,2,20,1),(4,1,10,1);\nSELECT customers.city, products.name, SUM(products.price * orders.qty) AS total FROM orders INNER JOIN customers ON customers.id = orders.customer_id INNER JOIN products ON products.id = orders.product_id GROUP BY customers.city, products.name HAVING SUM(products.price * orders.qty) >= 60 ORDER BY total DESC;\n",
+      "output": "beijing|pen|90\nshanghai|book|80",
+      "expectedOutput": "beijing|pen|90\nshanghai|book|80",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-052-lesson"
+    },
+    {
+      "id": "sql-example-053",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 53：标量子查询",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：在 SELECT 列表中用只返回单值的子查询",
+      "concepts": [
+        "SQLite 3.50",
+        "标量子查询",
+        "SELECT 中嵌套"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE scores (name TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Ann',95),('Ben',85),('Cara',75);\nSELECT name, score, score - (SELECT AVG(score) FROM scores) AS diff FROM scores ORDER BY score DESC;\n",
+      "output": "Ann|95|10.0\nBen|85|0.0\nCara|75|-10.0",
+      "expectedOutput": "Ann|95|10.0\nBen|85|0.0\nCara|75|-10.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-053-lesson"
+    },
+    {
+      "id": "sql-example-054",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 54：IN 子查询",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 IN 判断某列是否出现在子查询结果集中",
+      "concepts": [
+        "SQLite 3.50",
+        "IN",
+        "子查询"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO customers VALUES (1,'Ann'),(2,'Ben'),(3,'Cara'),(4,'Dan');\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER);\nINSERT INTO orders VALUES (1,1),(2,3),(3,1);\nSELECT name FROM customers WHERE id IN (SELECT customer_id FROM orders) ORDER BY id;\n",
+      "output": "Ann\nCara",
+      "expectedOutput": "Ann\nCara",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-054-lesson"
+    },
+    {
+      "id": "sql-example-055",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 55：NOT IN 与 NULL 陷阱",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解 NOT IN 遇上 NULL 会返回空结果的陷阱并给出替代",
+      "concepts": [
+        "SQLite 3.50",
+        "NOT IN",
+        "NULL",
+        "三值逻辑"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT);\nINSERT INTO users VALUES (1,'a@x.com'),(2,'b@x.com'),(3,'c@x.com');\nCREATE TABLE blocked (email TEXT);\nINSERT INTO blocked VALUES ('b@x.com'),(NULL);\nSELECT id FROM users WHERE email NOT IN (SELECT email FROM blocked);\n",
+      "output": "(no rows)",
+      "expectedOutput": "(no rows)",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-055-lesson"
+    },
+    {
+      "id": "sql-example-056",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 56：EXISTS 相关存在性",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 EXISTS 判断是否至少存在一条匹配行",
+      "concepts": [
+        "SQLite 3.50",
+        "EXISTS",
+        "半连接"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO customers VALUES (1,'Ann'),(2,'Ben'),(3,'Cara');\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, amount INTEGER);\nINSERT INTO orders VALUES (1,1,30),(2,3,40),(3,3,50);\nSELECT name FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id) ORDER BY c.id;\n",
+      "output": "Ann\nCara",
+      "expectedOutput": "Ann\nCara",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-056-lesson"
+    },
+    {
+      "id": "sql-example-057",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 57：NOT EXISTS 反存在",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 NOT EXISTS 找出右表不存在匹配的左表行",
+      "concepts": [
+        "SQLite 3.50",
+        "NOT EXISTS",
+        "反连接"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO customers VALUES (1,'Ann'),(2,'Ben'),(3,'Cara');\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER);\nINSERT INTO orders VALUES (1,1),(2,3),(3,1);\nSELECT name FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id) ORDER BY c.id;\n",
+      "output": "Ben",
+      "expectedOutput": "Ben",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-057-lesson"
+    },
+    {
+      "id": "sql-example-058",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 58：相关子查询",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：让子查询引用外层行，实现逐分组比较",
+      "concepts": [
+        "SQLite 3.50",
+        "相关子查询",
+        "逐行求值"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE scores (name TEXT, city TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Ann','beijing',95),('Ben','beijing',80),('Cara','shanghai',88),('Dan','shanghai',70);\nSELECT s.name, s.city FROM scores s WHERE s.score = (SELECT MAX(x.score) FROM scores x WHERE x.city = s.city) ORDER BY s.city;\n",
+      "output": "Ann|beijing\nCara|shanghai",
+      "expectedOutput": "Ann|beijing\nCara|shanghai",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-058-lesson"
+    },
+    {
+      "id": "sql-example-059",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 59：FROM 子查询（派生表）",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：把子查询当作临时表在 FROM 中使用",
+      "concepts": [
+        "SQLite 3.50",
+        "派生表",
+        "FROM 子查询",
+        "别名"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'north',50),(3,'south',200),(4,'east',40);\nSELECT t.region, t.total FROM (SELECT region, SUM(amount) AS total FROM sales GROUP BY region) AS t WHERE t.total > 100 ORDER BY t.total DESC;\n",
+      "output": "south|200\nnorth|150",
+      "expectedOutput": "south|200\nnorth|150",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-059-lesson"
+    },
+    {
+      "id": "sql-example-060",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 60：子查询改写为连接",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：把相关子查询重写成连接以获得更好的执行计划",
+      "concepts": [
+        "SQLite 3.50",
+        "子查询 vs JOIN",
+        "重写"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',40),(4,'Ben',10);\nSELECT o.customer, MAX(o.amount) AS top FROM orders o GROUP BY o.customer ORDER BY o.customer;\n",
+      "output": "Ann|60\nBen|40",
+      "expectedOutput": "Ann|60\nBen|40",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-060-lesson"
+    },
+    {
+      "id": "sql-example-061",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 61：ANY 与 ALL 比较",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解 SQL 标准量化比较语义并用 MIN/MAX 等价表达",
+      "concepts": [
+        "SQLite 3.50",
+        "ANY",
+        "ALL",
+        "量化比较"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE scores (name TEXT, city TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Ann','beijing',95),('Ben','beijing',80),('Cara','shanghai',88),('Dan','shanghai',70);\nSELECT name, score FROM scores WHERE score > (SELECT MAX(score) FROM scores WHERE city = 'shanghai') ORDER BY score DESC;\n",
+      "output": "Ann|95",
+      "expectedOutput": "Ann|95",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-061-lesson"
+    },
+    {
+      "id": "sql-example-062",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 62：综合练习：子查询组合报表",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：组合多种子查询形式完成综合分析",
+      "concepts": [
+        "SQLite 3.50",
+        "子查询",
+        "聚合",
+        "EXISTS"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',40),(4,'Cara',50);\nSELECT customer, SUM(amount) AS total FROM orders GROUP BY customer HAVING SUM(amount) > (SELECT AVG(amount) FROM orders) ORDER BY total DESC;\n",
+      "output": "Ann|90\nCara|50",
+      "expectedOutput": "Ann|90\nCara|50",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-062-lesson"
+    },
+    {
+      "id": "sql-example-063",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "beginner",
+      "title": "示例 63：WITH 基础",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 WITH 定义可读性更好的命名临时结果集",
+      "concepts": [
+        "SQLite 3.50",
+        "WITH",
+        "CTE",
+        "命名子查询"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);\nINSERT INTO sales VALUES (1,'north',100),(2,'north',50),(3,'south',200),(4,'east',40);\nWITH regional AS (SELECT region, SUM(amount) AS total FROM sales GROUP BY region)\nSELECT region, total FROM regional WHERE total > 100 ORDER BY total DESC;\n",
+      "output": "south|200\nnorth|150",
+      "expectedOutput": "south|200\nnorth|150",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-063-lesson"
+    },
+    {
+      "id": "sql-example-064",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 64：多个 CTE 与链式引用",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：定义多个 CTE 并让后者引用前者",
+      "concepts": [
+        "SQLite 3.50",
+        "多重 CTE",
+        "链式引用"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',20),(4,'Cara',50);\nWITH orders_total AS (SELECT customer, SUM(amount) AS total FROM orders GROUP BY customer),\n     big_spenders AS (SELECT customer, total FROM orders_total WHERE total >= 50)\nSELECT customer, total FROM big_spenders ORDER BY total DESC;\n",
+      "output": "Ann|90\nCara|50",
+      "expectedOutput": "Ann|90\nCara|50",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-064-lesson"
+    },
+    {
+      "id": "sql-example-065",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 65：CTE 与子查询的取舍",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：根据复用次数与可读性在 CTE 与子查询间选择",
+      "concepts": [
+        "SQLite 3.50",
+        "CTE",
+        "派生表",
+        "可读性与性能"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',20),(4,'Cara',50);\nWITH totals AS (SELECT customer, SUM(amount) AS total FROM orders GROUP BY customer)\nSELECT (SELECT MAX(total) FROM totals) AS best, (SELECT COUNT(*) FROM totals) AS n;\n",
+      "output": "90|3",
+      "expectedOutput": "90|3",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-065-lesson"
+    },
+    {
+      "id": "sql-example-066",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 66：递归 CTE 基础",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 WITH RECURSIVE 生成序列",
+      "concepts": [
+        "SQLite 3.50",
+        "RECURSIVE",
+        "递归 CTE",
+        "基础项与递归项"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE seed (n INTEGER);\nINSERT INTO seed VALUES (1);\nWITH RECURSIVE seq(n) AS (\n  SELECT n FROM seed\n  UNION ALL\n  SELECT n + 1 FROM seq WHERE n < 5\n)\nSELECT n FROM seq;\n",
+      "output": "1\n2\n3\n4\n5",
+      "expectedOutput": "1\n2\n3\n4\n5",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-066-lesson"
+    },
+    {
+      "id": "sql-example-067",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 67：递归遍历层级",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用递归 CTE 展开组织/分类树并计算层级",
+      "concepts": [
+        "SQLite 3.50",
+        "递归 CTE",
+        "层级遍历",
+        "路径"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE org (id INTEGER PRIMARY KEY, name TEXT, parent_id INTEGER);\nINSERT INTO org VALUES (1,'CEO',NULL),(2,'Dept-A',1),(3,'Dept-B',1),(4,'Team-1',2);\nWITH RECURSIVE tree(id, name, depth) AS (\n  SELECT id, name, 0 FROM org WHERE parent_id IS NULL\n  UNION ALL\n  SELECT o.id, o.name, t.depth + 1 FROM org o JOIN tree t ON o.parent_id = t.id\n)\nSELECT name, depth FROM tree ORDER BY depth, id;\n",
+      "output": "CEO|0\nDept-A|1\nDept-B|1\nTeam-1|2",
+      "expectedOutput": "CEO|0\nDept-A|1\nDept-B|1\nTeam-1|2",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-067-lesson"
+    },
+    {
+      "id": "sql-example-068",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 68：递归生成序列与日期",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用递归 CTE 生成连续日期序列用于补齐报表",
+      "concepts": [
+        "SQLite 3.50",
+        "数字序列",
+        "日期序列",
+        "递归 CTE"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE holidays (d TEXT);\nINSERT INTO holidays VALUES ('2026-10-01');\nWITH RECURSIVE days(d, i) AS (\n  SELECT d, 1 FROM holidays\n  UNION ALL\n  SELECT date(d, '+1 day'), i + 1 FROM days WHERE i < 5\n)\nSELECT d FROM days;\n",
+      "output": "2026-10-01\n2026-10-02\n2026-10-03\n2026-10-04\n2026-10-05",
+      "expectedOutput": "2026-10-01\n2026-10-02\n2026-10-03\n2026-10-04\n2026-10-05",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-068-lesson"
+    },
+    {
+      "id": "sql-example-069",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 69：递归终止与环路防护",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用路径字符串检测环路并限制递归深度",
+      "concepts": [
+        "SQLite 3.50",
+        "递归终止",
+        "环路检测",
+        "深度上限"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE edges (src TEXT, dst TEXT);\nINSERT INTO edges VALUES ('A','B'),('B','C');\nWITH RECURSIVE path(node, route) AS (\n  SELECT 'A', ',A,'\n  UNION ALL\n  SELECT e.dst, p.route || e.dst || ',' FROM edges e JOIN path p ON e.src = p.node\n  WHERE instr(p.route, ',' || e.dst || ',') = 0\n)\nSELECT node FROM path ORDER BY length(route);\n",
+      "output": "A\nB\nC",
+      "expectedOutput": "A\nB\nC",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-069-lesson"
+    },
+    {
+      "id": "sql-example-070",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 70：综合练习：组织路径报表",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用递归 CTE 输出每名员工到根的完整路径",
+      "concepts": [
+        "SQLite 3.50",
+        "递归 CTE",
+        "路径拼接",
+        "聚合"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE org (id INTEGER PRIMARY KEY, name TEXT, parent_id INTEGER);\nINSERT INTO org VALUES (1,'CEO',NULL),(2,'Dept-A',1),(3,'Dept-B',1),(4,'Team-1',2);\nWITH RECURSIVE tree(id, path, depth) AS (\n  SELECT id, name, 0 FROM org WHERE parent_id IS NULL\n  UNION ALL\n  SELECT o.id, t.path || ' > ' || o.name, t.depth + 1 FROM org o JOIN tree t ON o.parent_id = t.id\n)\nSELECT path, depth FROM tree ORDER BY depth, id;\n",
+      "output": "CEO|0\nCEO > Dept-A|1\nCEO > Dept-B|1\nCEO > Dept-A > Team-1|2",
+      "expectedOutput": "CEO|0\nCEO > Dept-A|1\nCEO > Dept-B|1\nCEO > Dept-A > Team-1|2",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-070-lesson"
+    },
+    {
+      "id": "sql-example-071",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 71：窗口函数与 OVER 概念",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解窗口函数在保留明细行的同时计算分组统计",
+      "concepts": [
+        "SQLite 3.50",
+        "OVER",
+        "窗口函数",
+        "不折叠行"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',80),(4,'Cara',80);\nSELECT id, amount, SUM(amount) OVER () AS total FROM orders ORDER BY id;\n",
+      "output": "1|30|250\n2|60|250\n3|80|250\n4|80|250",
+      "expectedOutput": "1|30|250\n2|60|250\n3|80|250\n4|80|250",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-071-lesson"
+    },
+    {
+      "id": "sql-example-072",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 72：PARTITION BY 分组窗口",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 PARTITION BY 在客户内部分别计算汇总",
+      "concepts": [
+        "SQLite 3.50",
+        "PARTITION BY",
+        "分区"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',80),(4,'Cara',80);\nSELECT customer, amount, SUM(amount) OVER (PARTITION BY customer) AS cust_total FROM orders ORDER BY id;\n",
+      "output": "Ann|30|90\nAnn|60|90\nBen|80|80\nCara|80|80",
+      "expectedOutput": "Ann|30|90\nAnn|60|90\nBen|80|80\nCara|80|80",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-072-lesson"
+    },
+    {
+      "id": "sql-example-073",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 73：ORDER BY 与 ROWS/RANGE 窗口帧",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解带 ORDER BY 的窗口默认累计帧与显式帧的区别",
+      "concepts": [
+        "SQLite 3.50",
+        "窗口帧",
+        "ROWS",
+        "RANGE",
+        "累计"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO orders VALUES (1,30),(2,60),(3,80),(4,80);\nSELECT id, amount, SUM(amount) OVER (ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running FROM orders ORDER BY id;\n",
+      "output": "1|30|30\n2|60|90\n3|80|170\n4|80|250",
+      "expectedOutput": "1|30|30\n2|60|90\n3|80|170\n4|80|250",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-073-lesson"
+    },
+    {
+      "id": "sql-example-074",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 74：ROW_NUMBER 行号",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 ROW_NUMBER 为每行分配唯一序号",
+      "concepts": [
+        "SQLite 3.50",
+        "ROW_NUMBER",
+        "序号"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO orders VALUES (1,30),(2,80),(3,80),(4,50);\nSELECT id, amount, ROW_NUMBER() OVER (ORDER BY amount DESC, id) AS rn FROM orders ORDER BY amount DESC, id;\n",
+      "output": "2|80|1\n3|80|2\n4|50|3\n1|30|4",
+      "expectedOutput": "2|80|1\n3|80|2\n4|50|3\n1|30|4",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-074-lesson"
+    },
+    {
+      "id": "sql-example-075",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 75：RANK 与 DENSE_RANK",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：区分并列排名中 RANK 跳号与 DENSE_RANK 不跳号",
+      "concepts": [
+        "SQLite 3.50",
+        "RANK",
+        "DENSE_RANK",
+        "并列"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE scores (name TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Ann',80),('Ben',80),('Cara',50),('Dan',30);\nSELECT name, score, RANK() OVER (ORDER BY score DESC) AS rnk, DENSE_RANK() OVER (ORDER BY score DESC) AS dense FROM scores ORDER BY score DESC, name;\n",
+      "output": "Ann|80|1|1\nBen|80|1|1\nCara|50|3|2\nDan|30|4|3",
+      "expectedOutput": "Ann|80|1|1\nBen|80|1|1\nCara|50|3|2\nDan|30|4|3",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-075-lesson"
+    },
+    {
+      "id": "sql-example-076",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 76：NTILE 分桶",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 NTILE(n) 把有序行均分成 n 个桶",
+      "concepts": [
+        "SQLite 3.50",
+        "NTILE",
+        "分位桶"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INTEGER PRIMARY KEY);\nINSERT INTO t VALUES (1),(2),(3),(4),(5);\nSELECT id, NTILE(3) OVER (ORDER BY id) AS bucket FROM t ORDER BY id;\n",
+      "output": "1|1\n2|1\n3|2\n4|2\n5|3",
+      "expectedOutput": "1|1\n2|1\n3|2\n4|2\n5|3",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-076-lesson"
+    },
+    {
+      "id": "sql-example-077",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 77：LAG 与 LEAD 取邻行",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 LAG/LEAD 比较当前行与前后行",
+      "concepts": [
+        "SQLite 3.50",
+        "LAG",
+        "LEAD",
+        "偏移"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO sales VALUES (1,30),(2,60),(3,80);\nSELECT id, amount, LAG(amount) OVER (ORDER BY id) AS prev, amount - LAG(amount) OVER (ORDER BY id) AS diff FROM sales ORDER BY id;\n",
+      "output": "1|30||\n2|60|30|30\n3|80|60|20",
+      "expectedOutput": "1|30||\n2|60|30|30\n3|80|60|20",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-077-lesson"
+    },
+    {
+      "id": "sql-example-078",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 78：FIRST_VALUE 与 LAST_VALUE",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 FIRST_VALUE/LAST_VALUE 取窗口边界值并理解默认帧陷阱",
+      "concepts": [
+        "SQLite 3.50",
+        "FIRST_VALUE",
+        "LAST_VALUE",
+        "窗口帧"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO sales VALUES (1,30),(2,60),(3,80);\nSELECT id, FIRST_VALUE(amount) OVER (ORDER BY id) AS first, LAST_VALUE(amount) OVER (ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last FROM sales ORDER BY id;\n",
+      "output": "1|30|80\n2|30|80\n3|30|80",
+      "expectedOutput": "1|30|80\n2|30|80\n3|30|80",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-078-lesson"
+    },
+    {
+      "id": "sql-example-079",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 79：累计与移动平均",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用窗口帧算累计总和与滑动平均",
+      "concepts": [
+        "SQLite 3.50",
+        "累计求和",
+        "移动平均",
+        "窗口帧"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO sales VALUES (1,30),(2,60),(3,80),(4,80);\nSELECT id, SUM(amount) OVER (ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running, AVG(amount) OVER (ORDER BY id ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS ma3 FROM sales ORDER BY id;\n",
+      "output": "1|30|30.0\n2|90|45.0\n3|170|56.6666666666667\n4|250|73.3333333333333",
+      "expectedOutput": "1|30|30.0\n2|90|45.0\n3|170|56.6666666666667\n4|250|73.3333333333333",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-079-lesson"
+    },
+    {
+      "id": "sql-example-080",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 80：环比与同比",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 LAG 计算相邻期环比增长",
+      "concepts": [
+        "SQLite 3.50",
+        "环比",
+        "LAG",
+        "增长率"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE monthly (m TEXT, amount INTEGER);\nINSERT INTO monthly VALUES ('2026-01',100),('2026-02',120),('2026-03',90),('2026-04',150);\nSELECT m, amount, amount - LAG(amount) OVER (ORDER BY m) AS delta, (amount - LAG(amount) OVER (ORDER BY m)) * 1.0 / LAG(amount) OVER (ORDER BY m) AS rate FROM monthly ORDER BY m;\n",
+      "output": "2026-01|100||\n2026-02|120|20|0.2\n2026-03|90|-30|-0.25\n2026-04|150|60|0.666666666666667",
+      "expectedOutput": "2026-01|100||\n2026-02|120|20|0.2\n2026-03|90|-30|-0.25\n2026-04|150|60|0.666666666666667",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-080-lesson"
+    },
+    {
+      "id": "sql-example-081",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 81：分组 Top-N 与去重",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用分区行号取每组前 N 名或保留每组一行的去重",
+      "concepts": [
+        "SQLite 3.50",
+        "ROW_NUMBER",
+        "PARTITION BY",
+        "Top-N",
+        "去重"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',90),(3,'Ann',60),(4,'Ben',40),(5,'Ben',25);\nSELECT customer, amount FROM (SELECT customer, amount, ROW_NUMBER() OVER (PARTITION BY customer ORDER BY amount DESC) AS rn FROM orders) t WHERE rn <= 2 ORDER BY customer, amount DESC;\n",
+      "output": "Ann|90\nAnn|60\nBen|40\nBen|25",
+      "expectedOutput": "Ann|90\nAnn|60\nBen|40\nBen|25",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-081-lesson"
+    },
+    {
+      "id": "sql-example-082",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 82：综合练习：销售分析报表",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：组合分区占比、组内排名与累计完成分析报表",
+      "concepts": [
+        "SQLite 3.50",
+        "窗口函数",
+        "占比",
+        "排名",
+        "累计"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'Ann',30),(2,'Ann',60),(3,'Ben',40),(4,'Ben',55);\nSELECT id, customer, amount, ROUND(amount * 1.0 / SUM(amount) OVER (PARTITION BY customer), 4) AS share, RANK() OVER (PARTITION BY customer ORDER BY amount DESC) AS rnk, SUM(amount) OVER (ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running FROM orders ORDER BY id;\n",
+      "output": "1|Ann|30|0.3333|2|30\n2|Ann|60|0.6667|1|90\n3|Ben|40|0.4211|2|130\n4|Ben|55|0.5789|1|185",
+      "expectedOutput": "1|Ann|30|0.3333|2|30\n2|Ann|60|0.6667|1|90\n3|Ben|40|0.4211|2|130\n4|Ben|55|0.5789|1|185",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-082-lesson"
+    },
+    {
+      "id": "sql-example-083",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 83：CREATE TABLE 与列类型",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 CREATE TABLE 定义表和列并选择合适类型",
+      "concepts": [
+        "SQLite 3.50",
+        "CREATE TABLE",
+        "类型",
+        "NOT NULL"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL, qty INTEGER, price REAL);\nINSERT INTO books VALUES (1,'SQL 入门',3,59.9),(2,'数据库原理',NULL,79.0);\nSELECT id, title, qty, price FROM books ORDER BY id;\n",
+      "output": "1|SQL 入门|3|59.9\n2|数据库原理||79.0",
+      "expectedOutput": "1|SQL 入门|3|59.9\n2|数据库原理||79.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-083-lesson"
+    },
+    {
+      "id": "sql-example-084",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 84：PRIMARY KEY 与自增",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用主键唯一标识行并理解自增行为",
+      "concepts": [
+        "SQLite 3.50",
+        "PRIMARY KEY",
+        "AUTOINCREMENT",
+        "rowid"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nINSERT INTO t (id, v) VALUES (10,'a');\nINSERT INTO t (v) VALUES ('b'),('c');\nSELECT id, v FROM t ORDER BY id;\n",
+      "output": "10|a\n11|b\n12|c",
+      "expectedOutput": "10|a\n11|b\n12|c",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-084-lesson"
+    },
+    {
+      "id": "sql-example-085",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 85：NOT NULL 与 DEFAULT",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 NOT NULL 禁止缺失并用 DEFAULT 提供默认值",
+      "concepts": [
+        "SQLite 3.50",
+        "NOT NULL",
+        "DEFAULT"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'new');\nINSERT INTO tasks (id, title) VALUES (1,'写文档');\nINSERT INTO tasks (id, title, status) VALUES (2,'评审','doing');\nSELECT id, title, status FROM tasks ORDER BY id;\n",
+      "output": "1|写文档|new\n2|评审|doing",
+      "expectedOutput": "1|写文档|new\n2|评审|doing",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-085-lesson"
+    },
+    {
+      "id": "sql-example-086",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 86：UNIQUE 约束",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 UNIQUE 保证列值（或组合）唯一",
+      "concepts": [
+        "SQLite 3.50",
+        "UNIQUE",
+        "唯一性"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT UNIQUE NOT NULL, email TEXT);\nINSERT INTO users VALUES (1,'alice','a@x.com'),(2,'bob',NULL);\nSELECT id, username, COALESCE(email,'-') AS email FROM users ORDER BY id;\n",
+      "output": "1|alice|a@x.com\n2|bob|-",
+      "expectedOutput": "1|alice|a@x.com\n2|bob|-",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-086-lesson"
+    },
+    {
+      "id": "sql-example-087",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 87：CHECK 约束",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 CHECK 在写入时校验取值范围",
+      "concepts": [
+        "SQLite 3.50",
+        "CHECK",
+        "域约束"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE stock (id INTEGER PRIMARY KEY, name TEXT, qty INTEGER CHECK (qty >= 0));\nINSERT INTO stock VALUES (1,'pen',10),(2,'book',0);\nSELECT id, name, qty FROM stock ORDER BY id;\n",
+      "output": "1|pen|10\n2|book|0",
+      "expectedOutput": "1|pen|10\n2|book|0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-087-lesson"
+    },
+    {
+      "id": "sql-example-088",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 88：FOREIGN KEY 与外键动作",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用外键维护引用完整性并选择删除动作",
+      "concepts": [
+        "SQLite 3.50",
+        "FOREIGN KEY",
+        "ON DELETE",
+        "引用完整性"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "PRAGMA foreign_keys = ON;\nCREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER REFERENCES customers(id), amount INTEGER);\nINSERT INTO customers VALUES (1,'alice'),(2,'bob');\nINSERT INTO orders VALUES (1,1,100),(2,2,200);\nSELECT o.id, c.name, o.amount FROM orders AS o JOIN customers AS c ON c.id = o.customer_id ORDER BY o.id;\n",
+      "output": "1|alice|100\n2|bob|200",
+      "expectedOutput": "1|alice|100\n2|bob|200",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-088-lesson"
+    },
+    {
+      "id": "sql-example-089",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 89：生成列（GENERATED）",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用生成列表达派生值避免重复计算",
+      "concepts": [
+        "SQLite 3.50",
+        "GENERATED",
+        "虚拟列",
+        "STORED"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE items (id INTEGER PRIMARY KEY, price REAL, qty INTEGER, total REAL GENERATED ALWAYS AS (price * qty) STORED);\nINSERT INTO items (id, price, qty) VALUES (1, 10.0, 3), (2, 5.0, 4);\nSELECT id, price, qty, total FROM items ORDER BY id;\n",
+      "output": "1|10.0|3|30.0\n2|5.0|4|20.0",
+      "expectedOutput": "1|10.0|3|30.0\n2|5.0|4|20.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-089-lesson"
+    },
+    {
+      "id": "sql-example-090",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 90：ALTER TABLE 加列改列",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 ALTER TABLE 增加列并了解删改限制",
+      "concepts": [
+        "SQLite 3.50",
+        "ALTER TABLE",
+        "迁移"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE logs (id INTEGER PRIMARY KEY, msg TEXT);\nINSERT INTO logs VALUES (1,'start'),(2,'stop');\nALTER TABLE logs ADD COLUMN level TEXT DEFAULT 'info';\nUPDATE logs SET level = 'warn' WHERE id = 2;\nSELECT id, msg, level FROM logs ORDER BY id;\n",
+      "output": "1|start|info\n2|stop|warn",
+      "expectedOutput": "1|start|info\n2|stop|warn",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-090-lesson"
+    },
+    {
+      "id": "sql-example-091",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 91：DROP TABLE 与 IF EXISTS",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：安全地删除表并避免不存在时出错",
+      "concepts": [
+        "SQLite 3.50",
+        "DROP TABLE",
+        "IF EXISTS",
+        "清理"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE keep (id INTEGER PRIMARY KEY);\nCREATE TABLE tmp (id INTEGER PRIMARY KEY);\nINSERT INTO keep VALUES (1);\nDROP TABLE IF EXISTS tmp;\nSELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('keep','tmp') ORDER BY name;\n",
+      "output": "keep",
+      "expectedOutput": "keep",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-091-lesson"
+    },
+    {
+      "id": "sql-example-092",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 92：临时表与内存表",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用临时表存放会话级中间结果",
+      "concepts": [
+        "SQLite 3.50",
+        "TEMP",
+        "临时表",
+        "会话"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TEMP TABLE stage (id INTEGER, amount INTEGER);\nINSERT INTO stage VALUES (1,10),(2,20),(3,30);\nSELECT COUNT(*) AS n, SUM(amount) AS total FROM stage;\n",
+      "output": "3|60",
+      "expectedOutput": "3|60",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-092-lesson"
+    },
+    {
+      "id": "sql-example-093",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 93：约束冲突与错误处理",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解约束冲突策略并选择合适动作",
+      "concepts": [
+        "SQLite 3.50",
+        "ON CONFLICT",
+        "ROLLBACK",
+        "ABORT"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INTEGER PRIMARY KEY, u TEXT UNIQUE);\nINSERT INTO t VALUES (1,'a');\nINSERT OR IGNORE INTO t VALUES (2,'a');\nINSERT OR IGNORE INTO t VALUES (3,'b');\nSELECT id, u FROM t ORDER BY id;\n",
+      "output": "1|a\n3|b",
+      "expectedOutput": "1|a\n3|b",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-093-lesson"
+    },
+    {
+      "id": "sql-example-094",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 94：综合练习：设计规范表结构",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：综合运用约束设计一个订单明细表结构",
+      "concepts": [
+        "SQLite 3.50",
+        "DDL",
+        "约束",
+        "外键",
+        "默认值"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "PRAGMA foreign_keys = ON;\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT NOT NULL);\nCREATE TABLE order_items (id INTEGER PRIMARY KEY, order_id INTEGER NOT NULL REFERENCES orders(id), price REAL NOT NULL CHECK (price >= 0), qty INTEGER NOT NULL CHECK (qty > 0), subtotal REAL GENERATED ALWAYS AS (price * qty) STORED);\nINSERT INTO orders VALUES (1,'alice'),(2,'bob');\nINSERT INTO order_items (order_id, price, qty) VALUES (1,10.0,2),(1,5.0,3),(2,20.0,1);\nSELECT o.id, o.customer, SUM(i.subtotal) AS total FROM orders AS o JOIN order_items AS i ON i.order_id = o.id GROUP BY o.id, o.customer ORDER BY o.id;\n",
+      "output": "1|alice|35.0\n2|bob|20.0",
+      "expectedOutput": "1|alice|35.0\n2|bob|20.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-094-lesson"
+    },
+    {
+      "id": "sql-example-095",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 95：INSERT 多行插入",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用一条 INSERT 插入多行并理解返回值",
+      "concepts": [
+        "SQLite 3.50",
+        "INSERT",
+        "多行",
+        "rowid"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nINSERT INTO t (v) VALUES ('a'),('b'),('c');\nSELECT changes() AS last_changes, (SELECT COUNT(*) FROM t) AS total;\n",
+      "output": "3|3",
+      "expectedOutput": "3|3",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-095-lesson"
+    },
+    {
+      "id": "sql-example-096",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 96：INSERT ... SELECT",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用查询结果批量写入另一张表",
+      "concepts": [
+        "SQLite 3.50",
+        "INSERT SELECT",
+        "复制数据"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, amount INTEGER);\nCREATE TABLE big_orders (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO orders VALUES (1,50),(2,150),(3,200);\nINSERT INTO big_orders (id, amount) SELECT id, amount FROM orders WHERE amount >= 100;\nSELECT id, amount FROM big_orders ORDER BY id;\n",
+      "output": "2|150\n3|200",
+      "expectedOutput": "2|150\n3|200",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-096-lesson"
+    },
+    {
+      "id": "sql-example-097",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 97：UPDATE 基础与 WHERE 安全",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 UPDATE 修改行并避免全表误更新",
+      "concepts": [
+        "SQLite 3.50",
+        "UPDATE",
+        "WHERE"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE products (id INTEGER PRIMARY KEY, price REAL);\nINSERT INTO products VALUES (1,50.0),(2,100.0),(3,80.0);\nUPDATE products SET price = price * 1.1 WHERE price < 100;\nSELECT id, price FROM products ORDER BY id;\n",
+      "output": "1|55.0\n2|100.0\n3|88.0",
+      "expectedOutput": "1|55.0\n2|100.0\n3|88.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-097-lesson"
+    },
+    {
+      "id": "sql-example-098",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 98：UPDATE 关联更新",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：依据另一张表的值更新目标表",
+      "concepts": [
+        "SQLite 3.50",
+        "UPDATE",
+        "关联",
+        "子查询"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price REAL);\nCREATE TABLE prices (product_id INTEGER PRIMARY KEY, price REAL);\nINSERT INTO products VALUES (1,'pen',10.0),(2,'book',20.0);\nINSERT INTO prices VALUES (1,12.0);\nUPDATE products SET price = (SELECT price FROM prices WHERE prices.product_id = products.id) WHERE EXISTS (SELECT 1 FROM prices WHERE prices.product_id = products.id);\nSELECT id, name, price FROM products ORDER BY id;\n",
+      "output": "1|pen|12.0\n2|book|20.0",
+      "expectedOutput": "1|pen|12.0\n2|book|20.0",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-098-lesson"
+    },
+    {
+      "id": "sql-example-099",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 99：DELETE 与条件删除",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 DELETE 删除匹配行并了解整表清空",
+      "concepts": [
+        "SQLite 3.50",
+        "DELETE",
+        "WHERE",
+        "TRUNCATE 替代"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE stock (id INTEGER PRIMARY KEY, name TEXT, qty INTEGER);\nINSERT INTO stock VALUES (1,'pen',0),(2,'book',5),(3,'bag',0);\nDELETE FROM stock WHERE qty = 0;\nSELECT id, name, qty FROM stock ORDER BY id;\n",
+      "output": "2|book|5",
+      "expectedOutput": "2|book|5",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-099-lesson"
+    },
+    {
+      "id": "sql-example-100",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 100：UPSERT：INSERT OR REPLACE",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 INSERT OR REPLACE 实现简单幂等写入",
+      "concepts": [
+        "SQLite 3.50",
+        "INSERT OR REPLACE",
+        "UPSERT",
+        "冲突"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE kv (u TEXT PRIMARY KEY, v INTEGER);\nINSERT INTO kv VALUES ('a',1);\nINSERT OR REPLACE INTO kv VALUES ('b',1);\nINSERT OR REPLACE INTO kv VALUES ('b',2);\nSELECT u, v FROM kv ORDER BY u;\n",
+      "output": "a|1\nb|2",
+      "expectedOutput": "a|1\nb|2",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-100-lesson"
+    },
+    {
+      "id": "sql-example-101",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 101：UPSERT：ON CONFLICT DO UPDATE",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 ON CONFLICT DO UPDATE 精确控制冲突时的更新",
+      "concepts": [
+        "SQLite 3.50",
+        "ON CONFLICT",
+        "DO UPDATE",
+        "excluded"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE counters (name TEXT PRIMARY KEY, v INTEGER);\nINSERT INTO counters VALUES ('a',1)\nON CONFLICT(name) DO UPDATE SET v = v + excluded.v;\nINSERT INTO counters VALUES ('a',2)\nON CONFLICT(name) DO UPDATE SET v = v + excluded.v;\nSELECT name, v FROM counters ORDER BY name;\n",
+      "output": "a|3",
+      "expectedOutput": "a|3",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-101-lesson"
+    },
+    {
+      "id": "sql-example-102",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "intermediate",
+      "title": "示例 102：综合练习：幂等写入流水",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：组合 DML 完成一次幂等对账写入",
+      "concepts": [
+        "SQLite 3.50",
+        "INSERT",
+        "UPSERT",
+        "UPDATE",
+        "DELETE"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE ledger (id INTEGER PRIMARY KEY, account TEXT, amount INTEGER);\nINSERT INTO ledger VALUES (1,'A',100),(2,'A',50),(3,'B',20),(4,'B',0),(5,'B',50)\nON CONFLICT(id) DO UPDATE SET account=excluded.account, amount=excluded.amount;\nDELETE FROM ledger WHERE amount = 0;\nSELECT account, SUM(amount) AS total FROM ledger GROUP BY account ORDER BY account;\n",
+      "output": "A|150\nB|70",
+      "expectedOutput": "A|150\nB|70",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-102-lesson"
+    },
+    {
+      "id": "sql-example-103",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 103：BEGIN/COMMIT/ROLLBACK",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用事务把多条语句绑成原子操作",
+      "concepts": [
+        "SQLite 3.50",
+        "BEGIN",
+        "COMMIT",
+        "ROLLBACK",
+        "原子性"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nINSERT INTO t VALUES (1,'kept');\nBEGIN;\nINSERT INTO t VALUES (2,'rolled-back');\nROLLBACK;\nSELECT id, v FROM t ORDER BY id;\n",
+      "output": "1|kept",
+      "expectedOutput": "1|kept",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-103-lesson"
+    },
+    {
+      "id": "sql-example-104",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 104：SAVEPOINT 部分回滚",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用保存点只回滚事务中的一部分",
+      "concepts": [
+        "SQLite 3.50",
+        "SAVEPOINT",
+        "RELEASE",
+        "部分回滚"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nBEGIN;\nINSERT INTO t VALUES (1,'A');\nSAVEPOINT sp1;\nINSERT INTO t VALUES (2,'B');\nROLLBACK TO sp1;\nRELEASE sp1;\nCOMMIT;\nSELECT id, v FROM t ORDER BY id;\n",
+      "output": "1|A",
+      "expectedOutput": "1|A",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-104-lesson"
+    },
+    {
+      "id": "sql-example-105",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 105：事务中的错误与原子性",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解语句失败时事务的保留状态",
+      "concepts": [
+        "SQLite 3.50",
+        "原子性",
+        "约束",
+        "回滚"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INTEGER PRIMARY KEY, u TEXT NOT NULL);\nBEGIN;\nINSERT INTO t VALUES (1,'a');\nSAVEPOINT sp;\nINSERT OR IGNORE INTO t VALUES (2,NULL);\nROLLBACK TO sp;\nRELEASE sp;\nCOMMIT;\nSELECT id, u FROM t ORDER BY id;\n",
+      "output": "1|a",
+      "expectedOutput": "1|a",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-105-lesson"
+    },
+    {
+      "id": "sql-example-106",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 106：隔离级别概念",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解隔离级别与并发异常的关系",
+      "concepts": [
+        "SQLite 3.50",
+        "隔离级别",
+        "脏读",
+        "可重复读"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INTEGER PRIMARY KEY, v INTEGER);\nBEGIN IMMEDIATE;\nINSERT INTO t VALUES (1,10);\nCOMMIT;\nSELECT id, v FROM t ORDER BY id;\n",
+      "output": "1|10",
+      "expectedOutput": "1|10",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-106-lesson"
+    },
+    {
+      "id": "sql-example-107",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 107：并发写与锁（SQLite 行为）",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解 SQLite 的写锁与忙等待行为",
+      "concepts": [
+        "SQLite 3.50",
+        "写锁",
+        "BUSY",
+        "WAL"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INTEGER PRIMARY KEY, v INTEGER);\nBEGIN IMMEDIATE;\nINSERT INTO t VALUES (1,1);\nCOMMIT;\nBEGIN IMMEDIATE;\nINSERT INTO t VALUES (2,2);\nCOMMIT;\nSELECT id, v FROM t ORDER BY id;\n",
+      "output": "1|1\n2|2",
+      "expectedOutput": "1|1\n2|2",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-107-lesson"
+    },
+    {
+      "id": "sql-example-108",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 108：综合练习：转账原子操作",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用事务保证转账的借贷一致",
+      "concepts": [
+        "SQLite 3.50",
+        "事务",
+        "一致性",
+        "约束"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE accounts (id INTEGER PRIMARY KEY, name TEXT UNIQUE, balance INTEGER NOT NULL CHECK (balance >= 0));\nINSERT INTO accounts VALUES (1,'alice',100),(2,'bob',50);\nBEGIN IMMEDIATE;\nUPDATE accounts SET balance = balance - 30 WHERE name = 'alice';\nUPDATE accounts SET balance = balance + 30 WHERE name = 'bob';\nCOMMIT;\nSELECT name, balance FROM accounts ORDER BY id;\n",
+      "output": "alice|70\nbob|80",
+      "expectedOutput": "alice|70\nbob|80",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-108-lesson"
+    },
+    {
+      "id": "sql-example-109",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 109：索引原理与 B-Tree",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解索引是额外的有序结构及其代价",
+      "concepts": [
+        "SQLite 3.50",
+        "索引",
+        "B-Tree",
+        "查找"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, city TEXT);\nINSERT INTO users VALUES (1,'alice','beijing'),(2,'bob','shanghai'),(3,'carol','beijing');\nCREATE INDEX idx_users_name ON users(name);\nSELECT id, name FROM users WHERE name = 'bob' ORDER BY id;\n",
+      "output": "2|bob",
+      "expectedOutput": "2|bob",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-109-lesson"
+    },
+    {
+      "id": "sql-example-110",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 110：单列索引与查询加速",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用单列索引加速等值与范围查询",
+      "concepts": [
+        "SQLite 3.50",
+        "单列索引",
+        "等值查询"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, amount INTEGER);\nINSERT INTO orders VALUES (1,50),(2,150),(3,200),(4,80);\nCREATE INDEX idx_orders_amount ON orders(amount);\nSELECT id, amount FROM orders WHERE amount > 100 ORDER BY id;\n",
+      "output": "2|150\n3|200",
+      "expectedOutput": "2|150\n3|200",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-110-lesson"
+    },
+    {
+      "id": "sql-example-111",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 111：复合索引与最左前缀",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解复合索引的列顺序与最左前缀规则",
+      "concepts": [
+        "SQLite 3.50",
+        "复合索引",
+        "最左前缀"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE people (id INTEGER PRIMARY KEY, city TEXT, age INTEGER);\nINSERT INTO people VALUES (1,'beijing',30),(2,'beijing',18),(3,'shanghai',25);\nCREATE INDEX idx_people_city_age ON people(city, age);\nSELECT id, city, age FROM people WHERE city = 'beijing' AND age > 20 ORDER BY id;\n",
+      "output": "1|beijing|30",
+      "expectedOutput": "1|beijing|30",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-111-lesson"
+    },
+    {
+      "id": "sql-example-112",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 112：覆盖索引",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用覆盖索引避免回表读取",
+      "concepts": [
+        "SQLite 3.50",
+        "覆盖索引",
+        "回表"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE people (id INTEGER PRIMARY KEY, city TEXT, age INTEGER, note TEXT);\nINSERT INTO people VALUES (1,'beijing',30,'x'),(2,'beijing',18,'y'),(3,'shanghai',25,'z');\nCREATE INDEX idx_people_city_age ON people(city, age);\nSELECT city, age FROM people WHERE city = 'beijing' ORDER BY city, age;\n",
+      "output": "beijing|18\nbeijing|30",
+      "expectedOutput": "beijing|18\nbeijing|30",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-112-lesson"
+    },
+    {
+      "id": "sql-example-113",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 113：唯一索引与主键索引",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：理解主键与唯一约束背后的索引",
+      "concepts": [
+        "SQLite 3.50",
+        "唯一索引",
+        "主键索引",
+        "隐式索引"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT UNIQUE, name TEXT);\nINSERT INTO users VALUES (1,'a@x.com','alice'),(2,'b@x.com','bob');\nSELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'users' ORDER BY name;\n",
+      "output": "sqlite_autoindex_users_1",
+      "expectedOutput": "sqlite_autoindex_users_1",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-113-lesson"
+    },
+    {
+      "id": "sql-example-114",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 114：索引失效场景",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：识别导致索引无法使用的常见写法",
+      "concepts": [
+        "SQLite 3.50",
+        "索引失效",
+        "函数",
+        "隐式转换"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO users VALUES (1,'alice'),(2,'bob');\nCREATE INDEX idx_users_name ON users(name);\nSELECT id, name FROM users WHERE name = 'alice' ORDER BY id;\n",
+      "output": "1|alice",
+      "expectedOutput": "1|alice",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-114-lesson"
+    },
+    {
+      "id": "sql-example-115",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 115：EXPLAIN 与 EXPLAIN QUERY PLAN",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 EXPLAIN QUERY PLAN 判断是否使用索引",
+      "concepts": [
+        "SQLite 3.50",
+        "EXPLAIN",
+        "查询计划",
+        "SCAN/SEARCH"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE accounts (id INTEGER PRIMARY KEY, owner TEXT, balance INTEGER);\nINSERT INTO accounts VALUES (1,'alice',100),(2,'bob',50);\nCREATE INDEX idx_accounts_owner ON accounts(owner);\nSELECT id, owner, balance FROM accounts WHERE owner = 'alice' ORDER BY id;\n",
+      "output": "1|alice|100",
+      "expectedOutput": "1|alice|100",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-115-lesson"
+    },
+    {
+      "id": "sql-example-116",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 116：综合练习：慢查询优化",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：为慢查询选择并验证合适的索引",
+      "concepts": [
+        "SQLite 3.50",
+        "索引",
+        "查询计划",
+        "优化"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE orders (id INTEGER PRIMARY KEY, city TEXT, amount INTEGER);\nINSERT INTO orders VALUES (1,'beijing',50),(2,'beijing',150),(3,'shanghai',200);\nCREATE INDEX idx_orders_city_amount ON orders(city, amount);\nSELECT id, city, amount FROM orders WHERE city = 'beijing' AND amount > 100 ORDER BY id;\n",
+      "output": "2|beijing|150",
+      "expectedOutput": "2|beijing|150",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-116-lesson"
+    },
+    {
+      "id": "sql-example-117",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 117：数据建模与范式",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用规范化拆分实体，消除更新异常",
+      "concepts": [
+        "SQLite 3.50",
+        "规范化",
+        "范式",
+        "冗余"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, city TEXT);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, amount INTEGER);\nINSERT INTO customers VALUES (1,'alice','beijing'),(2,'bob','shanghai');\nINSERT INTO orders VALUES (1,1,100),(2,1,50),(3,2,200);\nSELECT o.id, c.name, c.city, o.amount FROM orders AS o JOIN customers AS c ON c.id = o.customer_id ORDER BY o.id;\n",
+      "output": "1|alice|beijing|100\n2|alice|beijing|50\n3|bob|shanghai|200",
+      "expectedOutput": "1|alice|beijing|100\n2|alice|beijing|50\n3|bob|shanghai|200",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-117-lesson"
+    },
+    {
+      "id": "sql-example-118",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 118：SQLite 与 MySQL 方言差异",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：识别 SQLite 与 MySQL 的关键语法差异",
+      "concepts": [
+        "SQLite 3.50",
+        "方言",
+        "兼容性",
+        "版本"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE events (id INTEGER PRIMARY KEY, name TEXT, at TEXT);\nINSERT INTO events VALUES (1,'start','2026-01-01'),(2,'stop','2026-01-02');\nSELECT id, name || '@' || date(at, '+1 day') AS label FROM events ORDER BY id;\n",
+      "output": "1|start@2026-01-02\n2|stop@2026-01-03",
+      "expectedOutput": "1|start@2026-01-02\n2|stop@2026-01-03",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-118-lesson"
+    },
+    {
+      "id": "sql-example-119",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 119：视图与查询封装",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用视图封装常用查询并复用",
+      "concepts": [
+        "SQLite 3.50",
+        "VIEW",
+        "封装",
+        "复用"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, amount INTEGER);\nINSERT INTO customers VALUES (1,'alice'),(2,'bob');\nINSERT INTO orders VALUES (1,1,100),(2,1,50),(3,2,200);\nCREATE VIEW v_customer_totals AS SELECT c.id AS customer_id, c.name AS name, SUM(o.amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.id, c.name;\nSELECT customer_id, name, total FROM v_customer_totals ORDER BY customer_id;\n",
+      "output": "1|alice|150\n2|bob|200",
+      "expectedOutput": "1|alice|150\n2|bob|200",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-119-lesson"
+    },
+    {
+      "id": "sql-example-120",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 120：综合实战：多表分析报表",
+      "summary": "SQLite 3.50 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：综合多表、CTE 与窗口函数生成分析报表",
+      "concepts": [
+        "SQLite 3.50",
+        "JOIN",
+        "CTE",
+        "窗口",
+        "聚合",
+        "报表"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, product TEXT, amount INTEGER);\nINSERT INTO sales VALUES\n  (1,'north','pen',100),(2,'north','book',60),(3,'north','bag',40),\n  (4,'south','pen',80),(5,'south','book',120),(6,'south','bag',30);\nWITH totals AS (SELECT region, product, SUM(amount) AS total FROM sales GROUP BY region, product) SELECT region, product, total, RANK() OVER (PARTITION BY region ORDER BY total DESC) AS rnk FROM totals ORDER BY region, rnk;\n",
+      "output": "north|pen|100|1\nnorth|book|60|2\nnorth|bag|40|3\nsouth|book|120|1\nsouth|pen|80|2\nsouth|bag|30|3",
+      "expectedOutput": "north|pen|100|1\nnorth|book|60|2\nnorth|bag|40|3\nsouth|book|120|1\nsouth|pen|80|2\nsouth|bag|30|3",
+      "inputFixtures": {
+        "engine": "sqlite",
+        "version": "3.50"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-120-lesson"
+    },
+    {
+      "id": "sql-example-121",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 121：MySQL：ON DUPLICATE KEY UPDATE",
+      "summary": "MySQL 8.0 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 MySQL 的 ON DUPLICATE KEY UPDATE 实现 upsert",
+      "concepts": [
+        "MySQL 8.0",
+        "ON DUPLICATE KEY UPDATE",
+        "UPSERT"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE counters (name VARCHAR(32) PRIMARY KEY, v INT NOT NULL);\nINSERT INTO counters VALUES ('a', 1);\nINSERT INTO counters (name, v) VALUES ('a', 2) AS new\n  ON DUPLICATE KEY UPDATE v = counters.v + new.v;\nSELECT name, v FROM counters;\n",
+      "output": "a|3",
+      "expectedOutput": "a|3",
+      "inputFixtures": {
+        "engine": "mysql",
+        "version": "8.0"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-121-lesson"
+    },
+    {
+      "id": "sql-example-122",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 122：MySQL：CONCAT 与字符串长度",
+      "summary": "MySQL 8.0 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 MySQL 的 CONCAT/CHAR_LENGTH 处理字符串",
+      "concepts": [
+        "MySQL 8.0",
+        "CONCAT",
+        "LENGTH",
+        "CHAR_LENGTH"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INT PRIMARY KEY, s VARCHAR(64));\nINSERT INTO t VALUES (1,'Alice');\nSELECT id, CONCAT(s, '@example.com') AS email, CHAR_LENGTH(s) AS n FROM t;\n",
+      "output": "1|Alice@example.com|5",
+      "expectedOutput": "1|Alice@example.com|5",
+      "inputFixtures": {
+        "engine": "mysql",
+        "version": "8.0"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-122-lesson"
+    },
+    {
+      "id": "sql-example-123",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 123：MySQL：DATE_ADD 与日期运算",
+      "summary": "MySQL 8.0 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 MySQL 的 DATE_ADD/DATEDIFF 做日期运算",
+      "concepts": [
+        "MySQL 8.0",
+        "DATE_ADD",
+        "DATEDIFF"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE shipments (id INT PRIMARY KEY, shipped_at DATE);\nINSERT INTO shipments VALUES (1,'2026-01-01');\nSELECT id, DATE_ADD(shipped_at, INTERVAL 1 DAY) AS eta, DATEDIFF('2026-01-05', shipped_at) AS days FROM shipments;\n",
+      "output": "1|2026-01-02|4",
+      "expectedOutput": "1|2026-01-02|4",
+      "inputFixtures": {
+        "engine": "mysql",
+        "version": "8.0"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-123-lesson"
+    },
+    {
+      "id": "sql-example-124",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 124：MySQL：事务隔离级别",
+      "summary": "MySQL 8.0 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 MySQL 查看并设置事务隔离级别",
+      "concepts": [
+        "MySQL 8.0",
+        "隔离级别",
+        "REPEATABLE READ"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE t (id INT PRIMARY KEY, v INT);\nINSERT INTO t VALUES (1,10);\nSELECT @@transaction_isolation AS level;\n",
+      "output": "REPEATABLE-READ",
+      "expectedOutput": "REPEATABLE-READ",
+      "inputFixtures": {
+        "engine": "mysql",
+        "version": "8.0"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-124-lesson"
+    },
+    {
+      "id": "sql-example-125",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 125：MySQL：GROUP_CONCAT 与排序",
+      "summary": "MySQL 8.0 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 MySQL 的 GROUP_CONCAT 控制分隔符与排序",
+      "concepts": [
+        "MySQL 8.0",
+        "GROUP_CONCAT",
+        "SEPARATOR"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE s (id INT PRIMARY KEY, region VARCHAR(16), product VARCHAR(16));\nINSERT INTO s VALUES (1,'north','pen'),(2,'north','book'),(3,'south','bag');\nSELECT region, GROUP_CONCAT(product ORDER BY product ASC SEPARATOR ',') AS products FROM s GROUP BY region ORDER BY region;\n",
+      "output": "north|book,pen\nsouth|bag",
+      "expectedOutput": "north|book,pen\nsouth|bag",
+      "inputFixtures": {
+        "engine": "mysql",
+        "version": "8.0"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-125-lesson"
+    },
+    {
+      "id": "sql-example-126",
+      "language": "sql",
+      "type": "sql",
+      "locale": "zh-CN",
+      "level": "advanced",
+      "title": "示例 126：MySQL：FULL OUTER JOIN 的替代",
+      "summary": "MySQL 8.0 完整可运行示例：建表、造数并查询。预期结果已在本机执行验证。目标：用 LEFT/RIGHT JOIN + UNION 模拟 FULL OUTER JOIN",
+      "concepts": [
+        "MySQL 8.0",
+        "FULL OUTER JOIN",
+        "UNION"
+      ],
+      "source": "https://www.sqlite.org/lang.html",
+      "license": "Original QFLI curriculum. Reference link retained. CC BY 4.0",
+      "updatedAt": "2026-10-12",
+      "code": "CREATE TABLE a (id INT PRIMARY KEY, v VARCHAR(8));\nCREATE TABLE b (id INT PRIMARY KEY, v VARCHAR(8));\nINSERT INTO a VALUES (1,'x'),(2,'y');\nINSERT INTO b VALUES (2,'p'),(3,'q');\nSELECT a.id, a.v, b.v FROM a LEFT JOIN b ON a.id=b.id\nUNION\nSELECT b.id, a.v, b.v FROM a RIGHT JOIN b ON a.id=b.id\nORDER BY 1;\n",
+      "output": "1|x|\n2|y|p\n3||q",
+      "expectedOutput": "1|x|\n2|y|p\n3||q",
+      "inputFixtures": {
+        "engine": "mysql",
+        "version": "8.0"
+      },
+      "templateType": "sql",
+      "sourceLessonId": "sql-tutorial-126-lesson"
+    }
+  ]
+}

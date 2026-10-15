@@ -1,0 +1,129 @@
+launcher=[/tmp/qfli-host-check.p51vVF/qfli_mysql_launcher]
+[launch] launcher-main
+MySQL launcher received an invalid app pid
+[launch] launcher-main
+[launch] dlopen-before
+[launch] watchdog-ready
+[launch] dlopen-after
+[launch] entry-before
+ok   start_child returns a real pid
+ok   child is reported exited, not running
+ok   successful child exit code is 0
+ok   successful child writes its exit record
+ok   poll after exit is idempotent with the same code
+ok   release_child releases a completed child
+ok   released child is unknown
+ok   launcher bad-pid child reaped
+ok   launcher rejects an invalid app pid
+ok   launcher good-pid child reaped
+ok   launcher accepts the real parent pid
+ok   accepted-identity child wrote its exit record
+ok   non-executable launcher fails to start
+ok   a confirmed-reaped failed child leaves no owned pending pid
+ok   non-executable launcher reports an exec/permission error
+ok   diagnostic records the direct exec errno
+ok   diagnostic records the interpreter exec errno
+ok   diagnostic records the launcher mode
+ok   diagnostic records the interpreter path
+ok   error-frame pipe created
+ok   test writes a complete error frame
+ok   complete frame is read
+ok   complete frame preserves both errnos
+ok   eof pipe created
+ok   clean zero-byte EOF is reported as no frame
+ok   partial pipe created
+ok   test writes a partial frame
+ok   partial frame is a protocol failure
+ok   partial frame reports EPROTO
+ok   read error is a protocol failure
+ok   partial-frame child is reported as a start failure
+ok   partial-frame failure reports EPROTO
+ok   protocol-failure cleanup returns promptly (bounded)
+ok   read-failure child is a start failure
+ok   unconfirmed termination retains ownership with a pending pid
+ok   read-failure cleanup is bounded (no hang)
+ok   slow child reports running, not exited-0
+ok   release_child rejects a running child
+ok   signal_child signals the owned child
+ok   signalled child reaches a terminal state
+ok   nonzero child exit code is reported
+ok   start_child fails when the launcher cannot be executed
+ok   signal_child rejects pid 1
+ok   signal_child rejects a non-owned pid
+ok   poll rejects a non-owned pid
+ok   register_child accepts a framework pid
+ok   registered child reports running
+ok   registered child cannot be completed while still running
+ok   test reaps the framework child
+ok   registered child completes after it exits
+ok   completed registered child is exited
+ok   release succeeds for a confirmed-exited registered child
+ok   signal is refused after release (unknown pid)
+ok   register_child accepts the racy framework pid
+ok   framework reaps the child externally
+ok   reaped child exit code is 3
+ok   signal refuses a gone registered identity
+ok   gone registered child is reported exited
+ok   completion from the exit record succeeds
+ok   settled exit code is the real recorded value
+ok   release succeeds after racy completion
+ok   test opens a non-CLOEXEC fixture descriptor
+ok   fixture descriptor is not close-on-exec
+ok   fd-report child starts
+ok   fd-report child exits
+ok   fd-report child wrote its descriptor list
+ok   non-CLOEXEC fixture descriptor did not leak into the child
+ok   register_child records a stable identity
+ok   test reaps the registered child
+ok   signal_child refuses a reaped/recycled registered pid
+all host lifecycle checks passed
+constructor_thread_calls=1
+constructor_atfork_calls=0
+ok   wrapper observed constructor-time pthread_create calls
+ok   child exited without running the inherited parent atexit sentinel
+all prototype mechanism checks passed
+parent stderr during fork 0
+parent stderr during fork 1
+parent stderr during fork 2
+parent stderr during fork 3
+parent stderr during fork 4
+parent stderr during fork 5
+parent stderr during fork 6
+parent stderr during fork 7
+ok   acquires all stdio locks when free
+ok   unlock releases all locks
+ok   times out when stderr is held
+ok   releases all partial locks on timeout
+ok   stdin lock usable after timeout release
+ok   repeated forks with concurrent stderr all exit cleanly
+all stdio protocol checks passed
+PASS normal preload start succeeds
+PASS successful child retains exact exit status
+PASS successful child ownership can be released
+PASS debug exit self-test still succeeds through tracked lifecycle
+PASS debug self-test releases child ownership
+PASS pre-handshake timeout reports a failed start
+PASS stalled handshake obeys its two-second deadline
+PASS handshake timeout retains its diagnostic
+PASS failed start records the attempted child PID
+PASS confirmed termination does not retain pending ownership
+PASS failed child is released from tracked ownership
+PASS failed child was reaped without leaving a zombie
+PASS child exit before handshake reports a failed start
+PASS failed start records the attempted child PID
+PASS confirmed termination does not retain pending ownership
+PASS failed child is released from tracked ownership
+PASS failed child was reaped without leaving a zombie
+PASS parent opens an inheritable descriptor fixture
+PASS preload child closes the inherited non-CLOEXEC descriptor
+PASS descriptor-check child can be released
+PASS child descriptor cleanup preserves the parent's fixture
+PASS parent establishes an unrelated signal-mask fixture
+PASS watchdog inherits blocked Oracle signals and entry thread restores its original mask
+PASS signal-mask child can be released
+PASS watchdog creation failure refuses startup before the ready handshake
+PASS watchdog failure preserves a specific diagnostic
+PASS failed start records the attempted child PID
+PASS confirmed termination does not retain pending ownership
+PASS failed child is released from tracked ownership
+PASS failed child was reaped without leaving a zombie

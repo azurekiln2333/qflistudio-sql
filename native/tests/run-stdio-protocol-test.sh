@@ -1,5 +1,6 @@
+#!/usr/bin/env bash
 set -euo pipefail
-REPO=/mnt/d/MyNewProjects/qfli_sql
+REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 WORK=$(mktemp -d /tmp/qfli-stdio-proto.XXXXXX)
 cd "$WORK"
 clang++ -std=c++17 -Wall -Wextra -Werror -D_GNU_SOURCE -I"$REPO/native/mysql" \

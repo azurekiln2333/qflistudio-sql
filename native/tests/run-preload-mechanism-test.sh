@@ -1,5 +1,6 @@
+#!/usr/bin/env bash
 set -euo pipefail
-REPO=/mnt/d/MyNewProjects/qfli_sql
+REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 WORK=$(mktemp -d /tmp/qfli-preload-mech.XXXXXX)
 cd "$WORK"
 # Closure with a constructor that calls pthread_create/atfork.

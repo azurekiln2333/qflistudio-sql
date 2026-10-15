@@ -1,0 +1,12 @@
+QFLI_MYSQL_SERVER_1.0 {
+  global:
+    QfliMysqlMain;
+    qfli_mysql_child_main;
+    qfli_mysql_record_exit;
+    qfli_mysql_proto_report;
+    qfli_mysql_proto_ready;
+    qfli_mysql_proto_enter_child_scope;
+    qfli_mysql_proto_child_exit;
+  local:
+    *;
+};

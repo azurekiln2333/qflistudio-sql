@@ -1,6 +1,8 @@
 #include "napi/native_api.h"
 #include "qfli_mysql_client.h"
+#include "qfli_mysql_host.h"
 
+#include <dlfcn.h>
 #include <signal.h>
 
 #include <cerrno>
@@ -11,7 +13,24 @@
 #include <string>
 #include <vector>
 
+#include "qfli_mysql_proto_probe.h"
+
 namespace {
+
+// Resolve the installed native library directory from this module's own loaded
+// image. The packaged launcher and server library live beside it, so no
+// writable data path is ever used as executable code.
+std::string native_library_directory()
+{
+    Dl_info information{};
+    if (dladdr(reinterpret_cast<void *>(&native_library_directory), &information) != 0 &&
+        information.dli_fname != nullptr) {
+        std::string path(information.dli_fname);
+        const std::size_t slash = path.find_last_of('/');
+        if (slash != std::string::npos) return path.substr(0, slash);
+    }
+    return {};
+}
 
 struct QueryWork {
     napi_async_work work = nullptr;
@@ -260,18 +279,20 @@ napi_value execute_script(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value terminate_child(napi_env env, napi_callback_info info)
+napi_value signal_child(napi_env env, napi_callback_info info)
 {
-    std::size_t count = 1;
-    napi_value argument = nullptr;
+    std::size_t count = 2;
+    napi_value arguments[2]{};
     int32_t pid = 0;
-    if (napi_get_cb_info(env, info, &count, &argument, nullptr, nullptr) != napi_ok ||
-        count != 1 || napi_get_value_int32(env, argument, &pid) != napi_ok || pid <= 1) {
-        napi_throw_type_error(env, nullptr, "terminateChild(pid) expects a child process id.");
+    bool force = false;
+    if (napi_get_cb_info(env, info, &count, arguments, nullptr, nullptr) != napi_ok ||
+        count != 2 || napi_get_value_int32(env, arguments[0], &pid) != napi_ok || pid <= 1 ||
+        napi_get_value_bool(env, arguments[1], &force) != napi_ok) {
+        napi_throw_type_error(env, nullptr, "signalChild(pid, force) expects a child id and a boolean.");
         return nullptr;
     }
-    if (kill(pid, SIGTERM) != 0 && errno != ESRCH) {
-        napi_throw_error(env, nullptr, std::strerror(errno));
+    if (qfli_mysql::signal_child(pid, force) != 0) {
+        napi_throw_error(env, nullptr, "Unknown MySQL child process.");
         return nullptr;
     }
     napi_value result = nullptr;
@@ -279,19 +300,50 @@ napi_value terminate_child(napi_env env, napi_callback_info info)
     return result;
 }
 
-napi_value is_child_running(napi_env env, napi_callback_info info)
+// pollChild(pid) -> { state: 'unknown'|'running'|'exited', exitCode: number }
+// Typed so a successful exit 0 is never confused with a running child.
+napi_value poll_child(napi_env env, napi_callback_info info)
 {
     std::size_t count = 1;
     napi_value argument = nullptr;
     int32_t pid = 0;
     if (napi_get_cb_info(env, info, &count, &argument, nullptr, nullptr) != napi_ok ||
         count != 1 || napi_get_value_int32(env, argument, &pid) != napi_ok || pid <= 1) {
-        napi_throw_type_error(env, nullptr, "isChildRunning(pid) expects a child process id.");
+        napi_throw_type_error(env, nullptr, "pollChild(pid) expects a child process id.");
         return nullptr;
     }
-    const bool running = kill(pid, 0) == 0 || errno == EPERM;
+    const qfli_mysql::ChildStatus status = qfli_mysql::poll_child(pid);
+    napi_value object = nullptr;
+    napi_create_object(env, &object);
+    const char *state = status.state == qfli_mysql::ChildState::Running ? "running"
+        : status.state == qfli_mysql::ChildState::Exited ? "exited" : "unknown";
+    napi_set_named_property(env, object, "state", make_string(env, state));
+    napi_value code = nullptr;
+    napi_create_int32(env, status.exit_code, &code);
+    napi_set_named_property(env, object, "exitCode", code);
+    return object;
+}
+
+// completeRegisteredChild(pid, exitCode) -> void
+// Marks a native-child-API child complete after its exit record is observed.
+napi_value complete_registered_child(napi_env env, napi_callback_info info)
+{
+    std::size_t count = 2;
+    napi_value arguments[2]{};
+    int32_t pid = 0;
+    int32_t exit_code = 0;
+    if (napi_get_cb_info(env, info, &count, arguments, nullptr, nullptr) != napi_ok ||
+        count != 2 || napi_get_value_int32(env, arguments[0], &pid) != napi_ok || pid <= 1 ||
+        napi_get_value_int32(env, arguments[1], &exit_code) != napi_ok) {
+        napi_throw_type_error(env, nullptr, "completeRegisteredChild(pid, exitCode) expects two integers.");
+        return nullptr;
+    }
+    if (qfli_mysql::complete_registered_child(pid, exit_code) != 0) {
+        napi_throw_error(env, nullptr, "Unknown or still-running MySQL child process.");
+        return nullptr;
+    }
     napi_value result = nullptr;
-    napi_get_boolean(env, running, &result);
+    napi_get_undefined(env, &result);
     return result;
 }
 
@@ -300,15 +352,176 @@ napi_value version(napi_env env, napi_callback_info)
     return make_string(env, qfli_mysql::client_version());
 }
 
+napi_value proto_probe(napi_env env, napi_callback_info info)
+{
+    try {
+        (void)info;
+        const std::string directory = native_library_directory();
+        if (directory.empty()) {
+            napi_throw_error(env, nullptr, "Could not resolve the native directory.");
+            return nullptr;
+        }
+        const std::string library_path = directory + "/libqfli_mysql_server_proto.so";
+        ProtoResult result;
+        qfli_mysql_proto_probe(library_path.c_str(), &result);
+        napi_value object = nullptr;
+        napi_create_object(env, &object);
+        set_boolean(env, object, "loaded", result.loaded);
+        set_boolean(env, object, "ready", result.ready);
+        set_number(env, object, "threadCalls", result.threadCalls);
+        set_number(env, object, "atforkCalls", result.atforkCalls);
+        set_number(env, object, "exitIntercepts", result.exitIntercepts);
+        set_boolean(env, object, "childExitIsolated", result.childExitIsolated);
+        set_number(env, object, "childPid", result.childPid);
+        set_boolean(env, object, "owned", result.owned);
+        set_number(env, object, "pendingPid", result.pendingPid);
+        napi_set_named_property(env, object, "error", make_string(env, result.error));
+        return object;
+    } catch (const std::exception &error) {
+        napi_throw_error(env, nullptr, error.what());
+        return nullptr;
+    }
+}
+
+// preloadStart(entryParams) -> { pid, error }. DEBUG-only: loads the private
+// server DSO and starts the server in a forked child by calling its entry
+// directly (no exec). Used for the isolated debug-root probe.
+napi_value preload_start(napi_env env, napi_callback_info info)
+{
+    try {
+        std::size_t count = 1;
+        napi_value argument = nullptr;
+        std::string entry_params;
+        if (napi_get_cb_info(env, info, &count, &argument, nullptr, nullptr) != napi_ok ||
+            count != 1 || !read_string(env, argument, entry_params)) {
+            napi_throw_type_error(env, nullptr, "preloadStart(entryParams) expects a string.");
+            return nullptr;
+        }
+        const std::string directory = native_library_directory();
+        if (directory.empty()) {
+            napi_throw_error(env, nullptr, "Could not resolve the native directory.");
+            return nullptr;
+        }
+        const std::string library_path = directory + "/libqfli_mysql_server_proto.so";
+        ProtoResult result;
+        const int pid = qfli_mysql_preload_start(library_path.c_str(), entry_params.c_str(),
+                                                 &result);
+        napi_value object = nullptr;
+        napi_create_object(env, &object);
+        set_number(env, object, "pid", pid);
+        set_boolean(env, object, "failed", pid <= 1);
+        set_boolean(env, object, "owned", result.owned);
+        set_number(env, object, "pendingPid", result.pendingPid);
+        set_number(env, object, "errno", pid <= 1 ? errno : 0);
+        napi_set_named_property(env, object, "error", make_string(env, result.error));
+        return object;
+    } catch (const std::exception &error) {
+        napi_throw_error(env, nullptr, error.what());
+        return nullptr;
+    }
+}
+
+// startChild(entryParamsJson, logPath) -> pid
+//
+// Forks and execs the packaged launcher beside this module, passing the server
+// entry JSON. Used on phones, where the native-child API is unavailable.
+napi_value start_child(napi_env env, napi_callback_info info)
+{
+    try {
+        std::size_t count = 2;
+        napi_value arguments[2]{};
+        std::string entry_params;
+        std::string log_path;
+        if (napi_get_cb_info(env, info, &count, arguments, nullptr, nullptr) != napi_ok ||
+            count != 2 || !read_string(env, arguments[0], entry_params) ||
+            !read_string(env, arguments[1], log_path)) {
+            napi_throw_type_error(env, nullptr, "startChild(entryParams, logPath) expects two strings.");
+            return nullptr;
+        }
+        const std::string directory = native_library_directory();
+        if (directory.empty()) {
+            napi_throw_error(env, nullptr, "Could not resolve the MySQL native library directory.");
+            return nullptr;
+        }
+        const qfli_mysql::StartResult started =
+            qfli_mysql::start_child(directory + "/libqfli_mysql_launcher.so",
+                                    entry_params, log_path);
+        napi_value result = nullptr;
+        napi_create_object(env, &result);
+        set_number(env, result, "pid", started.pid);
+        set_boolean(env, result, "failed", !started.succeeded());
+        // When a failed start could not confirm termination, the child is still
+        // owned and must be cleaned through stop()/dispose(); surface its pid.
+        set_boolean(env, result, "owned", started.owned);
+        set_number(env, result, "pendingPid", started.pending_pid);
+        set_number(env, result, "errno", started.succeeded() ? 0 : errno);
+        napi_set_named_property(env, result, "error",
+            make_string(env, started.succeeded() ? std::string() : std::strerror(errno)));
+        return result;
+    } catch (const std::exception &error) {
+        napi_throw_error(env, nullptr, error.what());
+        return nullptr;
+    }
+}
+
+// registerChild(pid) -> void
+// Registers a child started by another host (the HarmonyOS native-child API),
+// so terminate/poll manage it through the same owned-child table.
+napi_value register_child(napi_env env, napi_callback_info info)
+{
+    std::size_t count = 1;
+    napi_value argument = nullptr;
+    int32_t pid = 0;
+    if (napi_get_cb_info(env, info, &count, &argument, nullptr, nullptr) != napi_ok ||
+        count != 1 || napi_get_value_int32(env, argument, &pid) != napi_ok || pid <= 1) {
+        napi_throw_type_error(env, nullptr, "registerChild(pid) expects a child process id.");
+        return nullptr;
+    }
+    if (qfli_mysql::register_child(pid) != 0) {
+        napi_throw_error(env, nullptr, std::strerror(errno));
+        return nullptr;
+    }
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+    return result;
+}
+
+// releaseChild(pid) -> void
+// Releases a completed child's retained status. Rejects a running child.
+napi_value release_child(napi_env env, napi_callback_info info)
+{
+    std::size_t count = 1;
+    napi_value argument = nullptr;
+    int32_t pid = 0;
+    if (napi_get_cb_info(env, info, &count, &argument, nullptr, nullptr) != napi_ok ||
+        count != 1 || napi_get_value_int32(env, argument, &pid) != napi_ok || pid <= 1) {
+        napi_throw_type_error(env, nullptr, "releaseChild(pid) expects a child process id.");
+        return nullptr;
+    }
+    if (qfli_mysql::release_child(pid) != 0) {
+        napi_throw_error(env, nullptr, "Unknown or still-running MySQL child process.");
+        return nullptr;
+    }
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+    return result;
+}
+
 napi_value init(napi_env env, napi_value exports)
 {
     napi_property_descriptor properties[] = {
         {"query", nullptr, query, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"executeScript", nullptr, execute_script, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"shutdown", nullptr, shutdown, nullptr, nullptr, nullptr, napi_default, nullptr},
-        {"terminateChild", nullptr, terminate_child, nullptr, nullptr, nullptr, napi_default, nullptr},
-        {"isChildRunning", nullptr, is_child_running, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"startChild", nullptr, start_child, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"registerChild", nullptr, register_child, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"completeRegisteredChild", nullptr, complete_registered_child, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"releaseChild", nullptr, release_child, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"pollChild", nullptr, poll_child, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"signalChild", nullptr, signal_child, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"version", nullptr, version, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"protoProbe", nullptr, proto_probe, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"preloadStart", nullptr, preload_start, nullptr, nullptr, nullptr, napi_default, nullptr},
     };
     napi_define_properties(env, exports, sizeof(properties) / sizeof(properties[0]), properties);
     return exports;

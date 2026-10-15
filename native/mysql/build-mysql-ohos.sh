@@ -38,6 +38,10 @@ else
 fi
 
 # Unexecuted cross-runtime probes select Oracle's existing fallback paths.
+# Cross builds skip Oracle's CHECK_C_SOURCE_RUNS probes, so under
+# CMAKE_CROSSCOMPILING neither HAVE_IB_GCC_ATOMIC_THREAD_FENCE nor
+# HAVE_IB_GCC_SYNC_SYNCHRONISE is set and os_rmb/os_wmb compile to nothing.
+# Clang 18 for aarch64-linux-ohos supports __atomic_thread_fence, so select it.
 cmake -S "$SOURCE" -B "$TARGET_BUILD" \
   -DCMAKE_TOOLCHAIN_FILE="$SCRIPT_ROOT/ohos-toolchain.cmake" \
   -DQFLI_OHOS_SDK="$SDK_ROOT" \
@@ -55,6 +59,7 @@ cmake -S "$SOURCE" -B "$TARGET_BUILD" \
   -DCMAKE_CXX_FLAGS_RELEASE="-O1 -DNDEBUG" \
   -DHAVE_SETNS=FALSE -DHAVE_CLOCK_GETTIME=FALSE -DHAVE_CLOCK_REALTIME=FALSE \
   -DHAVE_FALLOC_PUNCH_HOLE_AND_KEEP_SIZE=FALSE -DHAVE___BUILTIN_FFS=FALSE \
+  -DHAVE_IB_GCC_ATOMIC_THREAD_FENCE=TRUE \
   -DWITH_SSL=system -DOPENSSL_ROOT_DIR="$PREFIX" -DWITH_TIRPC=bundled \
   -Dprotobuf_BUILD_SHARED_LIBS=OFF \
   -Dprotobuf_BUILD_LIBPROTOC=ON \
@@ -74,4 +79,6 @@ cmake -S "$SOURCE" -B "$TARGET_BUILD" \
 
 cmake --build "$TARGET_BUILD" --target qfli_mysql -j1
 cmake --build "$TARGET_BUILD" --target qfli_mysql_server -j1
+cmake --build "$TARGET_BUILD" --target qfli_mysql_launcher -j1
+cmake --build "$TARGET_BUILD" --target qfli_mysql_server_proto -j1
 cmake -DQFLI_MYSQL_PORT_ROOT="$PORT_ROOT" -P "$SCRIPT_ROOT/package-runtime.cmake"

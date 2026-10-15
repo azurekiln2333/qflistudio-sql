@@ -61,16 +61,16 @@ void qfli_mysql_record_exit(int code)
 }
 
 extern "C" __attribute__((visibility("default")))
-void QfliMysqlMain(NativeChildProcess_Args args)
+void qfli_mysql_child_main(const char *entryParams)
 {
     exit_file.clear();
     try {
-        if (args.entryParams == nullptr || strnlen(args.entryParams, 256 * 1024 + 1) > 256 * 1024) {
+        if (entryParams == nullptr || strnlen(entryParams, 256 * 1024 + 1) > 256 * 1024) {
             std::fprintf(stderr, "Missing or oversized MySQL child arguments\n");
             return;
         }
         rapidjson::Document request;
-        request.Parse(args.entryParams);
+        request.Parse(entryParams);
         if (request.HasParseError() || !request.IsObject() ||
             !request.HasMember("exitFile") || !read_string(request["exitFile"], exit_file) ||
             exit_file.front() != '/' || exit_file.size() > 4090) {
@@ -113,4 +113,10 @@ void QfliMysqlMain(NativeChildProcess_Args args)
         std::fprintf(stderr, "MySQL child entry failed\n");
         qfli_mysql_record_exit(1);
     }
+}
+
+extern "C" __attribute__((visibility("default")))
+void QfliMysqlMain(NativeChildProcess_Args args)
+{
+    qfli_mysql_child_main(args.entryParams);
 }

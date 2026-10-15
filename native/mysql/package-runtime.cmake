@@ -10,12 +10,16 @@ set(QFLI_MYSQL_PACKAGE "${QFLI_MYSQL_PORT_ROOT}/package")
 set(QFLI_MYSQL_PACKAGE_LIBS "${QFLI_MYSQL_PACKAGE}/libs/arm64-v8a")
 set(QFLI_MYSQL_PACKAGE_DATA "${QFLI_MYSQL_PACKAGE}/rawfile/mysql")
 
-foreach(library qfli_mysql qfli_mysql_server)
+foreach(library qfli_mysql qfli_mysql_server qfli_mysql_server_proto)
   set(source "${QFLI_MYSQL_BUILD}/qfli-runtime/lib/lib${library}.so")
   if(NOT EXISTS "${source}")
     message(FATAL_ERROR "Missing Oracle MySQL runtime artifact: ${source}")
   endif()
 endforeach()
+set(QFLI_MYSQL_LAUNCHER "${QFLI_MYSQL_BUILD}/qfli-runtime/lib/libqfli_mysql_launcher.so")
+if(NOT EXISTS "${QFLI_MYSQL_LAUNCHER}")
+  message(FATAL_ERROR "Missing Oracle MySQL phone launcher: ${QFLI_MYSQL_LAUNCHER}")
+endif()
 if(NOT EXISTS "${QFLI_MYSQL_BUILD}/share/english/errmsg.sys")
   message(FATAL_ERROR "Missing generated Oracle MySQL error messages")
 endif()
@@ -26,7 +30,9 @@ find_program(QFLI_MYSQL_READOBJ NAMES llvm-readobj-18 llvm-readobj REQUIRED)
 find_program(QFLI_MYSQL_STRIP NAMES llvm-strip-18 llvm-strip REQUIRED)
 set(QFLI_MYSQL_LIBRARY_QUEUE
   "${QFLI_MYSQL_BUILD}/qfli-runtime/lib/libqfli_mysql.so"
-  "${QFLI_MYSQL_BUILD}/qfli-runtime/lib/libqfli_mysql_server.so")
+  "${QFLI_MYSQL_BUILD}/qfli-runtime/lib/libqfli_mysql_server.so"
+  "${QFLI_MYSQL_BUILD}/qfli-runtime/lib/libqfli_mysql_server_proto.so"
+  "${QFLI_MYSQL_BUILD}/qfli-runtime/lib/libqfli_mysql_launcher.so")
 set(QFLI_MYSQL_PACKAGED_LIBRARIES "")
 set(QFLI_MYSQL_PLATFORM_LIBRARIES libc.so libc++_shared.so libace_napi.z.so
   libhilog_ndk.z.so libm.so libdl.so libpthread.so)

@@ -41,7 +41,7 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$" OR OHOS_ARCH STREQUAL "arm
     if(NOT EXISTS "${QFLI_SQL_DIR}/../build/mysql-port/package/rawfile/mysql/runtime.json")
         message(FATAL_ERROR "Oracle MySQL runtime resources are missing; build native/mysql first")
     endif()
-    foreach(library qfli_mysql qfli_mysql_server)
+    foreach(library qfli_mysql qfli_mysql_server qfli_mysql_launcher qfli_mysql_server_proto)
         if(NOT EXISTS "${QFLI_MYSQL_RUNTIME}/lib${library}.so")
             message(FATAL_ERROR
                 "Build the Oracle MySQL runtime first: native/mysql/build-mysql-ohos.sh (${library})")
@@ -50,7 +50,11 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$" OR OHOS_ARCH STREQUAL "arm
 else()
     add_library(qfli_mysql SHARED
         src/qfli_mysql_unavailable.cpp
+        ${QFLI_SQL_DIR}/mysql/qfli_mysql_host.cpp
+        ../ohos/entry/src/main/cpp/qfli_mysql_proto_probe.cpp
         ../ohos/entry/src/main/cpp/qfli_mysql_napi.cpp)
-    target_include_directories(qfli_mysql PRIVATE ${QFLI_SQL_DIR}/src)
-    target_link_libraries(qfli_mysql PRIVATE -static-libstdc++ libace_napi.z.so)
+    target_include_directories(qfli_mysql PRIVATE
+        ${QFLI_SQL_DIR}/src ${QFLI_SQL_DIR}/mysql
+        ../ohos/entry/src/main/cpp)
+    target_link_libraries(qfli_mysql PRIVATE -static-libstdc++ libace_napi.z.so dl)
 endif()

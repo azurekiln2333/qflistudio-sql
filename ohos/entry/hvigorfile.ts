@@ -5,9 +5,12 @@ import fs from 'fs';
 import path from 'path';
 
 // Stage the versioned runtime before Hvigor discovers native libraries/resources.
+// All four libraries are required: the runtime and private preloaded server
+// libraries, the launcher, and the private server image the phone host loads.
 const mysqlPackage = path.resolve(__dirname, '../../build/mysql-port/package');
 if (fs.existsSync(path.join(mysqlPackage, 'rawfile/mysql/runtime.json'))) {
-    for (const library of ['libqfli_mysql.so', 'libqfli_mysql_server.so']) {
+    for (const library of ['libqfli_mysql.so', 'libqfli_mysql_server.so',
+        'libqfli_mysql_launcher.so', 'libqfli_mysql_server_proto.so']) {
         const source = path.join(mysqlPackage, 'libs/arm64-v8a', library);
         if (!fs.existsSync(source)) {
             throw new Error(`Oracle MySQL runtime package is incomplete: ${library}`);

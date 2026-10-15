@@ -25,7 +25,7 @@ export default class EntryAbility extends FlutterAbility {
 
   async onDestroy(): Promise<void> {
     try {
-      await this.mysqlRuntime?.stop();
+      await this.mysqlRuntime?.dispose();
     } catch (error) {
       console.error(`Oracle MySQL shutdown: ${error}`);
     } finally {

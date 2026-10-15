@@ -78,9 +78,19 @@ Verify actual merged manifests for marker=false, marker=true, absent signals
 and ordinary main builds; inspect the actual APK package with `aapt2` before
 any integration installation. Keep the Dart runtime sandbox guard as an
 independent check. Never uninstall or clear the production application.
+Isolated curriculum fixtures use a short app-private cache directory so the
+complete Unix socket path fits in 108 bytes including NUL. Capture the canonical
+created-directory identity before startup; verify it again before cleanup and
+resolve runtime paths before containment checks because Android may alias
+`/data/user/0` to `/data/data`. A timeout retains the active runtime directory;
+successful cleanup requires stop completion and PID-file disappearance.
 The API 37 x86_64 emulator with 16 KiB pages passed both actual-engine integration
 tests on 2026-10-02. Both x86_64 and ARM64 Oracle/OpenSSL builds and four-file
-staging audits passed. No ARM or Apple execution result is established.
+staging audits passed. On 2026-10-15 the physical ARM64 OPD2413 (API 36) passed
+both Oracle lifecycle/workbench tests and all six native curriculum tests
+(six examples plus six exercises, Oracle 8.4.6, private socket, cleanup).
+Evidence is under `10-15-sql-release-readiness/research/device-*-run.log`.
+No Apple execution result is established.
 
 ## 7. Wrong Vs Correct
 

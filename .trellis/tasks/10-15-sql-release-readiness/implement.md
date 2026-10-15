@@ -9,10 +9,10 @@
 - [x] Build final Android ARM64 release APK and OHOS unsigned release HAP against source-clean core 8b33443; record native/asset hashes and Android 16 KiB packaging audit in the final platform reports.
 - [x] Run full repository Dart analysis with zero issues; run appropriate native host regressions (30 preload checks plus lifecycle/mechanism/stdio suites; db5209a/cc68a2a/2753499).
 - [x] Finish Android manifest isolation regression (4 actual cases); commit 84746f1. Harden old native UI targets against production sandbox access, stale tree navigation and incomplete cleanup; commit c0a88bc.
-- [ ] Finish Android native curriculum/lifecycle/workbench device tests; restore final production release after physical-device testing. OPD2413 remains owned by Web; emulator handoff after Go requested separately.
+- [x] Finish Android native curriculum/lifecycle/workbench device tests; restore final production release after physical-device testing. OPD2413 ARM64/API 36 passed all four targets (6+2+6+1=15), including 12 authored MySQL outputs. Production release restored with install -r, five pages visually checked, production PID log clean for matching fatal/unhandled/overflow patterns. SQL explicitly released the window in global seq53. SQL's temporary 5582 emulator is stopped; no Go/Rust 5580 actions.
 - [x] Revalidate final app tests/builds against clean shared-core 8b33443 (Flutter/scoped and repository Dart analysis clean; 92 tests pass/2 unavailable desktop Oracle skips).
 - [x] Review complete owned source diffs and update SQL frontend/runtime specs; conventionally commit verified deliveries (8461bd6 and prior implementation batches).
-- [ ] Record final evidence and remaining work; archive only completed tasks and leave blocked checks explicit.
+- [x] Record final evidence and remaining work. Preserve the active release task because production signing and OHOS device acceptance remain external requirements; do not archive it as store-ready.
 
 ## Remaining external acceptance requirements
 

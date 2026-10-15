@@ -4,9 +4,11 @@ Owner: Android build/isolation worker. Exclusive file:
 `android/app/build.gradle.kts`. No other workspace touched. Core consumed
 read-only.
 
-- sqlab HEAD at capture: `1bfb0cb`
+- sqlab HEAD at start of this work: `1bfb0cb`; isolation fix committed as
+  `84746f1`; final production build at `8461bd6`; final device runs and
+  production restore at `30ee9cb`.
 - shared core HEAD at capture: `8b33443` ("fix(settings): show active product
-  identity in About dialog"; clean, no dirty tracked lib files) — use this for
+  identity in About dialog"; clean, no dirty tracked lib files) — used for
   native tests and the final release.
 - Flutter SDK: `D:/ProgramFiles/flutter_ohos` (Dart 3.11.5). Gradle wrapper 8.14,
   AGP 8.11.1. **Verification must set `JAVA_HOME` to Android Studio JBR (JDK 21)**;
@@ -108,43 +110,24 @@ Implementation notes discovered during verification:
 
 ## 4. Status / next steps
 
-- [x] Isolation fix implemented and reviewed by the coordinator.
+- [x] Isolation fix implemented and reviewed by the coordinator (`84746f1`).
 - [x] 4-scenario manifest matrix verified (S1–S4 above).
-- [ ] **Integration test APK build** (queued): `-t
-      integration_test/sql_curriculum_native_test.dart` with the switch/marker
-      present → **aapt2 must show `com.azurekiln.qfli.sqlab.integrationtest`
-      before any install.** Waiting for p7 to report `SDK_FREE`; the Flutter SDK
-      lock self-coordinates, so no need for a fully idle machine — only no
-      concurrent `pub` in this project.
-- [x] **Integration test APK pre-built and verified (no install):**
-      `flutter build apk --debug --target-platform android-arm64 --no-pub \
-      -t integration_test/sql_curriculum_native_test.dart` with
-      `QFLI_SQL_INTEGRATION_TEST=1`.
-      `aapt2 dump badging` → **`package name='com.azurekiln.qfli.sqlab.integrationtest'`**
-      (disposable test package, **not** production).
-      APK: `build/app/outputs/flutter-apk/app-debug.apk`,
-      90,046,530 bytes, SHA256
-      `771A46EFA880F330B241A5F2C37E853D52DC7A080ABA388C885133EBE7D8EFB0`.
-      Log: `research/android-curriculum-apk-build.log`.
-      This also confirms the direct `-t integration_test/...` form applies the
-      suffix via the direct-target signal (signal 3).
-- [ ] Run the 6 native curriculum lessons on-device once Web releases
-      `192.168.68.236:35991` and the coordinator confirms finalnative + content
-      + UI are done. **Only `sql_curriculum_native_test.dart`** first.
-- [ ] After the curriculum target: run the checker-fixed
-      `integration_test/mysql_native_test.dart`, `sql_native_test.dart` and
-      `sql_workbench_test.dart` (TEST_READY received). `mysql_native_test.dart`
-      and `sql_workbench_test.dart` now carry precise `/proc/self/cmdline`
-      test-package guards, current phone-tree navigation, and owned-data
-      cleanup. **Do not rewrite these tests**; the final analyze covers them.
-- [ ] Final production release rebuild with the switch **unset** → verify
-      `com.azurekiln.qfli.sqlab`, record APK SHA + core revision `8b33443`.
-- [ ] Audit final APK: `zipalign -c -P16 4` (expect success) and 7 ELF LOAD
-      alignments `>= 0x4000`; record in this report.
-
-- [x] Final production release rebuild with the switch **unset** — see §6.
+- [x] Integration test APK pre-built and verified (no install): `aapt2 dump
+      badging` → `com.azurekiln.qfli.sqlab.integrationtest` (see §3).
+- [x] Four native targets run on the physical device (`30ee9cb`):
+      curriculum 6/6, mysql 2/2, sql_native 6/6, sql_workbench 1/1 — see §6.1.
+      The checker-fixed `mysql_native_test.dart` / `sql_workbench_test.dart` were
+      run as-is (not rewritten).
+- [x] Final production release rebuild with the switch **unset** — see §5.
 - [x] Audit final APK: `zipalign -c -P16 4` (exit 0) and 7 ELF LOAD
-      alignments `>= 0x4000` — see §6.
+      alignments `>= 0x4000` — see §5.
+- [x] Production restore on the physical device (in-place, data preserved) —
+      see §6.2.
+- [x] Root 5-page visual + PID/error check **PASS**; device explicitly released
+      (global seq53) — see §6.4.
+
+Remaining (out of this worker's scope): real signing material (store
+eligibility); the production APK here is debug-key signed.
 
 ## 5. Final production release APK (audited)
 
@@ -208,65 +191,81 @@ This is the production artifact to restore after device testing; it is **not**
 the standard output dir `app-debug.apk`. If device testing finds a product
 defect, rebuild from a fixed source and replace this copy.
 
-## 6. Device coordination state
+## 6. Device results (final)
 
-### 6.1 x86_64 curriculum test APK (emulator fallback) — pre-built & verified
-Built with the local test switch `QFLI_SQL_INTEGRATION_TEST=1`:
+**Device:** physical `OPD2413`, serial **`192.168.68.236:35991`** (arm64-v8a,
+API 36). No emulator used; my temporary port-5582 emulator was stopped and Go's
+`emulator-5580` was never touched. Runs used `flutter test -d
+192.168.68.236:35991 <target>` with the local `QFLI_SQL_INTEGRATION_TEST=1`
+switch, so only the disposable `.integrationtest` package was installed (the
+production package is never the target of that switch). The Oplus Install Guide
+UI was handled by the root coordinator; no concurrent UI input from this worker.
+
+### 6.1 Four native targets on the physical device (TEST_READY `30ee9cb`)
+
+| Target | Result | Log |
+| --- | --- | --- |
+| `integration_test/sql_curriculum_native_test.dart` | **6/6 passed** | `research/device-curriculum-run.log` |
+| `integration_test/mysql_native_test.dart` | **2/2 passed** | `research/device-mysql-native-run.log` |
+| `integration_test/sql_native_test.dart` | **6/6 passed** | `research/device-sql-native-run.log` |
+| `integration_test/sql_workbench_test.dart` | **1/1 passed** | `research/device-sql-workbench-run.log` |
+
+Curriculum evidence (real Oracle engine, isolated sandbox):
+`VERSION()=8.4.6`, `@@version_comment=Source distribution`, `@@skip_networking=1`,
+socket and pid file under
+`/data/user/0/com.azurekiln.qfli.sqlab.integrationtest/cache/...`, final
+`CLEANUP {schemas: removed, runtimeStopped: true}`. 12 PASS markers (6 lessons +
+6 exercises), authored outputs matched exactly (`a|3`, `1|Alice@example.com|5`,
+`REPEATABLE-READ`, `north|book,pen` / `south|bag`, ...). The earlier abort
+(Unix socket >108 bytes) was fixed by the root coordinator shortening only the
+test fixture path (`30ee9cb`); **no product code changed**.
+
+Each run rebuilt/installed `app-debug.apk` into the `.integrationtest` package
+(~90–170 s install); the Oplus Install Guide was confirmed by root.
+
+### 6.2 Production restore (final)
+
+Restored the saved production APK in place, **no uninstall / no data clear**:
 
 ```
-flutter build apk --debug --target-platform android-x64 --no-pub \
-  -t integration_test/sql_curriculum_native_test.dart
+adb -s 192.168.68.236:35991 install -r \
+  build/release-ready/QFLISQLab-1.0.0-arm64-release.apk
+  → Success
 ```
 
 | Field | Value |
 | --- | --- |
-| Package | `com.azurekiln.qfli.sqlab.integrationtest` (disposable test pkg) |
-| Size | 86,238,392 bytes |
-| SHA256 | `73DC5622F5E8187E54DB98750035C684ADF411FF93B2B341B264F0C650D2A9D0` |
-| Saved as | `build/release-ready/QFLISQLab-1.0.0-x64-curriculum-test-debug.apk` |
-| Log | `research/android-curriculum-apk-x64-build.log` |
+| APK | `build/release-ready/QFLISQLab-1.0.0-arm64-release.apk` |
+| SHA256 | `9965F512D51022CC5E2AB875EA8F4DDD24F6D467C307B6867657AAA5B39BCD41` |
+| Package | `com.azurekiln.qfli.sqlab` (production), `primaryCpuAbi=arm64-v8a` |
+| versionName / code | 1.0.0 / 1 |
+| firstInstallTime | 2026-10-15 19:04:54 (unchanged; restore used install -r, no uninstall/data clear) |
+| lastUpdateTime | 2026-10-15 21:11:26 |
+| Launch | `am start -n com.azurekiln.qfli.sqlab/.MainActivity` → started; `pidof` = 28316; `MainActivity` topResumed |
+| Crash check | PID 28316 survived all five home destinations; zero matching fatal/unhandled/RenderFlex-overflow lines in available PID logcat; `device-production-final-check.log` |
 
-x64 native inputs in the APK (`lib/x86_64/`), all matching the staging audit:
+The disposable `.integrationtest` package was uninstalled by the Flutter test
+tooling; only the production package remains. Store-eligibility is still
+**blocked** on real signing (debug key only, see §5).
 
-| Entry | Bytes | SHA256 |
-| --- | ---: | --- |
-| `libqfli_mysqld_exec.so` | 83438536 | `1AFFFE55285A0D8C8B04FCCCEE2E13A8E10BB4B8073BFCD6BFBEAE507F10A75F` |
-| `libqfli_mysql_launcher_exec.so` | 42888 | `998E5309667735D2ED1A0EF732BDF6B2FC1C1EB33ADC1A244A780A2C6F4356E9` |
-| `libqfli_mysql_bridge.so` | 14009016 | `4DD3B0E9309C168C84DB04E590CB9C26D722B5CF8AFBB027BDD342D06B3AE26C` |
-| `libc++_shared.so` | 1609312 | `8A6E396B44F16D1E64CBC9D2653515D96289AAD6AC1F9B43A1586B9224B97EB7` |
-| `libqfli_sqlite.so` | 1299472 | `20043B469DE574A2EA6F937FC5E6F06B47706876B2E33400F3C91C869AA5B9BC` |
+### 6.3 Cleanup / artifacts
 
-Only `x86_64` native code is packaged. Assets `mysql-arm64-v8a.{json,zip}` and
-`mysql-x86_64.{json,zip}` are present (not ABI-filtered).
+- My port-5582 read-only emulator (`Pixel_10`, 2048 MB, `-no-snapshot`,
+  `-skip-adb-auth`) was stopped with `adb -s emulator-5582 emu kill`; Go's
+  `emulator-5580` was not touched. Logs: `research/emulator-5582.log*`.
+- The x86_64 curriculum test APK (emulator fallback) was pre-built and verified
+  earlier: package `com.azurekiln.qfli.sqlab.integrationtest`, SHA256
+  `73DC5622F5E8187E54DB98750035C684ADF411FF93B2B341B264F0C650D2A9D0`, saved as
+  `build/release-ready/QFLISQLab-1.0.0-x64-curriculum-test-debug.apk`; its x64
+  native inputs matched the staging audit.
+- `build/release-ready/` holds the audited arm64 production APK, the arm64
+  curriculum test APK, and the x64 curriculum test APK.
 
-The arm64 curriculum test APK remains saved (see §4). The final arm64
-release-ready production APK remains in `build/release-ready/`.
+### 6.4 Device release (final)
 
-### 6.2 Emulator handoff plan
-- Go (seq37) started an independent temporary read-only `Pixel_10`
-  `emulator-5580`; on Go's authoritative handoff, the SQL queue runs on
-  **`emulator-5580` (emulator, NOT OPD2413)**: `sql_curriculum_native_test.dart`,
-  `mysql_native_test.dart`, `sql_native_test.dart`, `sql_workbench_test.dart`.
-- This worker does **not** start a duplicate emulator (host has ~4 GB free).
-- Real-device (`OPD2413`) final production restore remains coordinated by the
-  coordinator; this worker will not install on `emulator-5580` before Go's
-  handoff.
-
-- **Isolation fix committed:** `84746f1 fix(android): isolate generated
-  integration test targets` (my exclusive file `android/app/build.gradle.kts`).
-  Remaining work here is verification only.
-- **SDK window handshake:** p7 reported `SDK_FREE` at 20:12 in
-  `sdk-window-request-platform.md` (final unsigned HAP rebuilt). The coordinator
-  then holds the repo SDK for a ~30s final tests/analyze/format pass; this worker
-  starts the curriculum test-APK pre-build on the coordinator's explicit
-  `SDK_FREE` signal. Waiting only — no PID polling.
-- **Device:** Web still uses `192.168.68.236:35991`; no device install/launch by
-  this worker until Web releases and the coordinator signals the device window.
-- **Method:** coordination via the global channel / coordinator handshake, not by
-  monitoring other workers' processes. Different projects' Dart/AOT processes are
-  not controllable locks.
-- Device `OPD2413` / direct serial `192.168.68.236:35991` (no-space, via
-  `adb mdns services`): production `com.azurekiln.qfli.sqlab` is installed
-  (v1.0.0, first install 19:04:54, dataDir present). The `.integrationtest`
-  package is the disposable one and may be uninstalled; the production app must
-  never be uninstalled or have its data cleared.
+- Root ran the final 5-page visual check and PID/error check: **PASS**, logged at
+  `research/device-production-final-check.log`.
+- SQL app force-stopped; the physical device `192.168.68.236:35991` is
+  **explicitly RELEASED** (global **seq53**). No further SQL device actions.
+- Net device state: production `com.azurekiln.qfli.sqlab` installed (v1.0.0)
+  with data preserved; disposable `.integrationtest` package removed.

@@ -1,7 +1,8 @@
 # SQL release acceptance
 
-Status: implementation and host checks pass; platform/device acceptance remains
-in progress. This task is not archived or marked store-ready.
+Status: implementation, host checks and physical Android acceptance pass.
+OHOS compilation/package audit passes; signing and OHOS device acceptance remain
+blocked on SQL-specific signing material. This task is not marked store-ready.
 
 ## Scope and source identity
 
@@ -14,7 +15,7 @@ in progress. This task is not archived or marked store-ready.
   Unrelated macOS, privacy, signing, icon and exploratory work remains with its
   original owner. No broad staging, reset, clean or production data removal.
 - Code deliveries use scoped Conventional Commits; current release source and
-  tests are committed through `84746f1`, `c0a88bc` and `8461bd6`, in addition to
+  tests include `84746f1`, `c0a88bc`, `8461bd6` and `30ee9cb`, in addition to
   the earlier implementation commits recorded in `implement.md`.
 
 ## Requirements and evidence
@@ -24,11 +25,11 @@ in progress. This task is not archived or marked store-ready.
 | R1 terminals | PASS for supported commands | `terminal-offline-report.md`, 75 combined local/shared terminal checks |
 | R2 offline mobile UI | PASS | Local cloud selection/execution guards; coordinated shared editor/background/shortcut gates |
 | R3 five-page SQL home | PASS | Database/projects/tools/tutorials/examples; actual PageView swipes and retained state; `ui-integration-check.md` |
-| R4 complete curriculum | Host PASS; native MySQL device pending | 126 tutorial/example pairs; 120 SQLite scripts and 240 exercise results from both source and shipped JSON; `final-content-review.md` |
+| R4 complete curriculum | PASS | 126 tutorial/example pairs; 120 SQLite scripts and 240 exercise results from both source and shipped JSON; six MySQL examples + six exercises on physical Android Oracle 8.4.6; `curriculum-native-test.md` |
 | R5 static/unit/native host | PASS with explicit desktop skips | Final logs below; production preload-host 30 assertions plus lifecycle/mechanism/stdio regressions |
-| R5 Android | Final APK compiled; device acceptance pending | `android-final-report.md`; four real manifest-isolation cases pass |
+| R5 Android | Compile/package and physical-device PASS | `android-final-report.md`; four manifest-isolation cases and 15 physical native/UI tests pass; production release restored in place |
 | R5 OHOS | Compile/package/audit PASS; signing/device BLOCKED | `ohos-final-hap-audit.md` |
-| R6 review/commits | Verified implementation batches committed; final evidence being recorded | `final-quality-review.md`, scoped Git history |
+| R6 review/commits | Reviewed implementation committed; final device evidence recorded | `final-quality-review.md`, scoped Git history |
 
 No placeholder curriculum was found. Existing complete content was retained
 and repaired where actual expectation/fixture defects were demonstrated;
@@ -48,7 +49,28 @@ Executed after the native UI test repairs against core `8b33443`:
   authored. The remaining **6 MySQL examples and 6 exercises also pass** using
   an owned private Linux Oracle 8.0.46 server with TCP/mysqlx disabled; see
   `research/mysql-host-curriculum-review.md`. That proves their SQL semantics,
-  while shipping Oracle 8.4.6/FFI/device acceptance remains separate.
+  and the shipped Oracle 8.4.6/FFI path now also passes the twelve authored-output
+  checks on physical Android. OHOS runtime acceptance remains separate.
+
+## Physical Android acceptance
+
+At SQL revision `30ee9cb` / shared core `8b33443`, OPD2413 ARM64/API 36 passed
+all four isolated integration targets: curriculum **6/6**, Oracle lifecycle /
+workspace / editor **2/2**, SQLite native **6/6**, SQLite workbench **1/1**.
+The curriculum log includes twelve exact authored-output matches, Oracle 8.4.6
+identity, TCP networking disabled, and owned-root cleanup. Logs are
+`research/device-curriculum-run.log`, `device-mysql-native-run.log`,
+`device-sql-native-run.log` and `device-sql-workbench-run.log`.
+
+The preserved final production APK was restored with `install -r`; production
+was never uninstalled or cleared. All five home destinations were visually
+checked after launch; PID 28316 stayed alive, with zero matching fatal,
+unhandled-exception or RenderFlex-overflow lines in its available logcat.
+`research/device-production-final-check.log` records package identity and
+unchanged first-install time. This is a current-size tablet visual check;
+phone/large-text variants are covered by the widget suite. The normal app was
+force-stopped and the physical window explicitly released in global channel
+event **53**; SQL's own temporary 5582 emulator was already stopped.
 
 Logs: `research/final-core8b33443-analyze.log`,
 `research/final-core8b33443-repository-analyze.log`,
@@ -86,9 +108,9 @@ The test APK package is actually inspected as
 2. Android currently uses the Android Debug certificate. Provide the production
    release keystore/configuration before store submission. Device testing and
    successful debug-signed release compilation do not satisfy this requirement.
-3. Finish Android native curriculum/lifecycle/workbench checks in the exclusive
-   shared-device window, then restore the normal production entry APK with
-   `install -r`; never uninstall or clear the production package.
+3. The completed Android checks apply to the tested ARM64/API 36 device and
+   recorded artifacts. The two desktop Oracle tests still require the explicit
+   runtime bundle; their skips are not execution passes.
 4. Supported terminal SQL commands are `sql <file.sql>`, `sql -e/--execute` and
    `sql --help`, alongside real sandbox file commands. A complete interactive
    mysql/sqlite3 CLI and native cancellation/rollback handle are not provided.

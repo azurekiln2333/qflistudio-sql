@@ -2,11 +2,14 @@
 
 ## Scope and current result
 
-`integration_test/sql_curriculum_native_test.dart` is ready for the platform
-worker to execute. This worker ran static and host curriculum checks only;
-**the six MySQL examples and six MySQL exercises have not yet been executed on
-Android/OHOS by this worker**. Unsupported platforms/native engines fail the
-target, rather than being skipped or replaced by SQLite/mocks.
+`integration_test/sql_curriculum_native_test.dart` passed on the physical
+Android OPD2413 at revision `30ee9cb` against core `8b33443`: **six MySQL examples
+and six MySQL exercises** executed with the packaged Oracle 8.4.6 engine.
+`device-curriculum-run.log` records all twelve authored-output matches, private
+socket identity, successful cleanup and `6: All tests passed!` (six registered
+lesson tests). OHOS device execution remains blocked by missing SQL signing.
+Unsupported platforms/native engines fail the target, rather than being skipped
+or replaced by SQLite/mocks.
 
 The target reads both shipped JSON assets through
 `SqlContentRepository(bundle: rootBundle)` and the shared `ContentCatalog`

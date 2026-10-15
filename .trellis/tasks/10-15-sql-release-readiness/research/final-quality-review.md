@@ -54,6 +54,13 @@ remaining callbacks, runtime stop, preference restoration or store disposal.
 
 ## Integration review
 
+- Follow-up review of `30ee9cb` passes: the Android curriculum fixture uses
+  a short private-cache socket path within the 108-byte Unix limit. Cleanup
+  requires the exact canonical directory captured on creation, resolves
+  Android path aliases, and retains OHOS external-root ownership, stop/PID
+  and timeout-retain guards. Focused Dart analysis reports no issues; physical
+  execution belongs to the Android worker.
+
 - `SqlLabApp` opens the app-local `SqlHomeShell`, whose PageView has exactly
   five retained destinations. Database/project widgets receive embedded mode;
   shared tools/tutorial/example pages receive their required stores and local
@@ -112,8 +119,20 @@ read the saved output directly:
 
 The analysis includes both newly repaired integration targets. The coordinator
 ran Dart formatting on exactly those two targets before this gate. Lint and
-type checking are green. Native Android device execution of those targets is
-still owned by Pi p5 and is not established by the host suite.
+type checking are green. Physical Android execution is now separately recorded
+below; it is not inferred from the host suite.
+
+The final physical Android logs at `30ee9cb` / core `8b33443` establish **15/15
+tests passed** across curriculum (6), Oracle lifecycle/editor/workbench (2),
+SQLite native (6) and SQLite workbench (1). The curriculum additionally logs
+twelve exact authored-output matches and successful isolated-runtime cleanup.
+The coordinator checked every framework summary and the structured markers.
+The saved normal production release was restored in place, all five home pages
+visually inspected, and its surviving PID's available logcat contained zero
+matching fatal/unhandled/overflow lines. The production package was never
+uninstalled or cleared; `device-production-final-check.log` records the final
+identity and observation. Physical ownership was explicitly released (global
+event 53). No OHOS device result is implied.
 
 Additional existing evidence reviewed: `terminal-offline-tests.log` (75 combined
 checks), the native host regressions and the platform artifact audit reports.
@@ -132,10 +151,11 @@ final platform builds must record the actual source/core revision.
    configuration uses the Android Debug certificate. Successful local builds
    and test installations do not establish store-ready signing. The owner must
    supply the SQL release keystore/configuration.
-3. **Pending acceptance:** Pi p5 owns final native curriculum/lifecycle/UI runs,
-   final production APK restoration and artifact hashes. Final analysis and the
-   host suite against core `8b33443` are green; they do not replace these device
-   and artifact checks.
+3. **Completed Android acceptance:** Pi p5's four native targets passed on
+   physical ARM64/API 36, the coordinator completed five-page visual checks,
+   and the recorded normal production APK was restored without clearing data.
+   These observations apply to that device and artifact; they do not replace
+   the still-blocked OHOS phone acceptance.
 4. **Explicit coverage limit:** the two desktop Oracle skips need
    `QFLI_MYSQL_TEST_BUNDLE`; they do not establish desktop runtime acceptance.
    OHOS debug probe/signed-device tests cannot be replaced by host stub tests.

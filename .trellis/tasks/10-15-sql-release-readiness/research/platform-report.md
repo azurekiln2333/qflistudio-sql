@@ -17,7 +17,13 @@ Repo: `D:/MyNewProjects/qfli_sql`. Only this workspace was written.
 
 ---
 
-## 1. Android release APK — built, verified (final result owned by wC:p5)
+## 1. Earlier Android release APK snapshot
+
+The table below records the earlier 18:50 build. The final production artifact,
+native/asset audit and physical-device results are maintained in
+`android-final-report.md`: preserved release-ready APK SHA256
+`9965F512D51022CC5E2AB875EA8F4DDD24F6D467C307B6867657AAA5B39BCD41`
+(45,745,907 bytes), built against shared core `8b33443`.
 
 | Field | Value |
 | --- | --- |
@@ -35,9 +41,10 @@ Repo: `D:/MyNewProjects/qfli_sql`. Only this workspace was written.
 - Installed + launched on `adb-d361e7a0-gqqQSM (2)._adb-tls-connect._tcp`
   (OPD2413/OP615EL1, arm64-v8a, API 36): install Success, process alive, no
   crash (fresh install; `com.azurekiln.qfli.sqlab` was not previously present).
-- **The final Android APK build/install and the native integration test are being
-  redone by wC:p5; p5's result supersedes this.** p5 uses the isolated
-  `.integrationtest` applicationId (uninstalls only the temp test package).
+- **Final Android build/install and all four native targets were completed by
+  wC:p5 (15/15 physical tests passed); `android-final-report.md` supersedes this
+  earlier snapshot.** Tests used the isolated `.integrationtest` applicationId;
+  the normal production package was restored with install -r.
 
 Key build-config fact for p5: build **without `--no-pub`** so `flutter pub get`
 regenerates the gitignored release `GeneratedPluginRegistrant.java` (drops the
@@ -114,9 +121,9 @@ At file: D:\MyNewProjects\qfli_sql\ohos\build-profile.json5
 - **No other project's profile was reused; no credentials generated;
   `build-profile.json5` and real certs were NOT modified.**
 - ⇒ Signed HAP and OHOS device acceptance are **blocked on missing
-  `com.azurekiln.qfli.sqlab` signing material**. Even once signed, the
-  auto-generated cert is a **debug** profile → sideload/test only, not
-  store-eligible.
+  `com.azurekiln.qfli.sqlab` signing material**. If a debug profile is regenerated,
+  that profile permits sideload testing only. A supplied future SQL signing
+  configuration must be verified independently for store distribution.
 
 ---
 

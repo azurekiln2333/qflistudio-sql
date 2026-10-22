@@ -44,4 +44,3 @@ Network-dependent app workflows, fabricated debugger controls, destructive user-
 
 ## Evidence ledger
 See implement.md and research/requirements-evidence.md. Keep every unproven requirement open until its authoritative evidence exists.
-

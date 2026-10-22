@@ -25,4 +25,3 @@ Developer research and Git publication may use network; app tools use only bundl
 
 ## Validation and rollback
 Use injected engine/repository seams for unit/widget behavior, real isolated SQLite/MySQL for semantics, current OHOS builds and device acceptance for target claims. Retain accurate unavailable results. Scoped corrective patches only; never reset/clean baseline work. Review each worker diff and the final integration before scoped commits.
-

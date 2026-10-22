@@ -33,4 +33,3 @@ all packaged-JSON executions matched authored lesson and exercise outputs
 ```
 
 All six MySQL entries remain unexecuted in this host check. New native coverage derives the denominator from the actual catalog and executes each engine separately. OHOS structured SQLite script dispatch is being fixed; SQL signing is absent and live emulator x86_64 lacks real Oracle runtime.
-

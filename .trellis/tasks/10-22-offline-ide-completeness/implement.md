@@ -40,4 +40,3 @@
 - Engine-context implementer owns sql_engine_preference.dart, sql_execution_context.dart and sql_workbench_page.dart. Pi p2 consumes that context in tools; stale preference contexts cannot dispatch SQL.
 - Pi p5/p6 stopped after repeated provider 502. Native replacement owns only OHOS bridge/validation core/native tests; existing script fix is preserved. Draft author remains isolated from shipped assets until the original OHOS catalog gate passes.
 - Audit failures must retain the full expected denominator and per-script records. A partial engine run or unavailable backend never passes the all-engine device gate.
-

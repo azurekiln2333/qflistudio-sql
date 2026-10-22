@@ -40,3 +40,10 @@
 - Engine-context implementer owns sql_engine_preference.dart, sql_execution_context.dart and sql_workbench_page.dart. Pi p2 consumes that context in tools; stale preference contexts cannot dispatch SQL.
 - Pi p5/p6 stopped after repeated provider 502. Native replacement owns only OHOS bridge/validation core/native tests; existing script fix is preserved. Draft author remains isolated from shipped assets until the original OHOS catalog gate passes.
 - Audit failures must retain the full expected denominator and per-script records. A partial engine run or unavailable backend never passes the all-engine device gate.
+
+## SQL workspace consumer follow-up (2026-10-23)
+- Existing SQL editor integration proves diagnostics owner/dialect changes, but does not exercise sidebar reopening, session reconstruction or owner-aware Run through the actual SQLite runner.
+- Add a SQL-owned `test/sql_workspace_integration_test.dart` using production `sqlProfile`, `EditorPage`, persisted `ProjectStore`/`ProjectHistory` and real bundled SQLite. Operate workspace UI before checking restoration; verify primary/secondary database writes and unsaved-buffer ownership through actual Run buttons.
+- This boundary adds consumer acceptance only. Shared editor/tree/workspace implementations remain with their announced C/studio owners; no source patch, compatibility wrapper or production behavior change belongs in SQL for those APIs.
+- Capture the exact consumed core source, including current dirty files. Serialize focused checks with other owners under current host memory pressure; a source-only proposal, unrun test or earlier core snapshot does not establish the new gate.
+- Target process restart, normal OHOS UI and original/expanded curriculum remain separately required even if the host consumer regressions pass.

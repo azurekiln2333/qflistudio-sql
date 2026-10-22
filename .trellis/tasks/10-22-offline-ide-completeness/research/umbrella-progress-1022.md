@@ -52,7 +52,7 @@ only for long press. Do not label this regression closed from owner-run tests.
 
 - `research/isolated-checkpoint-check.md`: exact staged product patch,272/2 and26/26 gates, captured core identity.
 - `research/audit-package-capfix.md`: current HAP identity and inspection, fixed512-statement smoke.
-- `research/requirements-evidence.md:17`: four delivery commits and pending remote publication.
+- `research/requirements-evidence.md`: live requirement gates; later five-remote publication is recorded in `research/publication-20261023.md` and channel seq171.
 - `research/draft-review.md:17`: reviewed306/912 promotion denominator and held180 drafts.
 - `tool/ohos/collect_curriculum_audit.py:252`: validates explicit run/build/platform, complete manifest counts and per-script evidence; line366 separates actual OHOS device status.
 - `integration_test/sql_curriculum_ohos_audit.dart:75`: executes using actual `Platform.operatingSystem` and emits the durable report.

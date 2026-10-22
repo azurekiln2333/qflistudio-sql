@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
 import 'sql_native_channel.dart';
-import 'sqlite_ffi.dart';
 
 class SqlResultColumn {
   const SqlResultColumn({
@@ -170,14 +169,13 @@ class NativeSqliteDatabase implements SqlDatabase, SqlScriptDatabase {
     required String databasePath,
     required String source,
   }) async {
-    if (!SqliteFfi.supported) {
-      final result = await query(databasePath: databasePath, source: source);
-      return SqlScriptResult(summary: result, results: [result]);
-    }
     try {
       if (databasePath != ':memory:') {
         await Directory(p.dirname(databasePath)).create(recursive: true);
       }
+      // Multi-statement scripts must always reach the native script entry point.
+      // A plain grid query rejects the second statement, so OHOS (which has no
+      // FFI) previously broke tutorial scripts by pretending to be a query.
       return SqlScriptResult.fromNative(
         await invokeSqliteNative('executeScript', {
           'source': source,

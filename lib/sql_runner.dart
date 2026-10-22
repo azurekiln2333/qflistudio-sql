@@ -13,7 +13,6 @@ import 'sql_engine_preference.dart';
 import 'sql_native_channel.dart';
 import 'mysql_database.dart';
 import 'sql_database.dart';
-import 'sqlite_ffi.dart';
 
 class SqlProgramRequest {
   const SqlProgramRequest({required this.projectPath, required this.source});
@@ -277,15 +276,18 @@ class PreferredSqlEngine implements SqlProgramEngine {
   }
 }
 
-/// Matches the default workbench's native engine on each platform.
+/// Executes the SQLite selection through its platform bridge.
+///
+/// OHOS supplies the same engine through the native channel. FFI availability
+/// selects a transport inside invokeSqliteNative, never a different SQL engine.
 class NativeLocalSqlEngine implements SqlProgramEngine {
-  const NativeLocalSqlEngine();
+  const NativeLocalSqlEngine({this.sqlite = const NativeSqliteEngine()});
+
+  final SqlProgramEngine sqlite;
 
   @override
   Future<SqlProgramExecutionResult> execute(SqlProgramRequest request) =>
-      SqliteFfi.supported
-      ? const NativeSqliteEngine().execute(request)
-      : const NativeMySqlEngine().execute(request);
+      sqlite.execute(request);
 }
 
 /// SQL 版 App 的运行后端。

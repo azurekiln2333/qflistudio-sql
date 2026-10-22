@@ -102,10 +102,24 @@ asserts ≥110 tutorials/examples, complete lesson fields, no placeholders, no
 duplicate explain/code, dialect visibility, runnable example DDL, and unit-tests
 `SqlContentRepository` (load, filter, memoization, missing-asset error).
 
-`integration_test/sql_curriculum_native_test.dart` executes all six shipped
-MySQL-only lessons and exercises through real Oracle 8.4.6 on Android/OHOS. It
-requires a separate Android `.integrationtest` app sandbox or an OHOS debug
-probe root, verifies socket/skip-networking identity, creates uniquely owned
-databases, and cleans only owned test data. Tests fail rather than silently
-skip an unavailable native runtime. Native build or host SQLite success does
-not establish the MySQL lesson result; record platform PASS/cleanup markers.
+`integration_test/sql_curriculum_native_test.dart` and the standalone OHOS entry
+`integration_test/sql_curriculum_ohos_audit.dart` share catalog-derived cases,
+comparison, real sessions and exhaustive reporting under `integration_test/support/`.
+The denominator includes every shipped SQLite/MySQL example and exercise. Reject
+duplicate/missing IDs, unknown engines, source/output drift and missing authored
+exercise expectations before execution. Engine filters never shrink the denominator.
+
+Each SQLite script uses fresh `:memory:`; each Oracle script uses a uniquely owned
+schema in an isolated runtime. Require SQLite3.50 identity plus dense multiple
+result smoke and actual Oracle8.4.6 identity with networking disabled and owned
+socket/PID/datadir. Ordinary failures continue; timeout stops further calls into
+that engine and retains its roots. Native calls are not cancelled by Dart timeout.
+
+The standalone entry uses the normal Flutter binding and app-private
+`sql-curriculum-audit/<unique-run>/report.json` plus flushed `events.jsonl`.
+Flush an event before publishing its report. Numbered REPORT/DETAIL JSON chunks
+provide log recovery. Missing identity/cleanup, failures, unavailable/skipped
+scripts or failed checkpoint prevent the complete gate. `deviceGatePassed` also
+requires actual OHOS platform identity. Host execution or successful packaging
+cannot establish device acceptance. Promote new content only after the entire
+original OHOS catalog gate, then rerun the complete expanded catalog.

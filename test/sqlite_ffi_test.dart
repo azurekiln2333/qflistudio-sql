@@ -184,6 +184,57 @@ void main() {
       );
 
       test(
+        'script cap ignores trailing trivia and refuses statement 513 before mutation',
+        () async {
+          Future<SqlScriptResult> script(String source) async =>
+              SqlScriptResult.fromNative(
+                await SqliteFfi.invoke('executeScript', {
+                  'databasePath': databasePath,
+                  'source': source,
+                }, libraryPath: library),
+              );
+          final boundary =
+              '${List.filled(511, 'SELECT 1 WHERE 0;').join()}'
+              "SELECT 'kept' AS marker;";
+          for (final suffix in [
+            ' \r\n\t ',
+            '-- trailing comment\n',
+            '/* trailing comment */',
+            '; ; /* trailing comment */ ; -- final comment',
+          ]) {
+            final result = await script('$boundary$suffix');
+            expect(result.success, isTrue, reason: '$suffix: ${result.error}');
+            expect(result.truncated, isFalse);
+            expect(result.results.length, 512);
+            expect(result.results.last.rows, [
+              ['kept'],
+            ]);
+            expect(result.summary.rows, result.results.last.rows);
+          }
+          expect(
+            (await query('CREATE TABLE cap_guard (value TEXT)')).success,
+            isTrue,
+          );
+          final refused = await script(
+            "$boundary ; /* separator */ INSERT INTO cap_guard VALUES ('forbidden');",
+          );
+          expect(refused.success, isFalse);
+          expect(refused.error, contains('512 statement limit'));
+          expect(refused.truncated, isFalse);
+          expect(refused.results.length, 512);
+          expect(refused.results.every((result) => result.success), isTrue);
+          expect(refused.results.last.rows, [
+            ['kept'],
+          ]);
+          expect((await query('SELECT count(*) FROM cap_guard')).rows, [
+            ['0'],
+          ]);
+          // The refused prepared handle is finalized and its connection closed.
+          expect((await query('DROP TABLE cap_guard')).success, isTrue);
+        },
+      );
+
+      test(
         'workspace creates, edits and deletes persisted rows through default FFI',
         () async {
           final workspace = SqlWorkspaceRepository(root: root);

@@ -24,9 +24,10 @@ It does not claim a complete interactive mysql/sqlite3 client or a SQL cancellat
 API; Ctrl+C cannot promise rollback of an already submitted native transaction.
 
 An offline product maps a persisted cloud preference to the local `sqlite`
-selection without opening a cloud connection. The effective native implementation
-is platform-specific: `NativeLocalSqlEngine` uses SQLite on Android/desktop and
-the existing Oracle channel on OHOS. Saving cloud is refused. `openCloud` checks policy before metadata
+selection without opening a cloud connection. `NativeLocalSqlEngine` always
+uses SQLite: FFI on supported targets and the SQLite native channel on OHOS.
+The absence of FFI never changes the selected engine to Oracle.
+Saving cloud is refused. `openCloud` checks policy before metadata
 requests; both cloud query/script methods check policy before token/API access.
 Local SQLite and Oracle remain independently selected; unavailable selected
 native engines must not silently connect to another service.

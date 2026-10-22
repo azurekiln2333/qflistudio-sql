@@ -22,6 +22,8 @@ This directory contains guidelines for backend development. Fill in each file wi
 | [SQL Query Library](./sql-query-library.md) | Query persistence and filesystem failure behavior | Documented |
 | [SQLite Workspace](./sql-workspace.md) | Stable grid identity and fixed-offset paging | Documented |
 | [SQLite Native Runtime](./sqlite-native-runtime.md) | Multi-platform C packaging, FFI, queries and real runtime evidence | Implemented |
+| [SQL Diagnostics](./sql-diagnostics.md) | Exact snapshots, isolated prepare-only validation, UTF-16 ranges and incomplete coverage | Implemented; target acceptance separate |
+| [OHOS Audit Packaging](./ohos-audit-packaging.md) | Real ABI staging, separate audit bundle, SDK test signing and final archive provenance | Build verified; device acceptance separate |
 | [Oracle MySQL Workspace](./mysql-workspace.md) | Oracle metadata, primary keys, binary values, and native client | Documented |
 | [Oracle Desktop Runtime](./mysql-desktop-runtime.md) | Windows/Linux private server lifecycle, FFI and bundle contract | Implemented |
 | [Oracle Android Runtime](./mysql-android-runtime.md) | Bionic build, installed code/data layout and private server lifecycle | Implemented; x86_64 device verified |

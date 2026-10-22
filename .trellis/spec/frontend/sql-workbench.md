@@ -30,7 +30,7 @@ belongs in this package.
 `SqlEnginePreference`
 and opens local SQLite or local Oracle. An offline profile refuses cloud
 repositories even when a former signed-in session persisted that selection.
-The existing OHOS default remains native Oracle. Query-library
+SQLite is available through its OHOS native channel. Query-library
 storage remains independent. `contentRepository` defaults to the app-local
 `SqlContentRepository` (C2-owned) and is injected into the SQL `LocalTutorialsTab`
 / `ExampleCodeTab`. Compact view controls are located by their tooltips in device
@@ -57,6 +57,25 @@ tests.
   rows reuse shared `commonTools` metadata/routes and the supplied terminal
   callback. Preserve every tool; do not use fixed-height cards that overflow
   at 2x text scale or merge SQL navigation into shared core.
+- SQL worksheet, ordered result sets, query plan, schema/index inspection and
+  text/value tools are embedded directly in `SqlToolsBody`. `SqlToolsController`
+  retains the worksheet/library state across tab switches. SQLite indexes come
+  from captured-context `PRAGMA main.index_list/index_info`; show actual names,
+  unique/primary/automatic origin, partial flags and expression markers.
+- After script execution, refresh the table list and always refresh schema
+  state. If the selected table disappeared, clear columns, indexes, schema note
+  and schema error together; an empty table selector must not display cached
+  metadata from a deleted table. Preserve generation/context guards across awaits.
+- Plan requests accept one guarded query and add plain `EXPLAIN` (MySQL) or
+  `EXPLAIN QUERY PLAN` (SQLite). Reject execution-analysis, file-output forms,
+  executable MySQL comments, ambiguous/truncated input and mutating WITH tails.
+  Render the engine's raw rows; do not promise stable plan-detail text.
+- `formatSqlText(source, dialect: ...)` is limited command-start normalization.
+  The UI says `整理语句开头`. Only recognized leading command words are uppercased;
+  identifiers, aliases, expression spelling, types, clauses, comments, literals
+  and separators remain unchanged. Surrounding whitespace is trimmed. An
+  incomplete, limited or ambiguous scan returns trimmed input unchanged. This
+  preserves case-sensitive MySQL object names and SQLite result-header spelling.
 - The database toolbar always exposes settings, including with zero projects;
   offline `SettingsPage` uses `showAi: false`. Standalone content routes push
   the shared page directly, without wrapping its Scaffold/AppBar again.
@@ -68,11 +87,17 @@ tests.
 - Hybrid layout: phone (<700px) home body is the tree with a back affordance;
   desktop (≥700px) is the tree side panel + workspace.
 - `_busy` serializes workspace commands. Disable mutation controls during work.
-- The engine menu selects persisted SQLite/localMysql. Unsupported SQLite is
-  omitted. Display the selected engine; both workbench and preferred editor
+- The engine menu selects persisted SQLite/localMysql, including SQLite on OHOS.
+  Display the selected engine; both workbench and preferred editor
   consume `sql_engine.json` (`sqlite`, `localMysql`, or existing `cloud`). Loading
   callers await the same pending read. Save publishes memory state only after
   a successful atomic write. A selected native engine cannot silently fall back.
+- `SqlExecutionContext.openLocal()` captures engine, repository and preference
+  revision. `repository`, `runQuery` and `runScript` check `requireCurrent()`.
+  Retained tools observe `SqlEnginePreference.changes`, invalidate old engine
+  results immediately, and check operation generation after every await before
+  publishing metadata/history/results or dispatching another operation. Keep the
+  in-flight lock until submitted native work settles; it is not cancellation.
 - Offline product: the engine menu never offers a cloud/online choice, and a
   stale persisted `cloud` value must not open a network repository. The
   workbench short-circuits a stale cloud choice and ignores a cloud
@@ -133,6 +158,14 @@ storage errors.
 `test/sql_home_shell_test.dart` covers the five PageView destinations, swiping to
 项目/功能/教程/示例, desktop rail vs phone bottom bar, the absence of a second home
 toolbar, embedded mode hiding the duplicate pushes, and 2× text scale.
+`test/sql_engine_context_test.dart`, `test/sql_tools_service_test.dart` and
+`test/sql_tools_tab_test.dart` cover stale selection, delayed metadata/history,
+partial results/SQLSTATE, plan refusal, direct retained layout and actual bundled
+SQLite index/plan inspection without changing data.
+The formatter regression must compare real SQLite results and exact column
+headers using a table named `text` with `real`/`text` columns; source-only keyword
+snapshots do not detect changes to result metadata. MySQL source-preservation
+tests cover unquoted identifiers/aliases without claiming a real server run.
 `integration_test/sql_workbench_test.dart` uses the native SQLite repository in
 the isolated Android test package and checks tree navigation, grid edits, SQL
 results, and saved-query reopening. It refuses production/other platforms and
@@ -146,3 +179,9 @@ Wrong: await a new selection's load while leaving the old grid editable.
 
 Correct: clear `_tablePage` when selection changes; on load failure, render
 `_tableError` and offer retry instead of rendering stale rows.
+
+Wrong: globally uppercase every word matching a keyword list. `text` can be a
+case-sensitive table name, and expression spelling can determine result headers.
+
+Correct: `select real as text from text;` becomes
+`SELECT real as text from text;`, with its body preserved verbatim.

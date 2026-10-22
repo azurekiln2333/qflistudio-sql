@@ -152,6 +152,44 @@ void main() {
       expect(result.exitCode, kProgramNotRunExitCode);
     });
   });
+
+  test(
+    'the local SQLite selection preserves the SQLite channel boundary',
+    () async {
+      const channel = MethodChannel('qfli_sql/selected_sqlite_test');
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      final project = await Directory.systemTemp.createTemp('qfli_selection_');
+      addTearDown(() async {
+        messenger.setMockMethodCallHandler(channel, null);
+        await project.delete(recursive: true);
+      });
+      var calls = 0;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        calls++;
+        expect(call.method, 'execute');
+        return {
+          'available': true,
+          'exitCode': 0,
+          'output': 'SQLite selected\n',
+          'error': null,
+        };
+      });
+      final result =
+          await const NativeLocalSqlEngine(
+            sqlite: NativeSqliteEngine(channel: channel),
+          ).execute(
+            SqlProgramRequest(projectPath: project.path, source: 'SELECT 1;'),
+          );
+      expect(calls, 1);
+      expect(result.stdout, ['SQLite selected']);
+      expect(result.exitCode, 0);
+      expect(
+        File(p.join(project.path, '.qfli', 'mysql.json')).existsSync(),
+        isFalse,
+      );
+    },
+  );
 }
 
 class _RecordingEngine implements SqliteEngine {

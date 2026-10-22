@@ -3,7 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qfli_sql/sql_database.dart';
+import 'package:qfli_sql/sql_engine_preference.dart';
+import 'package:qfli_sql/sql_execution_context.dart';
 import 'package:qfli_sql/sql_query_library.dart';
+import 'package:qfli_sql/sql_tools_service.dart';
+import 'package:qfli_sql/sql_tools_tab.dart';
 import 'package:qfli_sql/sql_workbench_page.dart';
 import 'package:qfli_sql/sql_workspace_repository.dart';
 import 'package:qfli_sql/main.dart' show sqlProfile;
@@ -39,14 +43,24 @@ void main() {
     settings.dispose();
   });
 
-  Widget app({ContentRepository? content}) => MaterialApp(
-    home: SqlWorkbenchPage(
-      store: store,
-      auth: auth,
-      settings: settings,
-      repositoryFactory: () async => workspace,
-      queryLibraryFactory: () async => queryLibrary,
-      contentRepository: content,
+  Widget app({ContentRepository? content}) => SqlToolsScope(
+    createController: () => SqlToolsController(
+      openTarget: () async => SqlExecutionContext.forTesting(
+        engine: SqlEngineKind.sqlite,
+        repository: workspace,
+      ),
+      openLibrary: () async => queryLibrary,
+      watchPreference: false,
+    ),
+    child: MaterialApp(
+      home: SqlWorkbenchPage(
+        store: store,
+        auth: auth,
+        settings: settings,
+        repositoryFactory: () async => workspace,
+        queryLibraryFactory: () async => queryLibrary,
+        contentRepository: content,
+      ),
     ),
   );
 
@@ -239,10 +253,14 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('功能'));
       await tester.pumpAndSettle();
-      // FunctionsTab exposes the terminal entry and the SQL content tool. The
-      // shared ToolsGrid labels the quick entry 终端; the SQL section is 专用.
+      // The real profile builder renders SQL controls directly under the
+      // FunctionsTab toolbar, with controlled local repository dependencies.
       expect(find.text('终端'), findsOneWidget);
       expect(find.text('SQL 查询'), findsOneWidget);
+      expect(find.byKey(const ValueKey('sql-tools-worksheet')), findsOneWidget);
+      expect(find.byKey(const ValueKey('sql-tools-run')), findsOneWidget);
+      expect(find.text('专用'), findsNothing);
+      expect(find.byType(AppBar), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
@@ -463,6 +481,18 @@ class _FakeContentRepository implements ContentRepository {
 class _FakeWorkspace extends SqlWorkspaceRepository {
   _FakeWorkspace() : super(root: Directory.systemTemp);
 
+  @override
+  Future<List<SqlColumn>> tableColumns(
+    String databaseName,
+    String table,
+  ) async => (await loadTable(databaseName, table)).columns;
+
+  @override
+  Future<List<SqlIndex>> tableIndexes(
+    String databaseName,
+    String table,
+  ) async => [];
+
   String name = 'Ada';
   String? updatedValue;
   bool hasBrokenTable = false;
@@ -532,10 +562,12 @@ class _FakeWorkspace extends SqlWorkspaceRepository {
 
   @override
   Future<SqlQueryResult> runQuery(String databaseName, String source) async =>
-      const SqlQueryResult(
+      SqlQueryResult(
         available: true,
         exitCode: 0,
-        columns: [],
+        columns: source.startsWith('PRAGMA main.index_list(')
+            ? ['seq', 'name', 'unique', 'origin', 'partial']
+            : [],
         rows: [],
         affectedRows: 0,
         truncated: false,

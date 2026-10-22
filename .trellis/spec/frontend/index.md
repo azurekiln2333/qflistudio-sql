@@ -24,6 +24,7 @@ This directory contains guidelines for frontend development. Fill in each file w
 | [Tutorial Imports](./tutorial-code-import.md) | MD3 content lists, custom source imports, backup and editor activation | Documented |
 | [SQL Content Repository](./sql-content-repository.md) | App-local SQL curriculum assets, shared-catalog loading, authoring/validation pipeline | Documented |
 | [SQL Terminal and Offline](./sql-terminal-offline.md) | Shared terminal delegate, project database identity and offline cloud refusal | Documented |
+| [SQL Diagnostics](../backend/sql-diagnostics.md) | Unsaved-buffer adapter and honest engine/lexical diagnostic limits | Documented |
 
 ---
 

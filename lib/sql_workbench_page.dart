@@ -10,7 +10,6 @@ import 'package:qfli_studio_core/pages/quick_tools_page.dart'
 import 'package:qfli_studio_core/pages/terminax_terminal_page.dart'
     show TerminaxTerminalPage;
 import 'package:qfli_studio_core/services/picker_service.dart';
-import 'package:qfli_studio_core/services/studio_profile.dart';
 import 'package:qfli_studio_core/store/auth_store.dart';
 import 'package:qfli_studio_core/store/project_store.dart';
 import 'package:qfli_studio_core/store/settings_store.dart';
@@ -23,10 +22,10 @@ import 'mysql_workspace_repository.dart';
 import 'sql_document_service.dart';
 import 'sql_query_library.dart';
 import 'sql_workspace_repository.dart';
-import 'sqlite_ffi.dart';
 import 'android_mysql_runtime.dart';
 import 'local_mysql_runtime.dart';
 import 'sql_engine_preference.dart';
+import 'sql_execution_context.dart';
 
 class SqlWorkbenchPage extends StatefulWidget {
   const SqlWorkbenchPage({
@@ -35,6 +34,7 @@ class SqlWorkbenchPage extends StatefulWidget {
     required this.auth,
     required this.settings,
     this.repositoryFactory,
+    this.localContextFactory,
     this.queryLibraryFactory,
     this.contentRepository,
     this.embedded = false,
@@ -44,6 +44,9 @@ class SqlWorkbenchPage extends StatefulWidget {
   final AuthStore auth;
   final SettingsStore settings;
   final Future<SqlWorkspaceRepository> Function()? repositoryFactory;
+  // Preserves preference/change-notification behavior while allowing tests to
+  // inject local engines without starting an app-private native server.
+  final Future<SqlExecutionContext> Function()? localContextFactory;
   final Future<SqlQueryLibrary> Function()? queryLibraryFactory;
   // SQL tutorial/example content source. Defaults to the app-local
   // SqlContentRepository; injectable so tests avoid real assets.
@@ -93,6 +96,9 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
   bool _queryLibraryLoading = true;
   int _page = 0;
   SqlEngineKind _engine = SqlEngineKind.sqlite;
+  SqlExecutionContext? _localContext;
+  bool _changingEngine = false;
+  bool _pendingEngineReload = false;
   // SQL tutorial/example content source; injectable for tests, otherwise the
   // bundled SQL catalog.
   late final ContentRepository _contentRepository =
@@ -102,12 +108,14 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
   void initState() {
     super.initState();
     SqlEnginePreference.token = () => widget.auth.token;
+    SqlEnginePreference.changes.addListener(_onEnginePreferenceChanged);
     unawaited(_initialize());
     unawaited(_loadQueryLibrary());
   }
 
   @override
   void dispose() {
+    SqlEnginePreference.changes.removeListener(_onEnginePreferenceChanged);
     _queryController.dispose();
     _filterController.dispose();
     super.dispose();
@@ -117,6 +125,8 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     setState(() {
       _busy = true;
       _loadError = null;
+      if (_pendingEngineReload) _clearEngineState();
+      _pendingEngineReload = false;
     });
     try {
       final factory = widget.repositoryFactory;
@@ -124,33 +134,36 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
       if (factory != null) {
         repository = await factory();
       } else {
-        _engine = await SqlEnginePreference.load();
-        // Offline product: a stale persisted `cloud` choice must never open a
-        // network repository. Fall back to the local engine and report it as
-        // local, so the UI cannot be talked into cloud over the wire.
+        await SqlEnginePreference.load();
+        _engine = SqlEnginePreference.current;
+        // Offline stale cloud settings use SQLite, including the native OHOS
+        // channel. FFI availability must never select a different engine.
         if (_engine == SqlEngineKind.cloud && _offlineOnly) {
-          _engine = SqliteFfi.supported
-              ? SqlEngineKind.sqlite
-              : SqlEngineKind.localMysql;
+          _engine = SqlEnginePreference.resolveLocalEngine(_engine);
         }
-        repository = await switch (_engine) {
-          SqlEngineKind.localMysql => MySqlWorkspaceRepository.openLocal(),
-          SqlEngineKind.sqlite =>
-            SqliteFfi.supported
-                ? SqlWorkspaceRepository.openDefault()
-                : MySqlWorkspaceRepository.openLocal(),
-          SqlEngineKind.cloud =>
-            widget.auth.token == null
-                ? Future<SqlWorkspaceRepository>.error(
-                    StateError('云 MySQL 需要登录。'),
-                  )
-                : MySqlWorkspaceRepository.openCloud(
-                    token: () => widget.auth.token ?? '',
-                  ),
-        };
+        if (_engine == SqlEngineKind.cloud) {
+          _localContext = null;
+          final revision = SqlEnginePreference.revision;
+          if (widget.auth.token == null) throw StateError('云 MySQL 需要登录。');
+          repository = await MySqlWorkspaceRepository.openCloud(
+            token: () => widget.auth.token ?? '',
+          );
+          if (revision != SqlEnginePreference.revision ||
+              _engine != SqlEnginePreference.current) {
+            throw StateError('数据库引擎已切换，请重新连接后运行。');
+          }
+        } else {
+          final local =
+              await (widget.localContextFactory?.call() ??
+                  SqlExecutionContext.openLocal());
+          _localContext = local;
+          _engine = local.engine;
+          repository = local.repository;
+        }
       }
       if (!mounted) return;
       _repository = repository;
+      _pendingEngineReload = false;
       await _refreshTree();
       if (mounted) setState(() => _loadError = null);
     } catch (error) {
@@ -161,19 +174,60 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
         });
       }
     } finally {
-      if (mounted) setState(() => _busy = false);
+      _finishCommand();
     }
   }
 
   String get _engineLabel => switch (_engine) {
-    SqlEngineKind.sqlite => SqliteFfi.supported ? 'SQLite' : '本机 MySQL',
+    SqlEngineKind.sqlite => 'SQLite',
     SqlEngineKind.localMysql => '本机 MySQL',
     SqlEngineKind.cloud => '云 MySQL',
   };
 
   /// The offline policy from the active product profile. The SQL app is an
   /// offline product, so no reachable action may open a networked engine.
-  bool get _offlineOnly => StudioProfile.current?.isOffline == true;
+  bool get _offlineOnly => !SqlEnginePreference.cloudEnabled;
+
+  void _onEnginePreferenceChanged() {
+    if (!mounted || widget.repositoryFactory != null || _changingEngine) return;
+    if (_engine == SqlEnginePreference.current &&
+        (_localContext?.isCurrent ?? true)) {
+      return;
+    }
+    _pendingEngineReload = true;
+    // Finish a command already submitted to native code before reconnecting.
+    // _perform also checks the context before dispatching any new command.
+    if (!_busy) unawaited(_initialize());
+  }
+
+  void _finishCommand() {
+    if (!mounted) return;
+    setState(() => _busy = false);
+    if (_pendingEngineReload && !_changingEngine) unawaited(_initialize());
+  }
+
+  void _clearEngineState() {
+    _repository = null;
+    _localContext = null;
+    _loadError = null;
+    _databases = [];
+    _expanded.clear();
+    _expandedTables.clear();
+    _collapsed.clear();
+    _database = null;
+    _table = null;
+    _tablePage = null;
+    _schemaColumns = null;
+    _queryResult = null;
+    _indexes = [];
+    _tableError = null;
+    _schemaError = null;
+    _filterColumn = null;
+    _sortColumn = null;
+    _descending = false;
+    _page = 0;
+    _filterController.clear();
+  }
 
   Future<void> _selectEngine(SqlEngineKind kind) async {
     if (_busy || kind == _engine) return;
@@ -183,25 +237,8 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
     final previous = _engine;
     setState(() {
       _busy = true;
-      _repository = null;
-      _loadError = null;
-      _databases = [];
-      _expanded.clear();
-      _expandedTables.clear();
-      _collapsed.clear();
-      _database = null;
-      _table = null;
-      _tablePage = null;
-      _schemaColumns = null;
-      _queryResult = null;
-      _indexes = [];
-      _tableError = null;
-      _schemaError = null;
-      _filterColumn = null;
-      _sortColumn = null;
-      _descending = false;
-      _page = 0;
-      _filterController.clear();
+      _changingEngine = true;
+      _clearEngineState();
     });
     try {
       await SqlEnginePreference.save(kind);
@@ -219,12 +256,20 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
         ).showSnackBar(SnackBar(content: Text(_message(error))));
       }
     } finally {
+      _changingEngine = false;
       if (mounted) await _initialize();
     }
   }
 
   Future<void> _perform(Future<void> Function() action) async {
     if (!mounted || _busy || _repository == null) return;
+    if (widget.repositoryFactory == null &&
+        (_pendingEngineReload ||
+            _engine != SqlEnginePreference.current ||
+            !(_localContext?.isCurrent ?? true))) {
+      await _initialize();
+      return;
+    }
     setState(() => _busy = true);
     try {
       await action();
@@ -235,7 +280,7 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
         ).showSnackBar(SnackBar(content: Text(_message(error))));
       }
     } finally {
-      if (mounted) setState(() => _busy = false);
+      _finishCommand();
     }
   }
 
@@ -1311,7 +1356,7 @@ class _SqlWorkbenchPageState extends State<SqlWorkbenchPage> {
               onSelected: (kind) => unawaited(_selectEngine(kind)),
               itemBuilder: (_) => [
                 for (final kind in [
-                  if (SqliteFfi.supported) SqlEngineKind.sqlite,
+                  SqlEngineKind.sqlite,
                   SqlEngineKind.localMysql,
                 ])
                   PopupMenuItem(

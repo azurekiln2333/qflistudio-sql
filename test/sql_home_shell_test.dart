@@ -3,8 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qfli_sql/main.dart' show sqlProfile;
+import 'package:qfli_sql/sql_database.dart';
+import 'package:qfli_sql/sql_engine_preference.dart';
+import 'package:qfli_sql/sql_execution_context.dart';
 import 'package:qfli_sql/sql_home_shell.dart';
 import 'package:qfli_sql/sql_query_library.dart';
+import 'package:qfli_sql/sql_tools_service.dart';
+import 'package:qfli_sql/sql_tools_tab.dart';
 import 'package:qfli_sql/sql_workspace_repository.dart';
 import 'package:qfli_studio_core/content/content_repository.dart';
 import 'package:qfli_studio_core/models/project.dart';
@@ -48,14 +53,28 @@ void main() {
     settings.dispose();
   });
 
-  Widget app({ContentRepository? content}) => MaterialApp(
-    home: SqlHomeShell(
-      store: store,
-      auth: auth,
-      settings: settings,
-      repositoryFactory: () async => workspace,
-      queryLibraryFactory: () async => queryLibrary,
-      contentRepository: content ?? _FakeContentRepository(),
+  Widget withTools(Widget child) => SqlToolsScope(
+    createController: () => SqlToolsController(
+      openTarget: () async => SqlExecutionContext.forTesting(
+        engine: SqlEngineKind.sqlite,
+        repository: workspace,
+      ),
+      openLibrary: () async => queryLibrary,
+      watchPreference: false,
+    ),
+    child: child,
+  );
+
+  Widget app({ContentRepository? content}) => withTools(
+    MaterialApp(
+      home: SqlHomeShell(
+        store: store,
+        auth: auth,
+        settings: settings,
+        repositoryFactory: () async => workspace,
+        queryLibraryFactory: () async => queryLibrary,
+        contentRepository: content ?? _FakeContentRepository(),
+      ),
     ),
   );
 
@@ -203,17 +222,19 @@ void main() {
     size(tester, const Size(390, 800));
     var opens = 0;
     await tester.pumpWidget(
-      MaterialApp(
-        home: SqlHomeShell(
-          store: store,
-          auth: auth,
-          settings: settings,
-          repositoryFactory: () async {
-            opens++;
-            return workspace;
-          },
-          queryLibraryFactory: () async => queryLibrary,
-          contentRepository: _FakeContentRepository(),
+      withTools(
+        MaterialApp(
+          home: SqlHomeShell(
+            store: store,
+            auth: auth,
+            settings: settings,
+            repositoryFactory: () async {
+              opens++;
+              return workspace;
+            },
+            queryLibraryFactory: () async => queryLibrary,
+            contentRepository: _FakeContentRepository(),
+          ),
         ),
       ),
     );
@@ -297,7 +318,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('SQL tools retain every shared offline tool and its route', (
+  testWidgets('SQL tools keep every shared offline tool and its own route', (
     tester,
   ) async {
     size(tester, const Size(390, 800));
@@ -305,12 +326,35 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byType(NavigationDestination).at(2));
     await tester.pumpAndSettle();
+    // The terminal entry and the shared tools keep their own destinations.
     expect(find.text('终端'), findsOneWidget);
+    // SQL capabilities render directly in this tab: no generic “专用” landing
+    // card and no pushed secondary SQL page.
+    expect(find.text('专用'), findsNothing);
     expect(find.text('SQL 查询'), findsOneWidget);
-    final scrollable = find.descendant(
-      of: find.byKey(const PageStorageKey('sql-tools-scroll')),
-      matching: find.byType(Scrollable),
-    );
+    expect(find.text('查询计划'), findsWidgets);
+    expect(find.byKey(const ValueKey('sql-tools-worksheet')), findsOneWidget);
+    expect(find.byKey(const ValueKey('sql-tools-run')), findsOneWidget);
+    // Using an inline SQL action must not push any route.
+    await tester.ensureVisible(find.byKey(const ValueKey('sql-tools-explain')));
+    await tester.tap(find.byKey(const ValueKey('sql-tools-explain')));
+    await tester.pumpAndSettle();
+    expect(find.byType(AppBar), findsOneWidget);
+    expect(find.byType(NavigationBar), findsOneWidget);
+    final scrollable = find
+        .descendant(
+          of: find.byKey(const PageStorageKey('sql-tools-scroll')),
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    for (final title in ['结构与索引', '文本与值工具']) {
+      await tester.scrollUntilVisible(
+        find.text(title),
+        200,
+        scrollable: scrollable,
+      );
+      expect(find.text(title), findsOneWidget);
+    }
     for (final tool in commonTools) {
       await tester.scrollUntilVisible(
         find.text(tool.title),
@@ -330,6 +374,36 @@ void main() {
       tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
       2,
     );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('SQL worksheet text survives distant destination switches', (
+    tester,
+  ) async {
+    size(tester, const Size(390, 800));
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(NavigationDestination).at(2));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('sql-tools-worksheet')),
+      'SELECT 42 AS answer;',
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const ValueKey('sql-tools-run')));
+    await tester.tap(find.byKey(const ValueKey('sql-tools-run')));
+    await tester.pumpAndSettle();
+    expect(workspace.scriptSources, ['SELECT 42 AS answer;']);
+    expect(find.byKey(const ValueKey('sql-tools-results')), findsOneWidget);
+    // A distant destination fully rebuilds its subtree; the retained SQL tab
+    // must keep the unsaved worksheet text.
+    await tester.tap(find.byType(NavigationDestination).at(4));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(NavigationDestination).at(2));
+    await tester.pumpAndSettle();
+    expect(find.text('SELECT 42 AS answer;'), findsOneWidget);
+    expect(find.byKey(const ValueKey('sql-tools-results')), findsOneWidget);
+    expect(workspace.scriptSources, ['SELECT 42 AS answer;']);
     expect(tester.takeException(), isNull);
   });
 
@@ -432,6 +506,47 @@ class _TestProjectStore extends ProjectStore {
 class _FakeWorkspace extends SqlWorkspaceRepository {
   _FakeWorkspace() : super(root: Directory.systemTemp);
 
+  final scriptSources = <String>[];
+
+  @override
+  Future<List<SqlColumn>> tableColumns(
+    String databaseName,
+    String table,
+  ) async => (await loadTable(databaseName, table)).columns;
+
+  @override
+  Future<List<SqlIndex>> tableIndexes(
+    String databaseName,
+    String table,
+  ) async => [];
+
+  @override
+  Future<SqlQueryResult> runQuery(String databaseName, String source) async =>
+      const SqlQueryResult(
+        available: true,
+        exitCode: 0,
+        columns: ['seq', 'name', 'unique', 'origin', 'partial'],
+        rows: [],
+        affectedRows: 0,
+        truncated: false,
+      );
+
+  @override
+  Future<SqlScriptResult> runScript(String databaseName, String source) async {
+    scriptSources.add(source);
+    const result = SqlQueryResult(
+      available: true,
+      exitCode: 0,
+      columns: ['answer'],
+      rows: [
+        ['42'],
+      ],
+      affectedRows: 0,
+      truncated: false,
+    );
+    return const SqlScriptResult(summary: result, results: [result]);
+  }
+
   @override
   Future<List<String>> listDatabases() async => ['work'];
 
@@ -470,4 +585,11 @@ class _FakeQueryLibrary extends SqlQueryLibrary {
 
   @override
   List<SqlSavedQuery> get saved => const [];
+
+  @override
+  Future<void> recordExecution({
+    required String database,
+    required String source,
+    required bool success,
+  }) async {}
 }

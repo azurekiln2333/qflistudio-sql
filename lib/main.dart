@@ -13,6 +13,7 @@ import 'package:qfli_studio_core/store/settings_store.dart';
 import 'sql_runner.dart';
 import 'sql_app.dart';
 import 'sql_tools_tab.dart';
+import 'sql_code_analyzer.dart';
 
 /// 本 App 的产品名。窗口标题、任务切换器和应用内顶栏都读它。
 const String _appTitle = StudioProductCatalog.sqlab;
@@ -36,6 +37,7 @@ const StudioProfile sqlProfile = StudioProfile(
   // unsupported on mobile, where no system shell exists to fall back to.
   terminalCommandDelegate: SqlTerminalCommands.execute,
   toolsTabBuilder: buildSqlToolsTab,
+  codeAnalyzer: SqlCodeAnalyzer(),
   // main.sql 排在默认入口表前面，保证本版一定先命中它。
   entryFileNames: ['main.sql', 'src/main.sql'],
 );

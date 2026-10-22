@@ -21,7 +21,7 @@ SqlWorkspaceRepository({required Directory root, SqlDatabase database,
 
 ## 3. Contracts
 
-- Methods are `query`, `execute` and `executeScript`. They receive `source: String` and
+- Execution methods are `query`, `execute` and `executeScript`. They receive `source: String` and
   `databasePath: String`; query also receives `params: List<String?>`.
 - Default Android/Windows/Linux/iOS/macOS calls execute the actual packaged C
   library on an isolate. OHOS uses `qfli_sql/native`. An explicitly supplied
@@ -39,14 +39,23 @@ SqlWorkspaceRepository({required Directory root, SqlDatabase database,
   remains tab-separated lines and retains errors and truncation diagnostics.
 - Structured scripts use SQLite prepare/tail boundaries in one connection,
   preserving transactions, string literals and all statement results. The
-  shared display budget is 500 rows / 1 MiB; scripts stop after 512 statements.
-  Errors and limits retain completed results and fail the summary.
+  shared display budget is 500 rows / 1 MiB; scripts permit512 real statements.
+  Ask SQLite to prepare remaining text before applying the statement cap: empty
+  semicolons and trailing whitespace/comments produce no statement and consume
+  no count. Finalize and refuse an actual513th statement before its first step.
+  Errors and limits retain completed results and fail the summary. Every result
+  array starts at row index zero; only the display budget is shared across
+  statements. Test `SELECT 1; SELECT 2;` through the actual platform bridge.
 - `openDefault()` supplies the native script adapter explicitly. Custom
   repositories without one keep their existing overridden `runQuery` contract.
-  OHOS SQLite scripts retain their existing single-query channel behavior.
-- The committed editor and workbench select SQLite on supported FFI platforms;
-  the existing OHOS native MySQL default remains in the platform dispatcher.
-  Pre-existing cloud preference work remains in the working tree separately.
+  OHOS also dispatches `executeScript`; a grid query cannot replace a script.
+- `NativeLocalSqlEngine` always means SQLite. FFI availability selects transport,
+  never a different database engine. OHOS SQLite uses `qfli_sql/native`; explicitly
+  selected Oracle uses its own adapter. Tools/workbench share
+  `SqlExecutionContext` and reject stale preference revisions before dispatch.
+- `validate({source})` is the isolated prepare-only method described in
+  [SQL Diagnostics](./sql-diagnostics.md). It never opens user databases or steps
+  user SQL and returns explicit missing-context/incomplete coverage.
 - `QFLI_SQLITE_LIBRARY` is a desktop test/development override, not a fallback
   engine. Missing native symbols/library fail and never report successful SQL.
 
@@ -58,6 +67,8 @@ SqlWorkspaceRepository({required Directory root, SqlDatabase database,
 | Second grid statement | Rejected before either statement executes |
 | Missing native library | Platform error converted to unavailable by the caller |
 | Row/cell limit | truncated true; no partial row |
+|512 statements plus trailing whitespace/comments/empty separators | Success if those512 statements succeed |
+| A real513th statement | Failed summary, finalized without stepping, previous512 results retained |
 | Explicit test channel | Use that channel and existing response validation |
 | Source/path NUL | Invocation fails before native parsing |
 
@@ -71,6 +82,10 @@ or labeling SQLite as MySQL.
 ## 6. Tests Required
 
 `test/sqlite_ffi_test.dart` requires a built native library and runs real SQL.
+Its statement-budget regression verifies512 statements followed by trivia and
+uses a513th INSERT to prove that over-limit SQL does not change persisted data.
+`SqliteCurriculumSession.identify` repeats acceptance/refusal through the actual
+platform bridge; host execution alone does not establish the OHOS result.
 `integration_test/sql_native_test.dart` exercises the Android application bridge.
 `integration_test/sql_workbench_test.dart` opens the actual default workbench,
 edits rows, executes SQL and reopens saved queries; it does not inject a repository.

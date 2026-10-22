@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:qfli_studio_core/services/app_paths.dart';
 import 'package:qfli_studio_core/services/studio_profile.dart';
@@ -13,6 +14,12 @@ abstract final class SqlEnginePreference {
   static SqlEngineKind _current = SqlEngineKind.sqlite;
   static bool _loaded = false;
   static Future<SqlEngineKind>? _loading;
+  static final ValueNotifier<int> _changes = ValueNotifier(0);
+
+  /// Published after a preference has loaded or been saved successfully.
+  /// Retained workspaces must reconnect before using an older engine context.
+  static Listenable get changes => _changes;
+  static int get revision => _changes.value;
 
   /// Supplies the signed-in QFLI token; set by the app entry point.
   static String? Function() token = () => null;
@@ -21,12 +28,26 @@ abstract final class SqlEnginePreference {
 
   static bool get cloudEnabled => StudioProfile.current?.offlineOnly != true;
 
+  /// Tools always use a local engine. SQLite's OHOS implementation is its
+  /// native channel, so lack of desktop/mobile FFI never changes this choice.
+  static SqlEngineKind resolveLocalEngine(SqlEngineKind kind) =>
+      kind == SqlEngineKind.cloud ? SqlEngineKind.sqlite : kind;
+
   static SqlEngineKind _effective(SqlEngineKind kind) =>
       kind == SqlEngineKind.cloud && !cloudEnabled
-      ? SqlEngineKind.sqlite
+      ? resolveLocalEngine(kind)
       : kind;
 
   static SqlEngineKind get current => _effective(_current);
+
+  static void _publish(SqlEngineKind kind) {
+    final changed = kind != _current;
+    _current = kind;
+    _loaded = true;
+    if (changed) {
+      _changes.value++;
+    }
+  }
 
   static Future<File?> _file() async {
     final storage = await AppPaths.storageDirectory();
@@ -39,14 +60,15 @@ abstract final class SqlEnginePreference {
   }
 
   static Future<SqlEngineKind> _read() async {
+    var kind = SqlEngineKind.sqlite;
     try {
       final file = await _file();
       if (file != null && await file.exists()) {
         final data = jsonDecode(await file.readAsString());
         if (data is Map && data['engine'] == 'cloud') {
-          _current = SqlEngineKind.cloud;
+          kind = SqlEngineKind.cloud;
         } else if (data is Map && data['engine'] == 'localMysql') {
-          _current = SqlEngineKind.localMysql;
+          kind = SqlEngineKind.localMysql;
         }
       }
     } on FileSystemException {
@@ -54,7 +76,7 @@ abstract final class SqlEnginePreference {
     } on FormatException {
       // Corrupt preferences fall back to local SQLite.
     }
-    _loaded = true;
+    _publish(kind);
     return current;
   }
 
@@ -75,7 +97,6 @@ abstract final class SqlEnginePreference {
       flush: true,
     );
     await temporary.rename(file.path);
-    _current = kind;
-    _loaded = true;
+    _publish(kind);
   }
 }

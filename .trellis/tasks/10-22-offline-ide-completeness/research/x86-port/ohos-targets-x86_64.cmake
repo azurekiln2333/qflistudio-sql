@@ -1,0 +1,15 @@
+# Keep all production source and link contracts; change only the target triple
+# and library architecture. Generate inside the new build tree, never in native/.
+if(NOT QFLI_SQL_REPO OR NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+  message(FATAL_ERROR "This task-local variant requires explicit SQL repository and x86_64 target")
+endif()
+if(NOT CMAKE_BINARY_DIR MATCHES "^/root/qfli-mysql-ohos-x64-1022/")
+  message(FATAL_ERROR "Refusing a build outside the owned isolated x86_64 port root")
+endif()
+set(native_root "${QFLI_SQL_REPO}/native/mysql")
+file(READ "${native_root}/ohos-targets.cmake" content)
+string(REPLACE "aarch64" "x86_64" content "${content}")
+string(REPLACE "HarmonyOS arm64 toolchain" "HarmonyOS x86_64 toolchain" content "${content}")
+string(REPLACE "\${CMAKE_CURRENT_LIST_DIR}" "${native_root}" content "${content}")
+file(WRITE "${CMAKE_BINARY_DIR}/qfli-ohos-targets-x86_64.cmake" "${content}")
+include("${CMAKE_BINARY_DIR}/qfli-ohos-targets-x86_64.cmake")

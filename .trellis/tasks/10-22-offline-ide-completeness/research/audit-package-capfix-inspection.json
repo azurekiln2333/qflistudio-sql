@@ -1,0 +1,245 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-10-22T21:55:13.166052+08:00",
+  "scope": "static x86_64 original-catalog audit package",
+  "deviceExecuted": false,
+  "artifact": {
+    "path": "D:\\MyNewProjects\\qfli_sql\\build\\ohos-audit\\sql-audit-signed.hap",
+    "bytes": 416781609,
+    "sha256": "0c5007b468e3e525d687b4e52983865b4c84d6ad2a89dd006aaf83bd8df76d78"
+  },
+  "tools": {
+    "llvm-strip.exe": {
+      "path": "D:\\ProgramFiles\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\native\\llvm\\bin\\llvm-strip.exe",
+      "sha256": "7092b2a07041635687d30d54f1e60b9cc440bc914d50cf0e2f3a21c348c97967"
+    },
+    "llvm-readelf.exe": {
+      "path": "D:\\ProgramFiles\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\native\\llvm\\bin\\llvm-readelf.exe",
+      "sha256": "f76fdcb8f3504712793451a30023cb1fa83b4ec5640db4c08c7bd79a757023ab"
+    },
+    "llvm-nm.exe": {
+      "path": "D:\\ProgramFiles\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\native\\llvm\\bin\\llvm-nm.exe",
+      "sha256": "5c09e629e1f72748ff482f6ad07169eff95543449f031f4fa7f83abe6db1cc65"
+    },
+    "llvmVersion": "LLVM (http://llvm.org/):\n  LLVM version 15.0.4\n  Optimized build.\n  Default target: x86_64-w64-windows-gnu\n  Host CPU: goldmont",
+    "hap-sign-tool.jar": {
+      "path": "D:\\ProgramFiles\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\toolchains\\lib\\hap-sign-tool.jar",
+      "sha256": "a434b6747e6c5d0b14e73837a46b39f4816ab25b42d1833d6f767bf867cf616d"
+    }
+  },
+  "zipEntries": 124,
+  "manifest": {
+    "bundle": "com.azurekiln.qfli.sqlab.audit",
+    "debug": true,
+    "compileSdkVersion": "26.0.0.105",
+    "permissions": [
+      "ohos.permission.INTERNET",
+      "ohos.permission.READ_PASTEBOARD"
+    ],
+    "target": "integration_test/sql_curriculum_ohos_audit.dart"
+  },
+  "catalogAssets": {
+    "assets/content/sql_examples.json": "cacfbf628a56fc42635764e3767981da14325eb9c8802cda94f5be0270276049",
+    "assets/content/sql_tutorials.json": "0ea1071c1aa9a6611ebceba7c4b4a832f6f635f4b57e052406f6455c99e5a2e0"
+  },
+  "catalog": {
+    "examples": 126,
+    "lessons": 126,
+    "exercises": 246,
+    "scripts": 372,
+    "scriptsByEngine": {
+      "sqlite": 360,
+      "mysql": 12
+    }
+  },
+  "kernel": {
+    "sha256": "258f0f7b784c4bdae71982591f9af2fc580c5c86bf29ced64430b9edb08c09e8",
+    "bytes": 42927216,
+    "buildId": "sql-originals-x64-capfix-20261022",
+    "currentAuditSourceEmbedded": true,
+    "entryExecutionVerified": false
+  },
+  "oracleResources": {
+    "version": "8.4.6",
+    "files": 70,
+    "otherFiles": [
+      "licenses/OpenSSL-3.5.3-LICENSE.txt",
+      "licenses/Oracle-MySQL-8.4.6-LICENSE.txt"
+    ],
+    "manifestSha256": "1a5fb7e2c4c048bbf53a01362270968714020a25c4a07f010c4d532ac8d5f7cf"
+  },
+  "libraries": {
+    "libs/arm64-v8a/libc++_shared.so": {
+      "bytes": 1262504,
+      "sha256": "f69947af100b652e349ae51e4a4888bcc7a327db9085272d318176ef1782bf0f",
+      "abi": "arm64-v8a"
+    },
+    "libs/arm64-v8a/libqfli_mysql.so": {
+      "bytes": 13655272,
+      "sha256": "dee3b4662e15632eaa79e6079acca7e8d8bb91835ed1b6b7f61f442f565ba573",
+      "abi": "arm64-v8a"
+    },
+    "libs/arm64-v8a/libqfli_mysql_launcher.so": {
+      "bytes": 11640,
+      "sha256": "2bdf8ad46da2fed32c0990f678e6bcbb1f54f71b202002b30b5f3e772c706f4a",
+      "abi": "arm64-v8a"
+    },
+    "libs/arm64-v8a/libqfli_mysql_server.so": {
+      "bytes": 71584712,
+      "sha256": "7a8142bb3cc926c63a084b376dfcafe641172be61ae1c189653fbe5659fd1212",
+      "abi": "arm64-v8a"
+    },
+    "libs/arm64-v8a/libqfli_mysql_server_proto.so": {
+      "bytes": 59211040,
+      "sha256": "02b0ad695a733293274d5093434a11fc8f8585e7aa860eb5a354ddbd91c15e0a",
+      "abi": "arm64-v8a"
+    },
+    "libs/arm64-v8a/libqfli_sql.so": {
+      "bytes": 1822856,
+      "sha256": "839cd83fee66e8a9311cfdf87c34425dbd4fc07c8886a6daf7a05ab8efe0c032",
+      "abi": "arm64-v8a"
+    },
+    "libs/x86_64/libc++_shared.so": {
+      "bytes": 1294904,
+      "sha256": "09b9e3a97d3c01260b5e269e2ce15fe4d3b7c787b99dc4378295d4f35e2fa006",
+      "abi": "x86_64",
+      "needed": [
+        "libc.so"
+      ]
+    },
+    "libs/x86_64/libflutter.so": {
+      "bytes": 40298440,
+      "sha256": "84f72baf693ee885146bf26ae962a88fd3b81488a54b2a99044fe3ea761bd9a1",
+      "abi": "x86_64",
+      "needed": [
+        "libnative_window.so",
+        "libnative_drawing.so",
+        "libnative_vsync.so",
+        "libdeviceinfo_ndk.z.so",
+        "libace_napi.z.so",
+        "libace_ndk.z.so",
+        "libhilog_ndk.z.so",
+        "libuv.so",
+        "librawfile.z.so",
+        "libEGL.so",
+        "libGLESv3.so",
+        "libimage_ndk.z.so",
+        "libnative_image.so",
+        "libpixelmap_ndk.z.so",
+        "libpixelmap.so",
+        "libimage_source.so",
+        "libqos.so",
+        "libnative_color_space_manager.so",
+        "libhitrace_ndk.z.so",
+        "libhiappevent_ndk.z.so",
+        "libnative_buffer.so",
+        "libc.so"
+      ]
+    },
+    "libs/x86_64/libqfli_mysql.so": {
+      "bytes": 14381032,
+      "sha256": "546d76618e37299e549f830bdd6c0a72dbb347f5499003cd1be98d287d418968",
+      "abi": "x86_64",
+      "auditedCandidateSha256": "77afd4d90565ff5524aa98dea2bc7d5019e73ef8e5be797b86a5469c8266c511",
+      "transform": "SDK llvm-strip --strip-all",
+      "needed": [
+        "libace_napi.z.so",
+        "libc++_shared.so",
+        "libc.so"
+      ]
+    },
+    "libs/x86_64/libqfli_mysql_launcher.so": {
+      "bytes": 11504,
+      "sha256": "5ba04d87f7fe52bd7c322be18c1716c1c7e824310a73f6b79cc07fcda9ffa997",
+      "abi": "x86_64",
+      "auditedCandidateSha256": "d0140f4b6d64192a54d030529b22af86e87d464ec9cb3c599ca5b198e204a1b8",
+      "transform": "SDK llvm-strip --strip-all",
+      "needed": [
+        "libc++_shared.so",
+        "libc.so"
+      ]
+    },
+    "libs/x86_64/libqfli_mysql_server.so": {
+      "bytes": 74266400,
+      "sha256": "90a57cc466b4f757b8f0c2c4e8755af93f18fdeb93a72df18e6f8e173a1928d4",
+      "abi": "x86_64",
+      "auditedCandidateSha256": "22c7146d77d5df7342c1d4242c9650f2b11dbd78672fd226d60480d5b9b49190",
+      "transform": "SDK llvm-strip --strip-all",
+      "needed": [
+        "libc++_shared.so",
+        "libc.so"
+      ]
+    },
+    "libs/x86_64/libqfli_mysql_server_proto.so": {
+      "bytes": 61674232,
+      "sha256": "f9e20b20e24cd8adddf619a6af09ebcc7ff5cda6f4ac425bb638efc43087e7c3",
+      "abi": "x86_64",
+      "auditedCandidateSha256": "77875c38b99b1fdd39f760a1ad3757d47a85eda0fa785217b8b2f3cd7e40c230",
+      "transform": "SDK llvm-strip --strip-all",
+      "needed": [
+        "libc.so"
+      ]
+    },
+    "libs/x86_64/libqfli_sql.so": {
+      "bytes": 1723848,
+      "sha256": "63adcda50bf5e3bdeee8da017c27ac7529cbed92b0e253490d169998474d7485",
+      "abi": "x86_64",
+      "needed": [
+        "libace_napi.z.so",
+        "libhilog_ndk.z.so",
+        "libc.so"
+      ]
+    }
+  },
+  "privateOracleExports": [
+    "QfliMysqlMain",
+    "qfli_mysql_child_main",
+    "qfli_mysql_proto_child_exit",
+    "qfli_mysql_proto_enter_child_scope",
+    "qfli_mysql_proto_ready",
+    "qfli_mysql_proto_report",
+    "qfli_mysql_record_exit"
+  ],
+  "sdkSymbolClosure": {
+    "libc++_shared.so": {
+      "strongImports": 165,
+      "unresolved": []
+    },
+    "libqfli_mysql.so": {
+      "strongImports": 330,
+      "unresolved": []
+    },
+    "libqfli_mysql_launcher.so": {
+      "strongImports": 34,
+      "unresolved": []
+    },
+    "libqfli_mysql_server.so": {
+      "strongImports": 617,
+      "unresolved": []
+    },
+    "libqfli_mysql_server_proto.so": {
+      "strongImports": 408,
+      "unresolved": []
+    },
+    "libqfli_sql.so": {
+      "strongImports": 131,
+      "unresolved": []
+    }
+  },
+  "platformDependencyScope": "NEEDED names present in installed x86_64 SDK; strong import names resolved for Oracle/SQLite/libc++; no device load or symbol-version runtime claim",
+  "signature": {
+    "verified": true,
+    "tool": "D:\\ProgramFiles\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\toolchains\\lib\\hap-sign-tool.jar",
+    "profileVerified": true,
+    "bundleName": "com.azurekiln.qfli.sqlab.audit",
+    "profileType": "debug",
+    "privilegeLevel": "normal",
+    "deviceScopeCount": 1,
+    "validity": {
+      "not-before": 1792676665,
+      "not-after": 1795269265
+    },
+    "rawLocalReportSha256": "6a3cf6d5035df2c1130e0f20d56b1db9fffef4eb0b21f950d369dd14af61fedb",
+    "privacyNote": "Device identifier and public certificate/profile payload omitted from versioned summary; complete raw SDK verification remains in ignored build evidence."
+  }
+}

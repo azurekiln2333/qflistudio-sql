@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/backend/sqlite-native-runtime.md", "reason": "Real target runtime evidence and native contract"}
+{"file": ".trellis/spec/frontend/sql-terminal-offline.md", "reason": "Offline runtime and database identity"}
+{"file": ".trellis/spec/frontend/sql-workbench.md", "reason": "Captured engine context and direct retained tools"}
+{"file": ".trellis/spec/frontend/sql-content-repository.md", "reason": "Complete actual catalog coverage and promotion gate"}
+{"file": ".trellis/spec/backend/sql-diagnostics.md", "reason": "Exact unsaved snapshot, prepare-only isolation and honest incomplete coverage"}
+{"file": ".trellis/spec/backend/ohos-audit-packaging.md", "reason": "Real native ABI package provenance, isolated build/signing and device evidence boundaries"}
+{"file": ".trellis/tasks/10-22-offline-ide-completeness/research/requirements-evidence.md", "reason": "Full scope, actual372-script denominator and separate host/device gates"}

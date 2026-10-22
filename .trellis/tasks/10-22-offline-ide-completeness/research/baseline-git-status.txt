@@ -1,0 +1,100 @@
+ M .trellis/spec/backend/index.md
+ M .trellis/spec/backend/mysql-desktop-runtime.md
+ M .trellis/spec/frontend/index.md
+ M .trellis/tasks/09-30-local-mysql-workbench/design.md
+ M .trellis/tasks/09-30-local-mysql-workbench/implement.md
+ M lib/local_mysql_runtime.dart
+ M lib/main.dart
+ M macos/Runner.xcodeproj/project.pbxproj
+ M macos/Runner/DebugProfile.entitlements
+ M macos/Runner/Release.entitlements
+ M native/mysql/desktop/CMakeLists.txt
+ M native/mysql/desktop/README.md
+ M ohos/build-profile.json5
+ M ohos/entry/.gitignore
+ M ohos/entry/build-profile.json5
+ M ohos/entry/src/main/ets/entryability/EntryAbility.ets
+ M ohos/entry/src/main/ets/pages/Index.ets
+ M ohos/entry/src/main/resources/base/media/icon.png
+ M ohos/entry/src/main/resources/base/profile/main_pages.json
+ M pubspec.lock
+ M pubspec.yaml
+?? .codex/
+?? .opencode/
+?? .trae/
+?? .trellis/tasks/09-30-local-mysql-workbench/check.jsonl
+?? .trellis/tasks/09-30-local-mysql-workbench/implement.jsonl
+?? .trellis/tasks/09-30-local-mysql-workbench/research/baseline/
+?? .trellis/tasks/09-30-local-mysql-workbench/research/home-tree-projects-page-design.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/ohos-resume-2026-10-09.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/option-b-private-preload-design.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/phone-acceptance-main-2026-10-09.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/phone-acceptance-probe.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/phone-debug-progress.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/phone-extension-companion-boundaries-2026-10-09.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/phone-host-options-2026-10-09.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/phone-musl-interpreter-support-2026-10-09.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/phone-native-host.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/phone-parent-preload-fork-safety-2026-10-09.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/phone-process-host-capabilities-sdk26-2026-10-09.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/phone-thread-host-lifecycle-2026-10-09.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/provenance-summary-2026-10-09.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/reviewer-stdio-fork-protocol-2026-10-09.md
+?? .trellis/tasks/09-30-local-mysql-workbench/research/status-check-2026-10-15.md
+?? .trellis/tasks/10-01-cross-platform-native-runtimes/
+?? .trellis/tasks/10-01-tutorial-code-import/
+?? .trellis/tasks/10-12-sql-curriculum-and-home/
+?? .trellis/tasks/10-12-sql-home-tree/
+?? .trellis/tasks/10-12-sql-lesson-curriculum/
+?? .trellis/tasks/10-15-sql-release-readiness/research/android-fix-plan.md
+?? .trellis/tasks/10-15-sql-release-readiness/research/android-release-run.png
+?? .trellis/tasks/10-15-sql-release-readiness/research/baseline-git-status.txt
+?? .trellis/tasks/10-15-sql-release-readiness/research/blocker-report.md
+?? .trellis/tasks/10-15-sql-release-readiness/research/device-window-request.txt
+?? .trellis/tasks/10-15-sql-release-readiness/research/emulator-5582.log.err
+?? .trellis/tasks/10-15-sql-release-readiness/research/ohos-push-14u.md
+?? .trellis/tasks/10-15-sql-release-readiness/research/platform-coordination-note.md
+?? .trellis/tasks/10-15-sql-release-readiness/research/sdk-window-request-platform.md
+?? .trellis/tasks/10-22-offline-ide-completeness/
+?? AGENTS.md
+?? SU5URUdSQVRJT05fVEVTVF9TSE9VTERfUkVQT1JUX1JFU1VMVFNfVE9fTkFUSVZFPWZhbHNl
+?? SU5URUdSQVRJT05fVEVTVF9TSE9VTERfUkVQT1JUX1JFU1VMVFNfVE9fTkFUSVZFPXRydWU=
+?? integration_test/mysql_ohos_probe.dart
+?? linux/flutter/generated_plugin_registrant.cc
+?? linux/flutter/generated_plugin_registrant.h
+?? macos/Flutter/GeneratedPluginRegistrant.swift
+?? native/mysql/macos/
+?? native/mysql/qfli_mysql_server.map
+?? native/tests/audit-ctor-sources.sh
+?? native/tests/build-preload-prototype.sh
+?? native/tests/build-with-fence.sh
+?? native/tests/check-trace-markers.sh
+?? native/tests/cold-backup-prod-mysql.sh
+?? native/tests/cold-backup-verified.ps1
+?? native/tests/debug-ctors.py
+?? native/tests/experiment-private-binding.sh
+?? native/tests/experiment-static-libcxx.sh
+?? native/tests/find-warning-emitter.sh
+?? native/tests/inspect-binding.sh
+?? native/tests/inspect-ctors.sh
+?? native/tests/inspect-fd-report.sh
+?? native/tests/inspect-libcxx-archives.sh
+?? native/tests/inspect-visibility.sh
+?? native/tests/probe-atomic-fence.sh
+?? native/tests/prove-fence-branch.sh
+?? native/tests/qfli_mysql_ctor_audit.sh
+?? native/tests/rebuild-ohos-package.sh
+?? native/tests/resolve-ctors.py
+?? native/tests/stage-back-package.sh
+?? native/tests/stage-proto-dso.sh
+?? native/tests/trace-fence-emitter.sh
+?? native/tests/verify-package.sh
+?? native/tests/verify-preload-prototype.sh
+?? native/tests/verify-static-closure.sh
+?? ohos/entry/src/main/ets/pages/AgreementReader.ets
+?? research/
+?? test/startup_test.dart
+?? tool/sql_curriculum/COLLABORATOR_CONTRACT.md
+?? tool/sql_curriculum/lessons/_collab_status-2.md
+?? windows/flutter/generated_plugin_registrant.cc
+?? windows/flutter/generated_plugin_registrant.h

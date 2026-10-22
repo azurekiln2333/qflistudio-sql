@@ -6,9 +6,8 @@ import {
   MethodCall,
   MethodResult,
 } from '@ohos/flutter_ohos';
-import { authentication } from '@kit.AccountKit';
 import { systemShare } from '@kit.ShareKit';
-import { common, Want, ConfigurationConstant } from '@kit.AbilityKit';
+import { common, ConfigurationConstant } from '@kit.AbilityKit';
 import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { GeneratedPluginRegistrant } from '../plugins/GeneratedPluginRegistrant';
@@ -56,26 +55,19 @@ export default class EntryAbility extends FlutterAbility {
     const abilityContext = this.context as common.UIAbilityContext;
     this.mysqlRuntime = registerQfliMysqlChannel(flutterEngine, abilityContext);
 
-    // 通用平台能力：打开系统浏览器（HTML 预览用）。
+    // 通用平台能力：离线模式拒绝外链，保留本地分享和文件操作。
     const platformChannel = new MethodChannel(
       flutterEngine.dartExecutor.getBinaryMessenger(),
       CHANNEL_PLATFORM,
     );
     platformChannel.setMethodCallHandler({
       onMethodCall(call: MethodCall, result: MethodResult): void {
-        if (call.method === 'openUrl') {
-          const url = call.argument('url') as string;
-          const want: Want = {
-            action: 'ohos.want.action.viewData',
-            uri: url,
-          };
-          abilityContext.startAbility(want)
-            .then(() => {
-              result.success(null);
-            })
-            .catch((err: BusinessError) => {
-              result.error(`${err.code}`, `${err.message}`, null);
-            });
+        if (call.method === 'openAgreement') {
+          result.error('OFFLINE_ONLY', '离线模式不支持打开在线协议', null);
+          return;
+        } else if (call.method === 'openUrl') {
+          result.error('OFFLINE_ONLY', '离线模式不支持打开外部链接', null);
+          return;
         } else if (call.method === 'shareText') {
           // 系统分享面板（Share Kit）：纯文本分享。
           const title = call.argument('title') as string;
@@ -103,9 +95,7 @@ export default class EntryAbility extends FlutterAbility {
       },
     });
 
-    // 华为账号（Account Kit v4 / API 11）：
-    // AuthorizationWithHuaweiIDRequest -> executeRequest -> authorizationCode，
-    // authorizationCode 交给服务端换取 token / userinfo。
+    // 保留华为账号通道兼容性；离线模式不执行账号认证。
     const huaweiChannel = new MethodChannel(
       flutterEngine.dartExecutor.getBinaryMessenger(),
       CHANNEL_HUAWEI,
@@ -113,34 +103,8 @@ export default class EntryAbility extends FlutterAbility {
     huaweiChannel.setMethodCallHandler({
       onMethodCall(call: MethodCall, result: MethodResult): void {
         if (call.method === 'login') {
-          try {
-            const provider = new authentication.HuaweiIDProvider();
-            const request: authentication.AuthorizationWithHuaweiIDRequest =
-              provider.createAuthorizationWithHuaweiIDRequest();
-            request.scopes = ['openid'];
-            request.permissions = [];
-
-            const controller =
-              new authentication.AuthenticationController(abilityContext);
-            controller.executeRequest(request)
-              .then((response: authentication.AuthenticationResponse) => {
-                const authResponse =
-                  response as authentication.AuthorizationWithHuaweiIDResponse;
-                const code: string =
-                  authResponse.data?.authorizationCode ?? '';
-                if (code.length > 0) {
-                  result.success(code);
-                } else {
-                  result.error('HUAWEI_LOGIN_EMPTY', '未获取到授权码', null);
-                }
-              })
-              .catch((err: BusinessError) => {
-                result.error('HUAWEI_LOGIN_FAILED', `${err.code}: ${err.message}`, null);
-              });
-          } catch (e) {
-            const err = e as BusinessError;
-            result.error('HUAWEI_LOGIN_ERROR', `${err.code}: ${err.message}`, null);
-          }
+          result.error('OFFLINE_ONLY', '离线模式不支持华为账号登录', null);
+          return;
         } else {
           result.notImplemented();
         }

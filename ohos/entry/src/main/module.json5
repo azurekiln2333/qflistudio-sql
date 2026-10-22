@@ -21,12 +21,6 @@
         "startWindowIcon": "$media:icon",
         "startWindowBackground": "$color:start_window_background",
         "exported": true,
-        "metadata": [
-          {
-            "name": "client_id",
-            "value": "REPLACE_WITH_AGC_CLIENT_ID"
-          }
-        ],
         "skills": [
           {
             "entities": [
@@ -40,7 +34,6 @@
       }
     ],
     "requestPermissions": [
-      {"name" :  "ohos.permission.INTERNET"},
       {
         "name": "ohos.permission.READ_PASTEBOARD",
         "reason": "$string:pasteboard_reason",

@@ -32,6 +32,15 @@ requests; both cloud query/script methods check policy before token/API access.
 Local SQLite and Oracle remain independently selected; unavailable selected
 native engines must not silently connect to another service.
 
+OHOS `EntryAbility` refuses `openAgreement`, `openUrl` and Huawei `login`
+with exactly one `OFFLINE_ONLY` error before reading arguments. Keep the account
+channel registered for callers that still carry a persisted login action, but
+do not import AccountKit or dispatch browser/router/authentication operations.
+The module requests only `READ_PASTEBOARD`, with no `client_id` metadata.
+Oracle uses its private Unix socket and `skip-networking`; it does not require
+the INTERNET permission. Preserve local picker/share, native registrations,
+runtime disposal and startup behavior when applying this policy.
+
 ## 4. Validation & Error Matrix
 
 | Input/state | Observable behavior |
@@ -58,6 +67,15 @@ profile registration, project discovery and real SQLite terminal-to-editor
 persistence. `test/sql_offline_policy_test.dart` verifies stale engine policy and
 API/token refusal. Shared terminal delegate/editor-pane/sandbox tests verify the
 same hook at both terminal surfaces; record the core revision used.
+
+`node tool/test_sql_offline_platform.cjs` transpiles and executes the actual
+EntryAbility with explicit SDK/native-interface doubles. It checks refused URI
+schemes/missing values, a throwing argument accessor, exact-once replies and
+preserved local dispatch/lifecycle. Default checks must work without unrelated
+startup WIP; `--workspace-startup` additionally checks its progress contract.
+This host gate does not establish ArkTS typing, actual picker/share IO, normal
+startup networking or installed execution. Rebuild and inspect the HAP after
+native changes; an earlier package containing INTERNET is historical evidence.
 
 ## 7. Wrong vs Correct
 

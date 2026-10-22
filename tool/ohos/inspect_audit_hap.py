@@ -37,6 +37,13 @@ def require(condition: bool, message: str) -> None:
         raise ValueError(message)
 
 
+def check_permissions(request_permissions: list[dict]) -> list[str]:
+    permissions = sorted(item["name"] for item in request_permissions)
+    require(permissions == ["ohos.permission.READ_PASTEBOARD"],
+            "Offline audit HAP requires clipboard-only permissions; network permission is forbidden")
+    return permissions
+
+
 def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -219,9 +226,7 @@ def inspect(args: argparse.Namespace, report: dict) -> None:
             require(app["debug"] is True and app["buildMode"] == "debug", "Expected debug HAP")
             require(module["type"] == "entry" and module["mainElement"] == "EntryAbility",
                     "Unexpected native entrypoint")
-            permissions = sorted(item["name"] for item in module["requestPermissions"])
-            require(permissions == ["ohos.permission.INTERNET", "ohos.permission.READ_PASTEBOARD"],
-                    "Manifest permission set changed; review before accepting")
+            permissions = check_permissions(module.get("requestPermissions", []))
             require(json.loads(archive.read("pack.info"))["summary"]["app"]["bundleName"]
                     == app["bundleName"], "Pack-info bundle mismatch")
             report["manifest"] = {"bundle": app["bundleName"], "debug": app["debug"],

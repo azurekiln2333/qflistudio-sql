@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 import unittest
 
-from inspect_audit_hap import check_catalog, check_names, elf_machine
+from inspect_audit_hap import check_catalog, check_names, check_permissions, elf_machine
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -54,6 +54,20 @@ class PackageGuardTest(unittest.TestCase):
                 check_names(names)
         with self.assertRaises(ValueError):
             elf_machine(b"not an ELF image")
+
+
+class OfflinePermissionTest(unittest.TestCase):
+    def test_clipboard_only_is_accepted(self):
+        self.assertEqual(check_permissions([{"name": "ohos.permission.READ_PASTEBOARD"}]),
+                         ["ohos.permission.READ_PASTEBOARD"])
+
+    def test_old_network_package_and_any_permission_drift_are_rejected(self):
+        for names in ([], ["ohos.permission.INTERNET"],
+                      ["ohos.permission.INTERNET", "ohos.permission.READ_PASTEBOARD"],
+                      ["ohos.permission.READ_PASTEBOARD", "ohos.permission.CAMERA"],
+                      ["ohos.permission.READ_PASTEBOARD", "ohos.permission.READ_PASTEBOARD"]):
+            with self.subTest(names=names), self.assertRaisesRegex(ValueError, "clipboard-only"):
+                check_permissions([{"name": name} for name in names])
 
 
 class AuditBuildCleanupTest(unittest.TestCase):

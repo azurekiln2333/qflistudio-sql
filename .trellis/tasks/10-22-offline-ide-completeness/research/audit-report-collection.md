@@ -26,6 +26,39 @@ python tool/ohos/collect_curriculum_audit.py --help
 
 Capture/pull files through the separately coordinated device workflow first. The commands below operate on those local copies. Get the exact run ID from the captured REPORT header/private report path and the exact build ID from the reviewed build metadata; neither is inferred from the newest file.
 
+### Pull the authoritative debug-sandbox files
+
+The installed DevEco SDK `hdc` is 3.2.0f. Its local `-h` explicitly supports
+`file recv -b <bundle>` and `shell -b <bundle>` for debug-application sandbox
+access. The official OpenHarmony `docs/zh-cn/application-dev/dfx/hdc.md` describes
+the same syntax and debug-app restriction. This resolves the collection method;
+an actual SQL pull remains unverified until the coordinated device run.
+
+Use the exact `reportPath` and `eventPath` emitted by that run, rather than
+guessing a host-visible application data path. After explicit SQL handoff:
+
+```powershell
+$sqlAuditHdc = 'D:/ProgramFiles/Huawei/DevEco Studio/sdk/default/openharmony/toolchains/hdc.exe'
+& $sqlAuditHdc -t 127.0.0.1:5555 file recv -b com.azurekiln.qfli.sqlab.audit `
+  '<exact-reportPath-from-this-run>' build/ohos-audit/pulled-unique-run/report.json
+& $sqlAuditHdc -t 127.0.0.1:5555 file recv -b com.azurekiln.qfli.sqlab.audit `
+  '<exact-eventPath-from-this-run>' build/ohos-audit/pulled-unique-run/events.jsonl
+```
+
+Use this explicit SDK path; the `hdc` found through PATH is an older client.
+Keep a fresh host directory per attempt and preserve both original files.
+Capture the audit marker live before launch as a second evidence path. Current
+device `hilog -h` supports blocking regex-filtered reads:
+
+```powershell
+& $sqlAuditHdc -t 127.0.0.1:5555 shell hilog -e QFLI_SQL_CURRICULUM_AUDIT
+```
+
+Redirect this stream to a fresh local UTF-8 log. Stopping that owned host reader
+must not reset the daemon or clear device logs. Large final REPORT chunks may
+be lost to platform log limits, so use the persisted report/events when present;
+the collector rejects incomplete logs rather than guessing the missing parts.
+
 The current original shipped denominator is **126 examples / 372 scripts**: SQLite **120 / 360**, MySQL **6 / 12**. Each MySQL example currently has one authored exercise. Counts are derived from the two supplied catalog files and checked against the explicit flags; the collector never reduces the denominator to selected engines or available records.
 
 From a captured hilog:
@@ -45,8 +78,8 @@ python tool/ohos/collect_curriculum_audit.py `
 From pulled files, replace `--hilog ...` with:
 
 ```powershell
-  --report build/ohos-audit/pulled/report.json `
-  --events build/ohos-audit/pulled/events.jsonl
+  --report build/ohos-audit/pulled-unique-run/report.json `
+  --events build/ohos-audit/pulled-unique-run/events.jsonl
 ```
 
 `--events` alone reconstructs its final report and validates the complete event history. `--report` alone validates the full report without claiming event-history coverage. Hilog collection requires the complete selected REPORT payload but does not require older checkpoint logs to remain in the ring buffer. Use `--sequence <integer>` if a selected run has multiple REPORT candidates; without it the tool refuses ambiguity. A bare report does not contain a sequence, so `--sequence` requires hilog or events.
@@ -77,8 +110,19 @@ Automation must require exit `0`, `collectionValidated == true` and `deviceGateP
 - A claimed passing script whose native summary or statement is unavailable, failing or truncated; sparse/malformed rows; missing query evidence; authored/native/recorded output disagreement; a NULL row standing in for the `(no rows)` expectation.
 - Engine/script/example count conflicts, incompatible verified engine identity, omitted engines or unsuccessful cleanup being presented as a gate pass. A complete internally consistent failed run is preserved with exit `1`.
 - A pulled event history with run/path mixing, duplicate/gapped sequence numbers, decreasing timestamps, missing final REPORT, report-copy disagreement, missing/duplicate script lifecycle or contradictory final outcome.
-- A final log-only REPORT or `persistError` being presented as a successful collection.
+- A final REPORT explicitly marked `logOnly`, or containing `persistError`, being presented as a successful collection. A complete hilog REPORT without these persistence-failure markers remains a supported input.
 
 ## Remaining boundary
 
 No actual OHOS report was available to this reviewer and no device operation was attempted. The coordinator still needs to use a real captured/pulled report with the reviewed build/catalog identity during an authorized device window. Product audit, HAP build/sign/stage scripts and existing Dart audit sources were not edited.
+
+## Collection-document review (2026-10-23)
+
+Independent read-only review found two documentation issues: pulled-file paths
+did not match the preceding destination, and “log-only REPORT” could be read as
+rejecting every hilog input. Both are corrected above, with the rejection tied
+to the collector's actual `logOnly`/`persistError` persistence-failure fields.
+Commands now select the known DevEco SDK client explicitly. The review found no
+private device identifier, key or certificate payload in this document, the
+umbrella update or the JSON evidence note. These edits do not establish a
+successful target pull or a device pass.

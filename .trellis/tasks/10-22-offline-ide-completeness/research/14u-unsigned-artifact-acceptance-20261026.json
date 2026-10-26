@@ -1,0 +1,51 @@
+{
+  "status": "RECOMMEND_ACCEPT_EXACT_UNSIGNED_ARTIFACT_FOR_FILE_DELIVERY_ONLY",
+  "coordinatorDisposition": "PENDING; no host or device grant inferred",
+  "artifact": {
+    "sha256": "6b5e615086c8c5d38b5433cebb3165327e8866f7eadc495c388abf54089b16bf",
+    "bytes": 345947746,
+    "mtimeNs": 1793024670938203800
+  },
+  "canonicalTransferSource": "D:\\MyNewProjects\\qfli_sql\\build\\ohos\\hap\\entry-default-unsigned.hap",
+  "reviewedProposal": {
+    "path": "D:\\MyNewProjects\\qfli_sql\\build\\ohos-14u-20261026\\diagnosis-readonly\\artifact-acceptance-proposal.json",
+    "sha256": "4f2d2710d2ddc4067f494e20a9d939cb3a67fdcf827affd32aa2a9a1260f060c"
+  },
+  "independentReview": {
+    "verdict": "PASS_WITH_EXPLICIT_PROVENANCE_LIMITS",
+    "jsonPath": "D:\\MyNewProjects\\qfli_sql\\.trellis\\tasks\\10-22-offline-ide-completeness\\research\\14u-unsigned-artifact-independent-review-20261026.json",
+    "jsonSha256": "03acd346b309822ba38e1078a0faec2008de5b100e316849ca1a5222d88fd0de",
+    "markdownPath": "D:\\MyNewProjects\\qfli_sql\\.trellis\\tasks\\10-22-offline-ide-completeness\\research\\14u-unsigned-artifact-independent-review-20261026.md",
+    "markdownSha256": "e6b5c778d58f35e58bd1bda399a1565c631a82559d6617a788843af4b3de255b"
+  },
+  "acceptanceBasis": [
+    "90 direct source/archive resource byte comparisons:3 product,14 core,73 MySQL including all70 listed runtime files, descriptor and both licenses; no missing, duplicate or extra resource.",
+    "Eight ARM64 libraries: all allocated section contents and decoded metadata exact, complete program header tables exact, GNU build IDs exact, dynamic dependency metadata exact.",
+    "Only e_shoff/e_shnum/e_shstrndx ELF-header fields may be normalized. All PT_LOAD content then exact. Explicit nonallocated metadata transformations per library only.",
+    "Allocated sh_name numeric string-table offsets may differ; decoded names remain exact. Raw section-header byte equality is not asserted.",
+    "Each packaged image is byte-exact to its stripped intermediate; Flutter engine is byte-exact to the frozen release HAR.",
+    "Production metadata, exact permissions and current485-path snapshot were independently rechecked. Both HAP paths match exact hash and size."
+  ],
+  "retainedFailures": {
+    "wrapperExit": 1,
+    "wrapperArtifactAccepted": false,
+    "wrapperInspector": "UNRUN",
+    "supplementaryOriginalInspector": "FAILED native raw-byte mismatch",
+    "generatedAssetDriftCount": 4
+  },
+  "provenanceLimits": [
+    "Core asset source files were absent from the original prebuild freeze. Current direct byte matches do not reconstruct their prebuild history.",
+    "Current SDK libc++_shared.so was not individually frozen before build.",
+    "libqfli_sql.so and AOT correspondence reaches current compiler outputs and merged/stripped/package files; it is not reproducible-build or source-semantics proof.",
+    "Byte-level ELF correspondence does not establish exact strip executable identity, runtime symbol-version binding, platform API availability or successful device loading.",
+    "Signature verification, installation, launch, application lifecycle and cross-application MySQL authentication are unperformed.",
+    "Original wrapper FAIL1, frozen inspector FAIL and artifactAccepted=false remain immutable; any separate acceptance has a distinct scope and does not recolor them."
+  ],
+  "transferConditions": [
+    "C must explicitly dispose artifact acceptance and issue a fresh named HDC file-only grant.",
+    "Before any transfer, rehash this exact artifact and verify exact authorized target identity under that grant.",
+    "Deliver explicitly unsigned. No install, launch, reset, daemon mutation or runtime claim."
+  ],
+  "noFrozenScriptOrReceiptChanges": true,
+  "noSDKBuildNativeDeviceExecution": true
+}

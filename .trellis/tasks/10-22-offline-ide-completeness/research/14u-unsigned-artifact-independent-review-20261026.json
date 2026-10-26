@@ -1,0 +1,1141 @@
+{
+  "scope": "Independent read-only unsigned artifact file-delivery review; not original build or inspector acceptance",
+  "startedNs": 1793026231739131500,
+  "originalResults": {
+    "wrapperExit": 1,
+    "wrapperStatus": "BUILD_INPUT_DRIFT_OR_INSPECTION_FAILED",
+    "artifactAccepted": false,
+    "inspectorStatus": "FAILED",
+    "inspectorError": "Packaged native image differs: libqfli_mysql.so"
+  },
+  "inputReports": {
+    "asset-report.json": "b5edbf9142066dfb43db04cb33c1b5ba5a6cea77ebd4f73dc6a6d88838cc09a2",
+    "elf-independent-report.json": "480108c7106cb1134ca02ecda50344d87cafb65b6617a01f57105db37ba6fa93",
+    "root-metadata-source-snapshot.json": "9e33c9bc656c6b18b815f5bfcef00a76281ccbedc05a8719467d799fcc5d4187"
+  },
+  "writesRestrictedToTaskResearch": true,
+  "execution": {
+    "SDK": false,
+    "native": false,
+    "LLVM": false,
+    "Node": false,
+    "WSL": false,
+    "build": false,
+    "retry": false,
+    "HDC": false
+  },
+  "artifactBefore": {
+    "sha256": "6b5e615086c8c5d38b5433cebb3165327e8866f7eadc495c388abf54089b16bf",
+    "bytes": 345947746,
+    "mtimeNs": 1793024670938203800
+  },
+  "assets": {
+    "counts": {
+      "product": 3,
+      "core": 14,
+      "mysql": 73
+    },
+    "all90BytesExact": true,
+    "independentInventoryEqualsReport": true,
+    "zipDuplicateNames": [],
+    "extraPackaged": [],
+    "missingPackaged": [],
+    "runtimeListedCount": 70,
+    "runtimeListedUnique": true,
+    "all70ListedIncluded": true,
+    "files": [
+      {
+        "group": "product",
+        "source": "D:\\MyNewProjects\\qfli_sql\\assets\\app_icon.png",
+        "archive": "resources/rawfile/flutter_assets/assets/app_icon.png",
+        "sourceSha256": "366e7fc5ba9822fab4226a213f8fb291c6103f9f893bb766c69e91917b528d3e",
+        "packagedSha256": "366e7fc5ba9822fab4226a213f8fb291c6103f9f893bb766c69e91917b528d3e",
+        "bytesExact": true
+      },
+      {
+        "group": "product",
+        "source": "D:\\MyNewProjects\\qfli_sql\\assets\\content\\sql_examples.json",
+        "archive": "resources/rawfile/flutter_assets/assets/content/sql_examples.json",
+        "sourceSha256": "cacfbf628a56fc42635764e3767981da14325eb9c8802cda94f5be0270276049",
+        "packagedSha256": "cacfbf628a56fc42635764e3767981da14325eb9c8802cda94f5be0270276049",
+        "bytesExact": true
+      },
+      {
+        "group": "product",
+        "source": "D:\\MyNewProjects\\qfli_sql\\assets\\content\\sql_tutorials.json",
+        "archive": "resources/rawfile/flutter_assets/assets/content/sql_tutorials.json",
+        "sourceSha256": "0ea1071c1aa9a6611ebceba7c4b4a832f6f635f4b57e052406f6455c99e5a2e0",
+        "packagedSha256": "0ea1071c1aa9a6611ebceba7c4b4a832f6f635f4b57e052406f6455c99e5a2e0",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\content\\examples.json",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/content/examples.json",
+        "sourceSha256": "df0555c005d4230ad8248fc0d0a44073d393e60fc3ae152254be3ca20f4306b6",
+        "packagedSha256": "df0555c005d4230ad8248fc0d0a44073d393e60fc3ae152254be3ca20f4306b6",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\content\\tutorials.json",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/content/tutorials.json",
+        "sourceSha256": "7d858d27e440cb0de93cbfa2cd2469ed99005c3cedf6a846d95ebbb355f694ba",
+        "packagedSha256": "7d858d27e440cb0de93cbfa2cd2469ed99005c3cedf6a846d95ebbb355f694ba",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\fonts\\roboto_mono\\OFL.txt",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/fonts/roboto_mono/OFL.txt",
+        "sourceSha256": "ffd9f334604a352ad52ee0a7159c31bdafaf5f8465e5b9f9eb5c1f4924343183",
+        "packagedSha256": "ffd9f334604a352ad52ee0a7159c31bdafaf5f8465e5b9f9eb5c1f4924343183",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\fonts\\roboto_mono\\static\\RobotoMono-Bold.ttf",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/fonts/roboto_mono/static/RobotoMono-Bold.ttf",
+        "sourceSha256": "92649d819cc4c20480b23a47aaa111769924eb31c66b6ecdcf6f573662558c83",
+        "packagedSha256": "92649d819cc4c20480b23a47aaa111769924eb31c66b6ecdcf6f573662558c83",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\fonts\\roboto_mono\\static\\RobotoMono-BoldItalic.ttf",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/fonts/roboto_mono/static/RobotoMono-BoldItalic.ttf",
+        "sourceSha256": "5bc2918abfd7399aff52e0a7ee22c97d544601f7ae8ff3b49ad176497acff1ed",
+        "packagedSha256": "5bc2918abfd7399aff52e0a7ee22c97d544601f7ae8ff3b49ad176497acff1ed",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\fonts\\roboto_mono\\static\\RobotoMono-Italic.ttf",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/fonts/roboto_mono/static/RobotoMono-Italic.ttf",
+        "sourceSha256": "82629b0b8a721ce1a79942f68b39438512b406dad2a4a7476c94b72e7794b2f4",
+        "packagedSha256": "82629b0b8a721ce1a79942f68b39438512b406dad2a4a7476c94b72e7794b2f4",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\fonts\\roboto_mono\\static\\RobotoMono-Regular.ttf",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/fonts/roboto_mono/static/RobotoMono-Regular.ttf",
+        "sourceSha256": "e4bf45837847d4abfa5a502b807a83393aa138727bdb9ea9c93fb17d53208d95",
+        "packagedSha256": "e4bf45837847d4abfa5a502b807a83393aa138727bdb9ea9c93fb17d53208d95",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\tutorials\\c.json",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/tutorials/c.json",
+        "sourceSha256": "a87e994f6a634838279e3998d64e805992a3d268368921087754d265da27b761",
+        "packagedSha256": "a87e994f6a634838279e3998d64e805992a3d268368921087754d265da27b761",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\tutorials\\cpp.json",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/tutorials/cpp.json",
+        "sourceSha256": "5a452897c06dee531602568eab06bee47b005abf793bef4c1a7307bac4f58151",
+        "packagedSha256": "5a452897c06dee531602568eab06bee47b005abf793bef4c1a7307bac4f58151",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\tutorials\\dart.json",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/tutorials/dart.json",
+        "sourceSha256": "d1d1f0d7eb5996a26e6251751ff527e6db215c50c718e6d00992f4012f4f4516",
+        "packagedSha256": "d1d1f0d7eb5996a26e6251751ff527e6db215c50c718e6d00992f4012f4f4516",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\tutorials\\java.json",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/tutorials/java.json",
+        "sourceSha256": "e9b89f7488bde9afb75c870eb3c450cb94234aa075e61160b8a737d8f1732732",
+        "packagedSha256": "e9b89f7488bde9afb75c870eb3c450cb94234aa075e61160b8a737d8f1732732",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\tutorials\\lua.json",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/tutorials/lua.json",
+        "sourceSha256": "8613764e20b759f285c814eee4c64af02abe2fb6ac7207be0288d42271d88f67",
+        "packagedSha256": "8613764e20b759f285c814eee4c64af02abe2fb6ac7207be0288d42271d88f67",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\tutorials\\python.json",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/tutorials/python.json",
+        "sourceSha256": "e669ac3d463a887bc90949818292950fd5cb516bd0827ac72aa76b5bf1637b13",
+        "packagedSha256": "e669ac3d463a887bc90949818292950fd5cb516bd0827ac72aa76b5bf1637b13",
+        "bytesExact": true
+      },
+      {
+        "group": "core",
+        "source": "D:\\MyNewProjects\\qfli_studio_core\\assets\\tutorials\\web.json",
+        "archive": "resources/rawfile/flutter_assets/packages/qfli_studio_core/assets/tutorials/web.json",
+        "sourceSha256": "2e0561ec8cf1f4ac12f817c903f235f2b3f66a326f751a41bfc89df7b1933431",
+        "packagedSha256": "2e0561ec8cf1f4ac12f817c903f235f2b3f66a326f751a41bfc89df7b1933431",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\licenses\\OpenSSL-3.5.3-LICENSE.txt",
+        "archive": "resources/rawfile/mysql/licenses/OpenSSL-3.5.3-LICENSE.txt",
+        "sourceSha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+        "packagedSha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\licenses\\Oracle-MySQL-8.4.6-LICENSE.txt",
+        "archive": "resources/rawfile/mysql/licenses/Oracle-MySQL-8.4.6-LICENSE.txt",
+        "sourceSha256": "2ac7df5239e0c0da9241c7b022863feacbf58163efe1c5a2537fa93dab85c2db",
+        "packagedSha256": "2ac7df5239e0c0da9241c7b022863feacbf58163efe1c5a2537fa93dab85c2db",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\runtime.json",
+        "archive": "resources/rawfile/mysql/runtime.json",
+        "sourceSha256": "1a5fb7e2c4c048bbf53a01362270968714020a25c4a07f010c4d532ac8d5f7cf",
+        "packagedSha256": "1a5fb7e2c4c048bbf53a01362270968714020a25c4a07f010c4d532ac8d5f7cf",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\Index.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/Index.xml",
+        "sourceSha256": "3d4ede5831b703a7bf06325eb3e3a672be44ce9ed5bbc8a82c1c75596a7ed1f9",
+        "packagedSha256": "3d4ede5831b703a7bf06325eb3e3a672be44ce9ed5bbc8a82c1c75596a7ed1f9",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\README",
+        "archive": "resources/rawfile/mysql/share/charsets/README",
+        "sourceSha256": "0af62ce1ae651e980006f2e9d29bd2f24e1cd18c6a0b1914e9c437cc80e990ab",
+        "packagedSha256": "0af62ce1ae651e980006f2e9d29bd2f24e1cd18c6a0b1914e9c437cc80e990ab",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\armscii8.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/armscii8.xml",
+        "sourceSha256": "159621074fcb079847c136cba758d0ac04da58b0d75385ce2d91f3ebc1c51d5a",
+        "packagedSha256": "159621074fcb079847c136cba758d0ac04da58b0d75385ce2d91f3ebc1c51d5a",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\ascii.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/ascii.xml",
+        "sourceSha256": "efec282317e350c69cd54f6fc86c2bd8ea2b84f5c3e14da55ff22d7cc67fe40b",
+        "packagedSha256": "efec282317e350c69cd54f6fc86c2bd8ea2b84f5c3e14da55ff22d7cc67fe40b",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\cp1250.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/cp1250.xml",
+        "sourceSha256": "42152b26193454ae463acb98244e3382419f8095d1416e8178cb8ba5600061c0",
+        "packagedSha256": "42152b26193454ae463acb98244e3382419f8095d1416e8178cb8ba5600061c0",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\cp1251.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/cp1251.xml",
+        "sourceSha256": "8e0cbe6a1a11acca345dee2b665cc424e1d08f43ee0bcfe1d42c280c57760961",
+        "packagedSha256": "8e0cbe6a1a11acca345dee2b665cc424e1d08f43ee0bcfe1d42c280c57760961",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\cp1256.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/cp1256.xml",
+        "sourceSha256": "e0ed76c6fee08ef84f5d6ac120474952405f2db601512b4a6baf6892eb2b0917",
+        "packagedSha256": "e0ed76c6fee08ef84f5d6ac120474952405f2db601512b4a6baf6892eb2b0917",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\cp1257.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/cp1257.xml",
+        "sourceSha256": "08e8646264af78fe4a2f6fc667d48e33aee21e349f4a9365a10f440529216c37",
+        "packagedSha256": "08e8646264af78fe4a2f6fc667d48e33aee21e349f4a9365a10f440529216c37",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\cp850.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/cp850.xml",
+        "sourceSha256": "2ba34b1f18f4e334740a4262d589ec11dc2417ceb8003cbf323d5452de3cefcf",
+        "packagedSha256": "2ba34b1f18f4e334740a4262d589ec11dc2417ceb8003cbf323d5452de3cefcf",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\cp852.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/cp852.xml",
+        "sourceSha256": "3d8ad7750fc19530406a090ee65f135ba251caf5b22b86cf9142019bc88db60b",
+        "packagedSha256": "3d8ad7750fc19530406a090ee65f135ba251caf5b22b86cf9142019bc88db60b",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\cp866.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/cp866.xml",
+        "sourceSha256": "a717c03e02a073048b164399bc12f39eea763bcf441bb2867157e3b47a43812b",
+        "packagedSha256": "a717c03e02a073048b164399bc12f39eea763bcf441bb2867157e3b47a43812b",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\dec8.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/dec8.xml",
+        "sourceSha256": "1ce93950fcf29b11ada01cb4c7d88de1d03784f2aa16b175f0c8efcae337f917",
+        "packagedSha256": "1ce93950fcf29b11ada01cb4c7d88de1d03784f2aa16b175f0c8efcae337f917",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\geostd8.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/geostd8.xml",
+        "sourceSha256": "1aec169b38fdac8dc6a7270f145e653d7c7ee7ae0e9e0a6537ed987212dd54b1",
+        "packagedSha256": "1aec169b38fdac8dc6a7270f145e653d7c7ee7ae0e9e0a6537ed987212dd54b1",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\greek.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/greek.xml",
+        "sourceSha256": "847edff0ee585c01255c11946ae03825da81f5b287f3493efb7ae6f3e9d88710",
+        "packagedSha256": "847edff0ee585c01255c11946ae03825da81f5b287f3493efb7ae6f3e9d88710",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\hebrew.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/hebrew.xml",
+        "sourceSha256": "ff72933eafb1ed2b3dff3724733ea40f51d47a71b6edcdd7cb1f3637df3fc89b",
+        "packagedSha256": "ff72933eafb1ed2b3dff3724733ea40f51d47a71b6edcdd7cb1f3637df3fc89b",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\hp8.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/hp8.xml",
+        "sourceSha256": "06b64d1c6cef5efa6fd69ad104dfcd4817f40288fbdb06168540759960823a6d",
+        "packagedSha256": "06b64d1c6cef5efa6fd69ad104dfcd4817f40288fbdb06168540759960823a6d",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\keybcs2.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/keybcs2.xml",
+        "sourceSha256": "ffe65a58630f8f295d4edf7ebea8d597da55621f5d49a2f37e69f2363fa37c94",
+        "packagedSha256": "ffe65a58630f8f295d4edf7ebea8d597da55621f5d49a2f37e69f2363fa37c94",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\koi8r.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/koi8r.xml",
+        "sourceSha256": "bc3a18d15b7aed78038a348a6e88946d3b51023255ec4371759efd1ec2094333",
+        "packagedSha256": "bc3a18d15b7aed78038a348a6e88946d3b51023255ec4371759efd1ec2094333",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\koi8u.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/koi8u.xml",
+        "sourceSha256": "7ec6566641883eca777d75e5039aca0fe49ed82b9d5fa0bba0e94d6c33a0a0eb",
+        "packagedSha256": "7ec6566641883eca777d75e5039aca0fe49ed82b9d5fa0bba0e94d6c33a0a0eb",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\languages.html",
+        "archive": "resources/rawfile/mysql/share/charsets/languages.html",
+        "sourceSha256": "c885418e988124926b820a4e8a6a9639e742f78ed02115f1bf4e05ebd7e865ac",
+        "packagedSha256": "c885418e988124926b820a4e8a6a9639e742f78ed02115f1bf4e05ebd7e865ac",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\latin1.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/latin1.xml",
+        "sourceSha256": "95389bf27b7170c196ce95f8d325de60309d9397131f1c6c7617944b647e1485",
+        "packagedSha256": "95389bf27b7170c196ce95f8d325de60309d9397131f1c6c7617944b647e1485",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\latin2.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/latin2.xml",
+        "sourceSha256": "11c36baa035f1ef93b929d2371ed76c315171d7470a63497133512f5482209d2",
+        "packagedSha256": "11c36baa035f1ef93b929d2371ed76c315171d7470a63497133512f5482209d2",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\latin5.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/latin5.xml",
+        "sourceSha256": "3f809e0e357c15b2a357d3684fe6959f3e9692e0a51c3da1346e38f7d59a8531",
+        "packagedSha256": "3f809e0e357c15b2a357d3684fe6959f3e9692e0a51c3da1346e38f7d59a8531",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\latin7.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/latin7.xml",
+        "sourceSha256": "7cb7fab1cea9206cf3f6aa80d454ecea52436e3aba15655022f14b69a4ce6e9b",
+        "packagedSha256": "7cb7fab1cea9206cf3f6aa80d454ecea52436e3aba15655022f14b69a4ce6e9b",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\macce.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/macce.xml",
+        "sourceSha256": "62d0799664146ae2f9be5eb638499dbbdde540d998a54f89d3bb0d34d736ea55",
+        "packagedSha256": "62d0799664146ae2f9be5eb638499dbbdde540d998a54f89d3bb0d34d736ea55",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\macroman.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/macroman.xml",
+        "sourceSha256": "fa6d43b909828d466560305029d9e99c5ddbd81d35f0b274cc21c12ca7292a02",
+        "packagedSha256": "fa6d43b909828d466560305029d9e99c5ddbd81d35f0b274cc21c12ca7292a02",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\charsets\\swe7.xml",
+        "archive": "resources/rawfile/mysql/share/charsets/swe7.xml",
+        "sourceSha256": "4d2ff74829ae881f433575bacc8b6ee5d8baa2676204d650d6a0b9ae48543cee",
+        "packagedSha256": "4d2ff74829ae881f433575bacc8b6ee5d8baa2676204d650d6a0b9ae48543cee",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\english\\errmsg.sys",
+        "archive": "resources/rawfile/mysql/share/english/errmsg.sys",
+        "sourceSha256": "324785c49705654d8955d1a178db6909451a39e0425d1459eae46c966f477cab",
+        "packagedSha256": "324785c49705654d8955d1a178db6909451a39e0425d1459eae46c966f477cab",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\burmesedict.dict",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/burmesedict.dict",
+        "sourceSha256": "99f1b2afe6672bc495a872e85dd5ed2be5ffc4d9b8377deff2dbc18a2b4538e5",
+        "packagedSha256": "99f1b2afe6672bc495a872e85dd5ed2be5ffc4d9b8377deff2dbc18a2b4538e5",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\char.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/char.brk",
+        "sourceSha256": "2a0e1730d20a0dde9611149e9fcf12a0f945cb22bfaa681a8fd6091f71796251",
+        "packagedSha256": "2a0e1730d20a0dde9611149e9fcf12a0f945cb22bfaa681a8fd6091f71796251",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\cjdict.dict",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/cjdict.dict",
+        "sourceSha256": "3850478c713b2004cbb96ef4b9f049caf16d6faf32a883d2e63c09659d0c59c7",
+        "packagedSha256": "3850478c713b2004cbb96ef4b9f049caf16d6faf32a883d2e63c09659d0c59c7",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\de.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/de.res",
+        "sourceSha256": "a08312a9303b1373f7129bdb6ebd798cb39073476f75d30f1602c0c6a99c05b2",
+        "packagedSha256": "a08312a9303b1373f7129bdb6ebd798cb39073476f75d30f1602c0c6a99c05b2",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\el.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/el.res",
+        "sourceSha256": "de0af623cf2c0440bfd567bb89116f02c78dc666b7fe3f62baaa47315937ebe3",
+        "packagedSha256": "de0af623cf2c0440bfd567bb89116f02c78dc666b7fe3f62baaa47315937ebe3",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\en.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/en.res",
+        "sourceSha256": "74c5fbfbfc3517d5383a84f9cbfbd0e3ab7c47fbdd09320d0429938fdb6ca984",
+        "packagedSha256": "74c5fbfbfc3517d5383a84f9cbfbd0e3ab7c47fbdd09320d0429938fdb6ca984",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\en_US.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/en_US.res",
+        "sourceSha256": "ee066818c0bfc2e92c9f4486f3087c3669b998786b0363a04467136d80c00d8b",
+        "packagedSha256": "ee066818c0bfc2e92c9f4486f3087c3669b998786b0363a04467136d80c00d8b",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\en_US_POSIX.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/en_US_POSIX.res",
+        "sourceSha256": "f0b36c871bf8cde086d24478f43c465de47a62ad267922022f0b2cf29bc5f94c",
+        "packagedSha256": "f0b36c871bf8cde086d24478f43c465de47a62ad267922022f0b2cf29bc5f94c",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\es.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/es.res",
+        "sourceSha256": "4db4b3ef626368fa010b546855296c5fa1556e5843d62fa5647e19bbe25cfdc6",
+        "packagedSha256": "4db4b3ef626368fa010b546855296c5fa1556e5843d62fa5647e19bbe25cfdc6",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\fi.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/fi.res",
+        "sourceSha256": "ee066818c0bfc2e92c9f4486f3087c3669b998786b0363a04467136d80c00d8b",
+        "packagedSha256": "ee066818c0bfc2e92c9f4486f3087c3669b998786b0363a04467136d80c00d8b",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\fr.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/fr.res",
+        "sourceSha256": "d95b1d5e778b175096289618ba726c7f31844609cdd1a69b5bb6748873f2d7ce",
+        "packagedSha256": "d95b1d5e778b175096289618ba726c7f31844609cdd1a69b5bb6748873f2d7ce",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\it.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/it.res",
+        "sourceSha256": "86b433f7a2456522c6c9310e6a23d7783e414f72c66dd5d4643096225caeec6a",
+        "packagedSha256": "86b433f7a2456522c6c9310e6a23d7783e414f72c66dd5d4643096225caeec6a",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\ja.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/ja.res",
+        "sourceSha256": "2cf394b51397cf3bc8f172275e1a956ee243658caa1120ef13c809ba276aeb5a",
+        "packagedSha256": "2cf394b51397cf3bc8f172275e1a956ee243658caa1120ef13c809ba276aeb5a",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\khmerdict.dict",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/khmerdict.dict",
+        "sourceSha256": "080582d61636c7f9039d65bc37452d100faa07f3ba7f5e21aa32aa1672441413",
+        "packagedSha256": "080582d61636c7f9039d65bc37452d100faa07f3ba7f5e21aa32aa1672441413",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\ko.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/ko.res",
+        "sourceSha256": "7af4ffd62b4dffaf18f453701fd37361f6c3c2d05a1edce201c45f37949f882c",
+        "packagedSha256": "7af4ffd62b4dffaf18f453701fd37361f6c3c2d05a1edce201c45f37949f882c",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\laodict.dict",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/laodict.dict",
+        "sourceSha256": "b044d4232c2fea926b88f6047c4efcd683e7cf0573cf9f60990aa7500c60ef0c",
+        "packagedSha256": "b044d4232c2fea926b88f6047c4efcd683e7cf0573cf9f60990aa7500c60ef0c",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\line.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/line.brk",
+        "sourceSha256": "f8cd15f438d9fa65ff49de922d15affa9ce265d1abf80a73138801015c57de4c",
+        "packagedSha256": "f8cd15f438d9fa65ff49de922d15affa9ce265d1abf80a73138801015c57de4c",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\line_cj.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/line_cj.brk",
+        "sourceSha256": "c87df2dae2f91152dc730c8ef67db90893b2bc03257be8e740002f7ac4bb2746",
+        "packagedSha256": "c87df2dae2f91152dc730c8ef67db90893b2bc03257be8e740002f7ac4bb2746",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\line_loose.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/line_loose.brk",
+        "sourceSha256": "9fced216b2c859c83b0ed5bdb383d4e966d83b96efba1c70a89e0106ddc1e107",
+        "packagedSha256": "9fced216b2c859c83b0ed5bdb383d4e966d83b96efba1c70a89e0106ddc1e107",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\line_loose_cj.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/line_loose_cj.brk",
+        "sourceSha256": "82178ed973312864aab2c54beff3e58f7c4b0c5c50bb40e5a0b6a0f59cf6b38c",
+        "packagedSha256": "82178ed973312864aab2c54beff3e58f7c4b0c5c50bb40e5a0b6a0f59cf6b38c",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\line_loose_phrase_cj.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/line_loose_phrase_cj.brk",
+        "sourceSha256": "5768526c010a78a2b8f5d19ed8db15a08b0490652343d82cd8c50e169640d527",
+        "packagedSha256": "5768526c010a78a2b8f5d19ed8db15a08b0490652343d82cd8c50e169640d527",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\line_normal.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/line_normal.brk",
+        "sourceSha256": "66069ccbc23cb0f63ed965a87f393af791fe66cc8f873ca400a6fcd2c92bfeab",
+        "packagedSha256": "66069ccbc23cb0f63ed965a87f393af791fe66cc8f873ca400a6fcd2c92bfeab",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\line_normal_cj.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/line_normal_cj.brk",
+        "sourceSha256": "e85343e49ff4b1e13c9ffd5c940798e5f115ef5a90d30fce3921bd06de24b055",
+        "packagedSha256": "e85343e49ff4b1e13c9ffd5c940798e5f115ef5a90d30fce3921bd06de24b055",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\line_normal_phrase_cj.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/line_normal_phrase_cj.brk",
+        "sourceSha256": "cd6160b0fcbe651952a4ace22c3b969cacb4cc98d9fefde14c43391ed842ebf5",
+        "packagedSha256": "cd6160b0fcbe651952a4ace22c3b969cacb4cc98d9fefde14c43391ed842ebf5",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\line_phrase_cj.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/line_phrase_cj.brk",
+        "sourceSha256": "154ba9a8ab4b3b3183bcbf758fc5aca5f10cac9efb80eb584a41a876db5ee30e",
+        "packagedSha256": "154ba9a8ab4b3b3183bcbf758fc5aca5f10cac9efb80eb584a41a876db5ee30e",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\pt.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/pt.res",
+        "sourceSha256": "200c5c8d1a5d1ef45a57b40517cb966842ce9fa63d0147f8f6fb210a8a8dbefe",
+        "packagedSha256": "200c5c8d1a5d1ef45a57b40517cb966842ce9fa63d0147f8f6fb210a8a8dbefe",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\res_index.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/res_index.res",
+        "sourceSha256": "0ef57bf600536ec93b119a45e72df7033a41e790e9693dfc27ec307d4fbd806e",
+        "packagedSha256": "0ef57bf600536ec93b119a45e72df7033a41e790e9693dfc27ec307d4fbd806e",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\root.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/root.res",
+        "sourceSha256": "49a4511b6d9430b5d0c8938e4f7275a35723fb48febd6e6aa198367cfcc6681a",
+        "packagedSha256": "49a4511b6d9430b5d0c8938e4f7275a35723fb48febd6e6aa198367cfcc6681a",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\ru.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/ru.res",
+        "sourceSha256": "9e934ecf7041a7aead1c5aa813582e36b21565fb626e762cf6247c709d936614",
+        "packagedSha256": "9e934ecf7041a7aead1c5aa813582e36b21565fb626e762cf6247c709d936614",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\sent.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/sent.brk",
+        "sourceSha256": "201c63fbd84e3068f4a9f87c40d1acee56e98d55ce9c13d49aca1efccee45e59",
+        "packagedSha256": "201c63fbd84e3068f4a9f87c40d1acee56e98d55ce9c13d49aca1efccee45e59",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\sent_el.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/sent_el.brk",
+        "sourceSha256": "99b68579f3d559d89df07fbb5d7d750369a229be068bc8b7615b39a752e59e37",
+        "packagedSha256": "99b68579f3d559d89df07fbb5d7d750369a229be068bc8b7615b39a752e59e37",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\sv.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/sv.res",
+        "sourceSha256": "ee066818c0bfc2e92c9f4486f3087c3669b998786b0363a04467136d80c00d8b",
+        "packagedSha256": "ee066818c0bfc2e92c9f4486f3087c3669b998786b0363a04467136d80c00d8b",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\thaidict.dict",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/thaidict.dict",
+        "sourceSha256": "ea47ae521cea65077bf047a75d1e9d28c495ec2f8cf4d2734fcb65a888229be9",
+        "packagedSha256": "ea47ae521cea65077bf047a75d1e9d28c495ec2f8cf4d2734fcb65a888229be9",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\title.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/title.brk",
+        "sourceSha256": "db249734898a13360e54e00e21bcf67aa1f2b16b355ceff5d1ca65a3a7c38083",
+        "packagedSha256": "db249734898a13360e54e00e21bcf67aa1f2b16b355ceff5d1ca65a3a7c38083",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\word.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/word.brk",
+        "sourceSha256": "c866c32a0b51947d331281dc555f8e3c979f8f292045a17165e42bc03d977224",
+        "packagedSha256": "c866c32a0b51947d331281dc555f8e3c979f8f292045a17165e42bc03d977224",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\word_POSIX.brk",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/word_POSIX.brk",
+        "sourceSha256": "d0c1f161990711c689546b72304a11a793806ec2313f98faec25097ac2be3733",
+        "packagedSha256": "d0c1f161990711c689546b72304a11a793806ec2313f98faec25097ac2be3733",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\zh.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/zh.res",
+        "sourceSha256": "35e7c34f5b94dda401bfc8d79c88dacc80a6985d821df44b5b8b667eacfe3646",
+        "packagedSha256": "35e7c34f5b94dda401bfc8d79c88dacc80a6985d821df44b5b8b667eacfe3646",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\brkitr\\zh_Hant.res",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/brkitr/zh_Hant.res",
+        "sourceSha256": "35e7c34f5b94dda401bfc8d79c88dacc80a6985d821df44b5b8b667eacfe3646",
+        "packagedSha256": "35e7c34f5b94dda401bfc8d79c88dacc80a6985d821df44b5b8b667eacfe3646",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\cnvalias.icu",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/cnvalias.icu",
+        "sourceSha256": "e833f51cb0a0874388cfef50c165af672cf2178c497b9d1bc70270744becf24b",
+        "packagedSha256": "e833f51cb0a0874388cfef50c165af672cf2178c497b9d1bc70270744becf24b",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\uemoji.icu",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/uemoji.icu",
+        "sourceSha256": "011733fe9b3401dabc6ec4c87cce8503a81fbe8b1c8548353fade634b95c99f5",
+        "packagedSha256": "011733fe9b3401dabc6ec4c87cce8503a81fbe8b1c8548353fade634b95c99f5",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\ulayout.icu",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/ulayout.icu",
+        "sourceSha256": "e3c39ae4966544703e89ac80fc64ed3b55f00a2ef67d810635dc010245ba154b",
+        "packagedSha256": "e3c39ae4966544703e89ac80fc64ed3b55f00a2ef67d810635dc010245ba154b",
+        "bytesExact": true
+      },
+      {
+        "group": "mysql",
+        "source": "D:\\MyNewProjects\\qfli_sql\\build\\mysql-port\\package\\rawfile\\mysql\\share\\icu\\icudt77l\\unames.icu",
+        "archive": "resources/rawfile/mysql/share/icu/icudt77l/unames.icu",
+        "sourceSha256": "262483b0171456733567fd1e3d2a7768373c181463a26ceb092fc250f081ad36",
+        "packagedSha256": "262483b0171456733567fd1e3d2a7768373c181463a26ceb092fc250f081ad36",
+        "bytesExact": true
+      }
+    ]
+  },
+  "metadata": {
+    "bundleExact": true,
+    "versionCodeExact": true,
+    "versionNameExact": true,
+    "release": true,
+    "permissions": [
+      "ohos.permission.INTERNET",
+      "ohos.permission.READ_PASTEBOARD"
+    ],
+    "permissionNamesExact": true,
+    "phoneEntry": true,
+    "abilitySetExact": true,
+    "rootMetadataAppMatches": true
+  },
+  "elf": {
+    "libqfli_mysql.so": {
+      "pass": true,
+      "referenceSha256": "6931d80aaf0cd486c195f49cceabc94856f15c6be2a77db788e5f01736053b52",
+      "packagedSha256": "21772a6bad16fc106da85603a7c3eecfdb2c0e79a550d67c52ad65a2c56e4eb9",
+      "reportHashesExact": true,
+      "normalizedHeaderExact": true,
+      "programHeaderTableExact": true,
+      "normalizedLoadSegmentsExact": true,
+      "gnuBuildIdExact": true,
+      "changedSections": [
+        ".comment",
+        ".shstrtab"
+      ],
+      "disallowedChanges": [],
+      "allocatedNameOffsetsChanged": [
+        ".relro_padding",
+        ".gcc_except_table",
+        ".plt",
+        ".dynamic",
+        ".hash",
+        ".dynsym",
+        ".rela.dyn",
+        ".rela.plt",
+        ".data",
+        ".fini",
+        ".bss",
+        ".note.gnu.build-id",
+        ".init",
+        ".data.rel.ro",
+        ".note.ohos.ident",
+        ".got.plt",
+        ".eh_frame",
+        ".gnu.hash",
+        ".eh_frame_hdr",
+        ".rodata",
+        ".dynstr"
+      ]
+    },
+    "libqfli_mysql_server.so": {
+      "pass": true,
+      "referenceSha256": "05fbfbb0dc55da94d56c11f995e8d95426cc19511aa3e193797c9e41cff0d6a2",
+      "packagedSha256": "7a8142bb3cc926c63a084b376dfcafe641172be61ae1c189653fbe5659fd1212",
+      "reportHashesExact": true,
+      "normalizedHeaderExact": true,
+      "programHeaderTableExact": true,
+      "normalizedLoadSegmentsExact": true,
+      "gnuBuildIdExact": true,
+      "changedSections": [
+        ".comment",
+        ".debug_abbrev",
+        ".debug_addr",
+        ".debug_aranges",
+        ".debug_frame",
+        ".debug_info",
+        ".debug_line",
+        ".debug_line_str",
+        ".debug_loclists",
+        ".debug_rnglists",
+        ".debug_str",
+        ".debug_str_offsets",
+        ".shstrtab",
+        ".strtab",
+        ".symtab"
+      ],
+      "disallowedChanges": [],
+      "allocatedNameOffsetsChanged": [
+        ".relro_padding",
+        ".gcc_except_table",
+        ".plt",
+        ".dynamic",
+        "malloc_hook",
+        ".init_array",
+        ".hash",
+        ".dynsym",
+        ".rela.dyn",
+        ".rela.plt",
+        ".data",
+        ".fini",
+        ".fini_array",
+        ".bss",
+        ".note.gnu.build-id",
+        ".init",
+        ".data.rel.ro",
+        ".note.ohos.ident",
+        ".got.plt",
+        ".eh_frame",
+        ".text",
+        ".gnu.hash",
+        ".eh_frame_hdr",
+        ".rodata",
+        ".got",
+        ".dynstr"
+      ]
+    },
+    "libqfli_mysql_server_proto.so": {
+      "pass": true,
+      "referenceSha256": "f216e6def30a0c761af6c13dd5a1c6dcd2dc90280605db8d0ebd342b668a2446",
+      "packagedSha256": "02b0ad695a733293274d5093434a11fc8f8585e7aa860eb5a354ddbd91c15e0a",
+      "reportHashesExact": true,
+      "normalizedHeaderExact": true,
+      "programHeaderTableExact": true,
+      "normalizedLoadSegmentsExact": true,
+      "gnuBuildIdExact": true,
+      "changedSections": [
+        ".comment",
+        ".debug_abbrev",
+        ".debug_addr",
+        ".debug_aranges",
+        ".debug_frame",
+        ".debug_info",
+        ".debug_line",
+        ".debug_line_str",
+        ".debug_loclists",
+        ".debug_rnglists",
+        ".debug_str",
+        ".debug_str_offsets",
+        ".shstrtab",
+        ".strtab",
+        ".symtab"
+      ],
+      "disallowedChanges": [],
+      "allocatedNameOffsetsChanged": [
+        ".relro_padding",
+        ".gcc_except_table",
+        ".plt",
+        ".dynamic",
+        "malloc_hook",
+        ".init_array",
+        ".hash",
+        ".dynsym",
+        ".rela.dyn",
+        ".rela.plt",
+        ".gnu.version_d",
+        ".data",
+        ".fini",
+        ".fini_array",
+        ".bss",
+        ".note.gnu.build-id",
+        ".init",
+        ".data.rel.ro",
+        ".note.ohos.ident",
+        ".got.plt",
+        ".eh_frame",
+        ".text",
+        ".gnu.version",
+        ".gnu.hash",
+        ".eh_frame_hdr",
+        ".rodata",
+        ".got",
+        ".dynstr"
+      ]
+    },
+    "libqfli_mysql_launcher.so": {
+      "pass": true,
+      "referenceSha256": "ef54810dfeff3260e8563dd1c19cccc7c09ecd1e0ea569de09ca700d6f9ed76c",
+      "packagedSha256": "2bdf8ad46da2fed32c0990f678e6bcbb1f54f71b202002b30b5f3e772c706f4a",
+      "reportHashesExact": true,
+      "normalizedHeaderExact": true,
+      "programHeaderTableExact": true,
+      "normalizedLoadSegmentsExact": true,
+      "gnuBuildIdExact": true,
+      "changedSections": [
+        ".comment",
+        ".debug_abbrev",
+        ".debug_addr",
+        ".debug_aranges",
+        ".debug_frame",
+        ".debug_info",
+        ".debug_line",
+        ".debug_line_str",
+        ".debug_rnglists",
+        ".debug_str",
+        ".debug_str_offsets",
+        ".shstrtab",
+        ".strtab",
+        ".symtab"
+      ],
+      "disallowedChanges": [],
+      "allocatedNameOffsetsChanged": [
+        ".relro_padding",
+        ".gcc_except_table",
+        ".plt",
+        ".dynamic",
+        ".init_array",
+        ".hash",
+        ".dynsym",
+        ".rela.dyn",
+        ".rela.plt",
+        ".data",
+        ".fini",
+        ".fini_array",
+        ".bss",
+        ".note.gnu.build-id",
+        ".init",
+        ".note.ohos.ident",
+        ".got.plt",
+        ".eh_frame",
+        ".text",
+        ".gnu.hash",
+        ".eh_frame_hdr",
+        ".rodata",
+        ".got",
+        ".interp",
+        ".dynstr"
+      ]
+    },
+    "libqfli_sql.so": {
+      "pass": true,
+      "referenceSha256": "65f2b54af707827ed6542a11ed14959eb8aae170eef0de96cc036a547cb21d67",
+      "packagedSha256": "93dcd20c23afafcff35a4810308df756b37c542184322cb45738fdae26758498",
+      "reportHashesExact": true,
+      "normalizedHeaderExact": true,
+      "programHeaderTableExact": true,
+      "normalizedLoadSegmentsExact": true,
+      "gnuBuildIdExact": true,
+      "changedSections": [
+        ".comment",
+        ".debug_abbrev",
+        ".debug_addr",
+        ".debug_aranges",
+        ".debug_frame",
+        ".debug_info",
+        ".debug_line",
+        ".debug_line_str",
+        ".debug_loclists",
+        ".debug_rnglists",
+        ".debug_str",
+        ".debug_str_offsets",
+        ".shstrtab",
+        ".strtab",
+        ".symtab"
+      ],
+      "disallowedChanges": [],
+      "allocatedNameOffsetsChanged": [
+        ".gcc_except_table",
+        ".plt",
+        ".init_array",
+        ".hash",
+        ".dynsym",
+        ".rela.dyn",
+        ".rela.plt",
+        ".data",
+        ".fini",
+        ".fini_array",
+        ".bss",
+        ".note.gnu.build-id",
+        ".init",
+        ".data.rel.ro",
+        ".note.ohos.ident",
+        ".got.plt",
+        ".eh_frame",
+        ".text",
+        ".gnu.hash",
+        ".eh_frame_hdr",
+        ".rodata",
+        ".got",
+        ".dynstr"
+      ]
+    },
+    "libapp.so": {
+      "pass": true,
+      "referenceSha256": "0e311793d1fdd21a7b23759cc09355f9b7cd7a3bf9926759044e61a5d2d2f099",
+      "packagedSha256": "6e536f87dbd8c9bdc1852e0d987bfec9b5e83f998a70c66c1f9b6391859a3257",
+      "reportHashesExact": true,
+      "normalizedHeaderExact": true,
+      "programHeaderTableExact": true,
+      "normalizedLoadSegmentsExact": true,
+      "gnuBuildIdExact": true,
+      "changedSections": [
+        ".shstrtab"
+      ],
+      "disallowedChanges": [],
+      "allocatedNameOffsetsChanged": [
+        ".bss",
+        ".note.gnu.build-id",
+        ".dynamic",
+        ".hash",
+        ".eh_frame",
+        ".text",
+        ".dynsym",
+        ".rodata",
+        ".dynstr"
+      ]
+    },
+    "libflutter.so": {
+      "pass": true,
+      "referenceSha256": "fbcb8c4a297bbd32fd2300e86406ffe3b4e033dd7b2404a09508a08936a7b14f",
+      "packagedSha256": "fbcb8c4a297bbd32fd2300e86406ffe3b4e033dd7b2404a09508a08936a7b14f",
+      "reportHashesExact": true,
+      "normalizedHeaderExact": true,
+      "programHeaderTableExact": true,
+      "normalizedLoadSegmentsExact": true,
+      "gnuBuildIdExact": true,
+      "changedSections": [],
+      "disallowedChanges": [],
+      "allocatedNameOffsetsChanged": []
+    },
+    "libc++_shared.so": {
+      "pass": true,
+      "referenceSha256": "f69947af100b652e349ae51e4a4888bcc7a327db9085272d318176ef1782bf0f",
+      "packagedSha256": "f69947af100b652e349ae51e4a4888bcc7a327db9085272d318176ef1782bf0f",
+      "reportHashesExact": true,
+      "normalizedHeaderExact": true,
+      "programHeaderTableExact": true,
+      "normalizedLoadSegmentsExact": true,
+      "gnuBuildIdExact": true,
+      "changedSections": [],
+      "disallowedChanges": [],
+      "allocatedNameOffsetsChanged": []
+    }
+  },
+  "snapshot485": {
+    "count": 485,
+    "mismatches": []
+  },
+  "artifactAfter": {
+    "sha256": "6b5e615086c8c5d38b5433cebb3165327e8866f7eadc495c388abf54089b16bf",
+    "bytes": 345947746,
+    "mtimeNs": 1793024670938203800
+  },
+  "artifactStable": true,
+  "limits": [
+    "Core authored asset prebuild provenance was not frozen and cannot be reconstructed by current-source equality.",
+    "libc++_shared source was not a frozen prebuild input; comparison proves current selected SDK consistency only.",
+    "libqfli_sql and libapp reference current build outputs; ELF equality does not prove reproducible source-to-binary semantics.",
+    "Only e_shoff[40:48], e_shnum[60:62], e_shstrndx[62:64] were normalized; sh_name offsets may change with nonallocated shstrtab while decoded names and allocated section metadata/content remain exact.",
+    "GNU build-id and permitted strip transformations are correspondence evidence, not cryptographic source provenance or proof of a specific strip tool.",
+    "Original wrapper FAIL1 and frozen inspector FAILED remain untouched. No signature, installability, loader/runtime, cross-app TCP or background acceptance is granted."
+  ],
+  "separateFileDeliveryVerdict": "PASS_WITH_EXPLICIT_PROVENANCE_LIMITS",
+  "finishedNs": 1793026233644212000,
+  "proposalReview": {
+    "path": "D:\\MyNewProjects\\qfli_sql\\build\\ohos-14u-20261026\\diagnosis-readonly\\artifact-acceptance-proposal.json",
+    "sha256": "4f2d2710d2ddc4067f494e20a9d939cb3a67fdcf827affd32aa2a9a1260f060c",
+    "reportBindingsExact": {
+      "asset-report.json": true,
+      "elf-independent-report.json": true,
+      "root-metadata-source-snapshot.json": true
+    },
+    "artifacts": [
+      {
+        "path": "D:\\MyNewProjects\\qfli_sql\\ohos\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+        "bytes": 345947746,
+        "sha256": "6b5e615086c8c5d38b5433cebb3165327e8866f7eadc495c388abf54089b16bf",
+        "matchesProposal": true
+      },
+      {
+        "path": "D:\\MyNewProjects\\qfli_sql\\build\\ohos\\hap\\entry-default-unsigned.hap",
+        "bytes": 345947746,
+        "sha256": "6b5e615086c8c5d38b5433cebb3165327e8866f7eadc495c388abf54089b16bf",
+        "matchesProposal": true
+      }
+    ],
+    "proposedScopeAccepted": true,
+    "scope": "Separate conditional unsigned file-only transfer acceptance; fresh named transfer grant still required; original FAIL results and provenance limits retained.",
+    "note": "allAllocatedSectionsExact is interpreted as allocated section contents and decoded metadata, with explicitly listed sh_name offset changes into nonallocated .shstrtab. It is not a raw-section-header byte equality claim."
+  }
+}

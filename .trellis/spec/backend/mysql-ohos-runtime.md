@@ -107,3 +107,43 @@ server entry **directly** from a privately loaded image — no `exec`, no child
   workbench, editor, stop/restart persistence, cleanup) under the preload host.
 - Host-side Linux tests cover fork/stdout protocol, owned PID, and error frames.
 - Never claim phone acceptance from compilation alone; require a live runId.
+
+
+## Explicit same-device sharing (2026-10-26)
+
+The OHOS Tools page exposes `sharingStatus`, `startSharing` and `stopSharing`
+through `qfli_sql/mysql`. The returned map contains `supported`, `running`,
+`host`, `port`, `database`, `username`, `password` and `error`. The only endpoint
+is `127.0.0.1:3306`, schema `qfli_shared`, account `qfli_app@127.0.0.1`.
+The password is returned only after an authenticated TCP readiness check.
+
+Normal internal startup remains socket-only. Sharing first verifies
+`@@skip_networking = 1` on an owned child, persists cryptographically generated
+admin/shared credentials with mode 0600 and atomic replacement, provisions the
+schema/account and verifies root authentication. It stops and reaps this child
+before enabling TCP. Never use init-file as the sole authentication barrier.
+Internal queries/scripts/shutdown retain Unix sockets and pass the admin
+password through optional trailing NAPI arguments. Legacy isolated probes may
+omit the password. Empty-password interruption recovery is restricted to a
+newly owned private start and never runs on TCP startup.
+
+Sharing sets `skip-networking=OFF`, `bind-address=127.0.0.1`, `port=3306`,
+`skip-name-resolve` and `loose-mysqlx=OFF`. No LAN binding or alternate-port
+fallback is allowed. Readiness authenticates as the dedicated account over TCP
+and verifies version, port, bind address, networking, schema and account.
+The dedicated account has privileges only on `qfli_shared`.*. Loopback identifies
+a host, not an application: any local app holding these credentials can connect.
+Do not export root credentials or embed generated passwords in source/logs.
+
+Stopping sharing terminates the managed server and preserves its data. A later
+internal query may restart privately. Unconfirmed termination retains ownership
+and an error; it must not permit a second child. Disposal and the existing
+parent-death watchdog remain the lifecycle boundary. There is no persistent
+background-service guarantee. INTERNET and READ_PASTEBOARD are the exact
+manifest permission set; declaration checks do not prove traffic scope.
+
+Current-source analyze, native rebuild, HAP staging and real two-app OHOS
+acceptance are open. Require first-install and existing-data recovery, wrong
+password rejection, dedicated-schema privilege checks, port collision,
+stop/restart, internal Unix access, background/disposal, IPv4 loopback-only
+listeners and no MySQLX listener. Historical phone probes do not cover sharing.

@@ -39,8 +39,12 @@ def require(condition: bool, message: str) -> None:
 
 def check_permissions(request_permissions: list[dict]) -> list[str]:
     permissions = sorted(item["name"] for item in request_permissions)
-    require(permissions == ["ohos.permission.READ_PASTEBOARD"],
-            "Offline audit HAP requires clipboard-only permissions; network permission is forbidden")
+    require(permissions == ["ohos.permission.INTERNET",
+                            "ohos.permission.READ_PASTEBOARD"],
+            "Audit HAP requires exactly ohos.permission.INTERNET and "
+            "ohos.permission.READ_PASTEBOARD; extra, duplicate or missing "
+            "permissions are forbidden. This check does not verify that INTERNET "
+            "is used only for the requested same-device loopback path")
     return permissions
 
 

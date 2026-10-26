@@ -4,6 +4,15 @@
 
 #include <dlfcn.h>
 #include <signal.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <sys/stat.h>
+
+#if __has_include(<mysql.h>)
+#include <mysql.h>
+#define QFLI_HAS_MYSQL_TCP_CLIENT 1
+#endif
 
 #include <cerrno>
 #include <cstring>
@@ -38,12 +47,59 @@ struct QueryWork {
     std::string socket;
     std::string schema;
     std::string source;
+    std::string password;
     std::vector<std::optional<std::string>> parameters;
     qfli_mysql::QueryResult result;
     qfli_mysql::ScriptResult script;
     bool stopping = false;
     bool executing_script = false;
+    bool probing_sharing = false;
 };
+
+qfli_mysql::QueryResult probe_sharing(const std::string &password)
+{
+    qfli_mysql::QueryResult result;
+    result.error_code = 1;
+    result.error = "Authenticated loopback connection to 127.0.0.1:3306 failed.";
+#ifdef QFLI_HAS_MYSQL_TCP_CLIENT
+    struct ThreadScope {
+        bool initialized = mysql_thread_init() == 0;
+        ~ThreadScope() { if (initialized) mysql_thread_end(); }
+    } thread;
+    if (!thread.initialized) return result;
+    std::unique_ptr<MYSQL, decltype(&mysql_close)> connection(mysql_init(nullptr), mysql_close);
+    if (!connection) return result;
+    const unsigned int timeout = 3;
+    const auto protocol = MYSQL_PROTOCOL_TCP;
+    const auto ssl_mode = SSL_MODE_DISABLED;
+    const bool public_key = true;
+    if (mysql_options(connection.get(), MYSQL_OPT_PROTOCOL, &protocol) != 0 ||
+        mysql_options(connection.get(), MYSQL_OPT_CONNECT_TIMEOUT, &timeout) != 0 ||
+        mysql_options(connection.get(), MYSQL_OPT_READ_TIMEOUT, &timeout) != 0 ||
+        mysql_options(connection.get(), MYSQL_OPT_WRITE_TIMEOUT, &timeout) != 0 ||
+        mysql_options(connection.get(), MYSQL_OPT_SSL_MODE, &ssl_mode) != 0 ||
+        mysql_options(connection.get(), MYSQL_OPT_GET_SERVER_PUBLIC_KEY, &public_key) != 0 ||
+        !mysql_real_connect(connection.get(), "127.0.0.1", "qfli_app", password.c_str(),
+                            "qfli_shared", 3306, nullptr, 0)) return result;
+    if (mysql_query(connection.get(),
+        "SELECT VERSION(), @@port, @@bind_address, @@skip_networking, DATABASE(), CURRENT_USER()") != 0)
+        return result;
+    std::unique_ptr<MYSQL_RES, decltype(&mysql_free_result)> rows(
+        mysql_store_result(connection.get()), mysql_free_result);
+    if (!rows || mysql_num_fields(rows.get()) != 6) return result;
+    MYSQL_ROW row = mysql_fetch_row(rows.get());
+    if (!row) return result;
+    std::vector<qfli_mysql::Cell> cells;
+    for (unsigned int index = 0; index < 6; ++index) {
+        cells.push_back({row[index] == nullptr, row[index] == nullptr ? "" : row[index]});
+    }
+    result.rows.push_back(std::move(cells));
+    result.available = true;
+    result.error_code = 0;
+    result.error.clear();
+#endif
+    return result;
+}
 
 bool read_string(napi_env env, napi_value value, std::string &out)
 {
@@ -132,12 +188,14 @@ void execute_query(napi_env, void *data)
     auto &job = *static_cast<QueryWork *>(data);
     auto &status = job.executing_script ? job.script.summary : job.result;
     try {
-        if (job.executing_script) {
-            job.script = qfli_mysql::execute_script(job.socket, job.schema, job.source);
+        if (job.probing_sharing) {
+            job.result = probe_sharing(job.password);
+        } else if (job.executing_script) {
+            job.script = qfli_mysql::execute_script(job.socket, job.schema, job.source, {}, job.password);
         } else {
             job.result = job.stopping
-                ? qfli_mysql::shutdown(job.socket)
-                : qfli_mysql::query(job.socket, job.schema, job.source, job.parameters);
+                ? qfli_mysql::shutdown(job.socket, job.password)
+                : qfli_mysql::query(job.socket, job.schema, job.source, job.parameters, {}, job.password);
         }
     } catch (const std::exception &error) {
         status.error_code = 1;
@@ -193,15 +251,19 @@ napi_value query(napi_env env, napi_callback_info info)
 {
     try {
         auto job = std::make_unique<QueryWork>();
-        std::size_t count = 4;
-        napi_value arguments[4]{};
+        std::size_t count = 5;
+        napi_value arguments[5]{};
         bool is_array = false;
         if (napi_get_cb_info(env, info, &count, arguments, nullptr, nullptr) != napi_ok ||
-            count != 4 || !read_string(env, arguments[0], job->socket) ||
+            (count != 4 && count != 5) || !read_string(env, arguments[0], job->socket) ||
             !read_string(env, arguments[1], job->schema) ||
             !read_string(env, arguments[2], job->source) ||
             napi_is_array(env, arguments[3], &is_array) != napi_ok || !is_array) {
             napi_throw_type_error(env, nullptr, "query(socket, schema, source, params) expects strings and an array.");
+            return nullptr;
+        }
+        if (count == 5 && !read_string(env, arguments[4], job->password)) {
+            napi_throw_type_error(env, nullptr, "MySQL password must be a string.");
             return nullptr;
         }
         uint32_t parameter_count = 0;
@@ -243,10 +305,11 @@ napi_value shutdown(napi_env env, napi_callback_info info)
 {
     try {
         auto job = std::make_unique<QueryWork>();
-        std::size_t count = 1;
-        napi_value argument = nullptr;
-        if (napi_get_cb_info(env, info, &count, &argument, nullptr, nullptr) != napi_ok ||
-            count != 1 || !read_string(env, argument, job->socket)) {
+        std::size_t count = 2;
+        napi_value arguments[2]{};
+        if (napi_get_cb_info(env, info, &count, arguments, nullptr, nullptr) != napi_ok ||
+            (count != 1 && count != 2) || !read_string(env, arguments[0], job->socket) ||
+            (count == 2 && !read_string(env, arguments[1], job->password))) {
             napi_throw_type_error(env, nullptr, "shutdown(socket) expects a string.");
             return nullptr;
         }
@@ -262,12 +325,13 @@ napi_value execute_script(napi_env env, napi_callback_info info)
 {
     try {
         auto job = std::make_unique<QueryWork>();
-        std::size_t count = 3;
-        napi_value arguments[3]{};
+        std::size_t count = 4;
+        napi_value arguments[4]{};
         if (napi_get_cb_info(env, info, &count, arguments, nullptr, nullptr) != napi_ok ||
-            count != 3 || !read_string(env, arguments[0], job->socket) ||
+            (count != 3 && count != 4) || !read_string(env, arguments[0], job->socket) ||
             !read_string(env, arguments[1], job->schema) ||
-            !read_string(env, arguments[2], job->source)) {
+            !read_string(env, arguments[2], job->source) ||
+            (count == 4 && !read_string(env, arguments[3], job->password))) {
             napi_throw_type_error(env, nullptr, "executeScript(socket, schema, source) expects strings.");
             return nullptr;
         }
@@ -277,6 +341,60 @@ napi_value execute_script(napi_env env, napi_callback_info info)
         napi_throw_error(env, nullptr, error.what());
         return nullptr;
     }
+}
+
+napi_value sharing_probe(napi_env env, napi_callback_info info)
+{
+    auto job = std::make_unique<QueryWork>();
+    std::size_t count = 1;
+    napi_value argument = nullptr;
+    if (napi_get_cb_info(env, info, &count, &argument, nullptr, nullptr) != napi_ok ||
+        count != 1 || !read_string(env, argument, job->password) || job->password.empty()) {
+        napi_throw_type_error(env, nullptr, "sharingProbe requires a password.");
+        return nullptr;
+    }
+    job->probing_sharing = true;
+    return queue_work(env, std::move(job));
+}
+
+napi_value loopback_port_available(napi_env env, napi_callback_info)
+{
+    const int descriptor = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+    if (descriptor < 0) {
+        napi_throw_error(env, nullptr, "Could not inspect loopback port 3306.");
+        return nullptr;
+    }
+    sockaddr_in address{};
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    address.sin_port = htons(3306);
+    const int reuse = 1;
+    if (setsockopt(descriptor, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) != 0) {
+        close(descriptor);
+        napi_throw_error(env, nullptr, "Could not inspect loopback port 3306.");
+        return nullptr;
+    }
+    const bool available = bind(descriptor, reinterpret_cast<sockaddr *>(&address), sizeof(address)) == 0;
+    close(descriptor);
+    napi_value result = nullptr;
+    napi_get_boolean(env, available, &result);
+    return result;
+}
+
+napi_value protect_file(napi_env env, napi_callback_info info)
+{
+    std::size_t count = 1;
+    napi_value argument = nullptr;
+    int32_t descriptor = -1;
+    if (napi_get_cb_info(env, info, &count, &argument, nullptr, nullptr) != napi_ok ||
+        count != 1 || napi_get_value_int32(env, argument, &descriptor) != napi_ok ||
+        descriptor < 0 || fchmod(descriptor, 0600) != 0) {
+        napi_throw_error(env, nullptr, "Could not protect MySQL credentials.");
+        return nullptr;
+    }
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+    return result;
 }
 
 napi_value signal_child(napi_env env, napi_callback_info info)
@@ -513,6 +631,9 @@ napi_value init(napi_env env, napi_value exports)
         {"query", nullptr, query, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"executeScript", nullptr, execute_script, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"shutdown", nullptr, shutdown, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"sharingProbe", nullptr, sharing_probe, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"loopbackPortAvailable", nullptr, loopback_port_available, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"protectFile", nullptr, protect_file, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"startChild", nullptr, start_child, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"registerChild", nullptr, register_child, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"completeRegisteredChild", nullptr, complete_registered_child, nullptr, nullptr, nullptr, napi_default, nullptr},

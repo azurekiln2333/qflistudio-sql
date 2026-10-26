@@ -8,6 +8,8 @@ import 'package:qfli_studio_core/store/project_store.dart';
 import 'package:qfli_studio_core/widgets/tool_widgets.dart'
     show ToolsSectionHeading;
 
+import 'mysql_sharing_card.dart';
+import 'mysql_sharing_controller.dart';
 import 'sql_database.dart';
 import 'sql_query_library.dart';
 import 'sql_tools_service.dart';
@@ -44,6 +46,7 @@ class SqlToolsBody extends StatefulWidget {
     required this.onOpenTerminal,
     this.controller,
     this.queryLibraryFactory,
+    this.sharingController,
   });
 
   final ProjectStore store;
@@ -51,6 +54,8 @@ class SqlToolsBody extends StatefulWidget {
 
   /// Boundary seam for widget tests; production resolves the real engine.
   final SqlToolsController? controller;
+
+  final MySqlSharingController? sharingController;
 
   /// Lets the tab reuse the app query library and its injected cache.
   final Future<SqlQueryLibrary> Function()? queryLibraryFactory;
@@ -181,6 +186,7 @@ class _SqlToolsBodyState extends State<SqlToolsBody> {
         _schemaCard(),
         _heading('文本与值工具', Icons.text_fields_outlined),
         _textToolsCard(),
+        MySqlSharingCard(controller: widget.sharingController),
         _heading('通用', Icons.build_outlined),
         for (final tool in commonTools)
           ListTile(

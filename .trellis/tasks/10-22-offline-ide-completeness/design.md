@@ -25,3 +25,11 @@ Developer research and Git publication may use network; app tools use only bundl
 
 ## Validation and rollback
 Use injected engine/repository seams for unit/widget behavior, real isolated SQLite/MySQL for semantics, current OHOS builds and device acceptance for target claims. Retain accurate unavailable results. Scoped corrective patches only; never reset/clean baseline work. Review each worker diff and the final integration before scoped commits.
+
+
+## Same-device MySQL sharing implementation (2026-10-26)
+
+- User explicitly authorized implementation, scoped commit and push. The backend owns OHOS runtime/channel/NAPI/manifest. Tools owns the inline service card and typed controller. Root owns integration/docs/specs. Existing Herdr Pi own audit permission policy and independent account/lifecycle/UI source reviews. Preserve unrelated WIP and all shared-core ownership.
+- Internal clients retain the private Unix socket. The explicit service binds only 127.0.0.1:3306. Provision and verify generated persisted admin/shared credentials while networking is disabled, then stop before enabling TCP. Never expose insecure initialization or use init-file as the only security barrier. Disable MySQLX.
+- The Tools page exposes start/stop/status and connection details. Do not claim background persistence or cross-app OHOS reachability until a real two-app target test. Runtime failure remains visible. Cloud requests remain blocked.
+- Source/AST/Chinese lint and independent review may proceed now. Analyze, focused driver/controller tests, native compilation and two-app target acceptance require fresh named grants. No old C586/C616 replay, device inference or source snapshot parity claim.

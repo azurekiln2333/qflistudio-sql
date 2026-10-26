@@ -36,9 +36,12 @@ OHOS `EntryAbility` refuses `openAgreement`, `openUrl` and Huawei `login`
 with exactly one `OFFLINE_ONLY` error before reading arguments. Keep the account
 channel registered for callers that still carry a persisted login action, but
 do not import AccountKit or dispatch browser/router/authentication operations.
-The module requests only `READ_PASTEBOARD`, with no `client_id` metadata.
-Oracle uses its private Unix socket and `skip-networking`; it does not require
-the INTERNET permission. Preserve local picker/share, native registrations,
+The module requests exactly `READ_PASTEBOARD` and `INTERNET`, with no `client_id`
+metadata. INTERNET permits the explicitly requested same-device MySQL TCP sharing.
+Internal Oracle clients keep the private Unix socket. Default startup keeps
+`skip-networking`; explicit sharing binds only `127.0.0.1:3306` after account
+provisioning through the socket. No LAN/cloud fallback is allowed. Preserve
+local picker/share, native registrations,
 runtime disposal and startup behavior when applying this policy.
 
 ## 4. Validation & Error Matrix

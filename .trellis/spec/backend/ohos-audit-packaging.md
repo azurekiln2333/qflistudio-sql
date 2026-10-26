@@ -44,11 +44,18 @@ The signing wrapper uses the same bundle and verifies its identity against
 - The build record stores target, architecture, bundle, Dart defines, timestamp
   and unsigned SHA256. Signing adds signed SHA256 and the public SDK test identity.
   Neither helper operates the device or claims `deviceExecuted=true`.
-- Current offline packages request exactly `ohos.permission.READ_PASTEBOARD`.
-  The archive inspector rejects INTERNET, extra/missing or duplicate permissions.
-  Oracle's local Unix socket does not justify network permission. A prior HAP
-  inspected before native offline enforcement remains historical, even when
-  its catalog/ELF/signature checks passed; rebuild and inspect current inputs.
+- Current audit packages request exactly two permissions:
+  `ohos.permission.INTERNET` and `ohos.permission.READ_PASTEBOARD`. The
+  inspector sorts the requested names and rejects any other set, including
+  extra, missing or duplicate entries. `INTERNET` serves only the explicitly
+  requested same-device loopback TCP path to `127.0.0.1:3306` for sibling
+  applications. It does not authorize remote, cloud or LAN access. The
+  inspector enforces only this permission set and cannot prove that runtime
+  traffic stays on loopback. No background service is claimed. Device cross-application acceptance on the
+  selected target remains open. The Oracle staging Unix socket alone does not
+  justify network permission. A prior HAP inspected before native offline
+  enforcement remains historical, even when its catalog/ELF/signature checks
+  passed; rebuild and inspect current inputs.
 - Test signing uses only the installed public OpenHarmony SDK identity. The
   template's CA-issued `development-certificate` is the app leaf; append exported
   public Application CA/root certificates. The release alias's exported

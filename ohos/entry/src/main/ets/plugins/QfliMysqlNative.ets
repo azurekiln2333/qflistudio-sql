@@ -20,6 +20,15 @@ export function registerQfliMysqlChannel(engine: FlutterEngine,
           call.argument('source') as string)
           .then((response) => { result.success(response); })
           .catch((error: Error) => { result.error('MYSQL_SCRIPT_FAILED', error.message, null); });
+      } else if (call.method === 'sharingStatus') {
+        runtime.sharingStatus().then((response) => { result.success(response); })
+          .catch(() => { result.error('MYSQL_SHARING_STATUS_FAILED', 'Could not inspect MySQL sharing.', null); });
+      } else if (call.method === 'startSharing') {
+        runtime.startSharing().then((response) => { result.success(response); })
+          .catch(() => { result.error('MYSQL_SHARING_START_FAILED', 'Could not start MySQL sharing.', null); });
+      } else if (call.method === 'stopSharing') {
+        runtime.stopSharing().then((response) => { result.success(response); })
+          .catch(() => { result.error('MYSQL_SHARING_STOP_FAILED', 'Could not stop MySQL sharing.', null); });
       } else if (call.method === 'stop') {
         runtime.stop().then(() => { result.success(null); })
           .catch((error: Error) => { result.error('MYSQL_SHUTDOWN_FAILED', error.message, null); });

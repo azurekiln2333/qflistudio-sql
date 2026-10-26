@@ -109,8 +109,13 @@ Android engine integration tests passed on an API 37 x86_64 emulator on
 October 2, 2026, and a physical API 36 ARM64 OPD2413 on October 15, 2026.
 These historical results do not establish acceptance of the current source.
 
-Oracle traffic uses a private Unix socket or pipe with `skip-networking`; TCP is
-never a fallback and the app does not request network permission. Defaults are
+Internal Oracle clients use a private Unix socket or pipe. The default configuration
+uses `skip-networking`. The OHOS Tools page provides optional same-device MySQL
+sharing at `127.0.0.1:3306`. Other subprojects connect through their MySQL drivers
+using the dedicated account and generated password shown in Tools. Start sharing
+before connecting. Keep the password out of source control. Stopping sharing
+disconnects clients; exiting the SQL app stops its server. Background availability
+and real two-app connectivity still require device acceptance. Defaults are
 1 MiB of SQL input, 1,000 rows / 1 MiB of displayed results, at most 128 result
 sets per script and an 8 MiB packet limit.
 
@@ -208,9 +213,11 @@ node tool/test_sql_offline_platform.cjs
   cloud code paths check policy before reading a token or calling an API.
 
 - On HarmonyOS, the ability refuses agreement, browser-open and login requests
-  with a single `OFFLINE_ONLY` error before reading arguments. The single declared
-  permission is `ohos.permission.READ_PASTEBOARD`; the archive inspector rejects
-  network permission.
+  with a single `OFFLINE_ONLY` error before reading arguments. The manifest requests
+  `ohos.permission.READ_PASTEBOARD` and `ohos.permission.INTERNET` for same-device
+  TCP sharing. The archive inspector requires exactly those two permissions and
+  rejects missing, extra or duplicate permissions. Sharing binds only to loopback.
+  Remote cloud connections remain refused by runtime policy.
 
 - Tools, diagnostics and content use only bundled engines, app-owned files and
   pure computation. Developer research, Git publication and pushes may use the

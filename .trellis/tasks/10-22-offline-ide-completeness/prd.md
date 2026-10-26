@@ -39,6 +39,25 @@ Make the standalone language applications substantially complete offline develop
 - SQL has no existing breakpoint/stepping backend or managed ports. Capability limits stay visible in the ledger; fake controls are excluded.
 - Existing production signing/device limitations are rechecked against current state. Missing device evidence keeps R2/R3 open.
 
+## Same-device MySQL sharing clarification — 2026-10-26
+
+The user clarified that sibling standalone apps should be able to connect to
+this SQL app's MySQL service on same-device localhost port3306. The intended
+consumer is another child project, not only the SQL app's private client.
+Treat this as requested capability, not current behavior or a verified target
+result. Normal OHOS startup keeps skip-networking and a private Unix socket.
+The explicit sharing implementation requires separate runtime and target
+acceptance.
+
+This refines R11: explicitly requested same-device database IPC may use
+loopback TCP. Remote/LAN/cloud database access and online dependency downloads
+remain outside the standalone offline workflow. Preserve the internal Unix
+socket path where practical. Cross-app TCP permissions, account/authentication,
+port conflicts, truthful service state and process/background lifetime need
+source design and separate OHOS acceptance. Never expose the existing private
+bootstrap account merely by removing skip-networking. Source research does
+not authorize a device or host validation window.
+
 ## Out of scope
 Network-dependent app workflows, fabricated debugger controls, destructive user-data cleanup, broad staging of unrelated changes, and uncoordinated edits of shared core/sibling products.
 

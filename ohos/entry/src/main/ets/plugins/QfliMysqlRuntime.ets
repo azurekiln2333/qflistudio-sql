@@ -2,6 +2,7 @@ import qfliMysql from 'libqfli_mysql.so';
 import fs from '@ohos.file.fs';
 import util from '@ohos.util';
 import deviceInfo from '@ohos.deviceInfo';
+import cryptoFramework from '@ohos.security.cryptoFramework';
 import { childProcessManager, common } from '@kit.AbilityKit';
 
 export interface QfliMysqlColumn {
@@ -24,6 +25,22 @@ export interface QfliMysqlResponse {
 
 export interface QfliMysqlScriptResponse extends QfliMysqlResponse {
   results: Array<QfliMysqlResponse>;
+}
+
+export interface QfliMysqlSharingStatus {
+  supported: boolean;
+  running: boolean;
+  host: string;
+  port: number;
+  database: string;
+  username: string;
+  password: string;
+  error: string;
+}
+
+interface MysqlCredentials {
+  rootPassword: string;
+  sharingPassword: string;
 }
 
 interface QfliMysqlChildStatus {
@@ -68,9 +85,13 @@ interface QfliMysqlStopResult {
 
 interface QfliMysqlModule {
   query(socket: string, schema: string, source: string,
-    params: Array<string | null>): Promise<QfliMysqlResponse>;
-  executeScript(socket: string, schema: string, source: string): Promise<QfliMysqlScriptResponse>;
-  shutdown(socket: string): Promise<QfliMysqlResponse>;
+    params: Array<string | null>, password: string): Promise<QfliMysqlResponse>;
+  executeScript(socket: string, schema: string, source: string,
+    password: string): Promise<QfliMysqlScriptResponse>;
+  shutdown(socket: string, password: string): Promise<QfliMysqlResponse>;
+  sharingProbe(password: string): Promise<QfliMysqlResponse>;
+  loopbackPortAvailable(): boolean;
+  protectFile(descriptor: number): void;
   startChild(entryParams: string, logPath: string): MysqlStartResult;
   // Debug-only preload instrumentation and host (present only in probe builds).
   protoProbe?(): Record<string, Object>;
@@ -133,6 +154,10 @@ export class QfliMysqlRuntime {
   private starting: Promise<void> | undefined;
   private stopping: Promise<void> | undefined;
   private queue: Promise<void> = Promise.resolve();
+  private sharingRequested: boolean = false;
+  private sharingError: string = '';
+  private rootPassword: string = '';
+  private credentials: MysqlCredentials | undefined;
 
   constructor(context: common.UIAbilityContext) {
     this.context = context;
@@ -196,7 +221,7 @@ export class QfliMysqlRuntime {
     if (this.closing || this.disposed) return Promise.reject(new Error('Oracle MySQL is closing.'));
     const operation = this.queue.then(async (): Promise<QfliMysqlResponse> => {
       await this.ensureStarted();
-      const response = await this.module().query(this.socket, schema, source, params);
+      const response = await this.module().query(this.socket, schema, source, params, this.rootPassword);
       if (!response.available) this.ready = false;
       return response;
     });
@@ -208,12 +233,170 @@ export class QfliMysqlRuntime {
     if (this.closing || this.disposed) return Promise.reject(new Error('Oracle MySQL is closing.'));
     const operation = this.queue.then(async (): Promise<QfliMysqlScriptResponse> => {
       await this.ensureStarted();
-      const response = await this.module().executeScript(this.socket, schema, source);
+      const response = await this.module().executeScript(this.socket, schema, source, this.rootPassword);
       if (!response.available) this.ready = false;
       return response;
     });
     this.queue = operation.then((): void => {}, (): void => {});
     return operation;
+  }
+
+  sharingStatus(): Promise<QfliMysqlSharingStatus> {
+    const operation = this.queue.then((): Promise<QfliMysqlSharingStatus> => this.inspectSharing());
+    this.queue = operation.then((): void => {}, (): void => {});
+    return operation;
+  }
+
+  startSharing(): Promise<QfliMysqlSharingStatus> {
+    if (this.closing || this.disposed || this.rootOverridden) {
+      return Promise.resolve(this.sharingSnapshot(false, 'MySQL sharing is unavailable in this runtime.'));
+    }
+    const operation = this.queue.then(async (): Promise<QfliMysqlSharingStatus> => {
+      try {
+        if (this.sharingRequested) {
+          const current = await this.inspectSharing();
+          if (current.running) return current;
+          await this.stopSharingChild();
+        }
+        this.sharingRequested = false;
+        this.sharingError = '';
+        await this.ensureStarted();
+        if (this.pid === undefined || this.host === undefined) {
+          throw new Error('Refusing to share a MySQL server outside this runtime ownership.');
+        }
+        await this.provisionSharing();
+        await this.stopSharingChild();
+        if (!this.module().loopbackPortAvailable()) {
+          this.sharingError = 'Loopback port 127.0.0.1:3306 is occupied or unavailable.';
+          throw new Error('Loopback port 127.0.0.1:3306 is occupied or unavailable.');
+        }
+        this.sharingRequested = true;
+        await this.ensureStarted();
+        const status = await this.inspectSharing();
+        if (!status.running) throw new Error(status.error);
+        return status;
+      } catch (_) {
+        if (this.sharingError.length === 0) {
+          this.sharingError = 'Could not start MySQL sharing on 127.0.0.1:3306. Check port availability and local MySQL startup.';
+        }
+        try {
+          await this.stopSharingChild();
+          this.sharingRequested = false;
+        } catch (_) {
+          this.closing = true;
+          this.sharingError = 'MySQL sharing failed and server termination is unconfirmed. Retry stopping the service.';
+        }
+        return this.sharingSnapshot(false, this.sharingError);
+      }
+    });
+    this.queue = operation.then((): void => {}, (): void => {});
+    return operation;
+  }
+
+  stopSharing(): Promise<QfliMysqlSharingStatus> {
+    const operation = this.queue.then(async (): Promise<QfliMysqlSharingStatus> => {
+      try {
+        await this.stopSharingChild();
+        this.sharingRequested = false;
+        this.sharingError = '';
+        if (!this.disposed && this.stopping === undefined) this.closing = false;
+      } catch (_) {
+        this.closing = true;
+        this.sharingError = 'MySQL server termination is unconfirmed. Retry stopping the service.';
+      }
+      return this.inspectSharing();
+    });
+    this.queue = operation.then((): void => {}, (): void => {});
+    return operation;
+  }
+
+  private sharingSnapshot(running: boolean, error: string): QfliMysqlSharingStatus {
+    return {
+      supported: nativeModule !== undefined && !this.rootOverridden && !this.disposed,
+      running: running,
+      host: '127.0.0.1',
+      port: 3306,
+      database: 'qfli_shared',
+      username: 'qfli_app',
+      password: running ? (this.credentials?.sharingPassword ?? '') : '',
+      error: error,
+    };
+  }
+
+  private async inspectSharing(): Promise<QfliMysqlSharingStatus> {
+    if (!this.sharingRequested || this.credentials === undefined || this.pid === undefined) {
+      return this.sharingSnapshot(false, this.sharingError);
+    }
+    try {
+      if (this.childStatus(this.pid).state !== 'running') {
+        return this.sharingSnapshot(false, 'The MySQL sharing process is not running.');
+      }
+      const result = await this.module().sharingProbe(this.credentials.sharingPassword);
+      const row = result.rows.length === 1 ? result.rows[0] : [];
+      if (!result.available || result.exitCode !== 0 || row.length !== 6 ||
+        row[0] === null || !/^8\.4\.6(?:-|$)/.test(row[0]) || row[1] !== '3306' ||
+        row[2] !== '127.0.0.1' || row[3] !== '0' || row[4] !== 'qfli_shared' ||
+        row[5] !== 'qfli_app@127.0.0.1') {
+        return this.sharingSnapshot(false, 'Authenticated MySQL loopback readiness failed.');
+      }
+      return this.sharingSnapshot(true, this.sharingError);
+    } catch (_) {
+      return this.sharingSnapshot(false, 'Authenticated MySQL loopback readiness failed.');
+    }
+  }
+
+  private async stopSharingChild(): Promise<void> {
+    if (this.pid !== undefined) {
+      const result = await this.stopChild(this.pid);
+      if (!result.confirmed) throw new Error('MySQL server termination is unconfirmed.');
+      this.pid = undefined;
+      this.host = undefined;
+    }
+    this.ready = false;
+  }
+
+  private async provisionSharing(): Promise<void> {
+    const privateStatus = await this.module().query(this.socket, '',
+      'SELECT @@skip_networking', [], this.rootPassword);
+    if (!privateStatus.available || privateStatus.exitCode !== 0 ||
+      privateStatus.rows.length !== 1 || privateStatus.rows[0][0] !== '1') {
+      throw new Error('MySQL account provisioning requires a network-disabled server.');
+    }
+    if (this.credentials === undefined) {
+      const credentials: MysqlCredentials = {
+        rootPassword: this.randomPassword(), sharingPassword: this.randomPassword(),
+      };
+      this.writeText(`${this.root}/sharing-credentials.json`, JSON.stringify(credentials));
+      this.credentials = credentials;
+    }
+    const credentials = this.credentials;
+    const script = [
+      'CREATE DATABASE IF NOT EXISTS `qfli_shared`',
+      "DROP USER IF EXISTS 'qfli_app'@'127.0.0.1'",
+      `CREATE USER 'qfli_app'@'127.0.0.1' IDENTIFIED WITH caching_sha2_password BY '${credentials.sharingPassword}'`,
+      "GRANT ALL PRIVILEGES ON `qfli_shared`.* TO 'qfli_app'@'127.0.0.1'",
+      `ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY '${credentials.rootPassword}'`,
+    ].join(';\n');
+    let result: QfliMysqlScriptResponse | undefined;
+    try {
+      result = await this.module().executeScript(this.socket, '', script, this.rootPassword);
+    } catch (_) {}
+    const verified = await this.module().query(this.socket, '',
+      "SELECT COUNT(*) FROM mysql.user WHERE (User = 'root' OR User = '') AND authentication_string = ''",
+      [], credentials.rootPassword);
+    if (verified.available) this.rootPassword = credentials.rootPassword;
+    if (result === undefined || !result.available || result.exitCode !== 0 ||
+      !verified.available || verified.exitCode !== 0 ||
+      verified.rows.length !== 1 || verified.rows[0][0] !== '0') {
+      throw new Error('MySQL account provisioning could not be verified.');
+    }
+  }
+
+  private randomPassword(): string {
+    const bytes = cryptoFramework.createRandom().generateRandomSync(32).data;
+    let password = '';
+    for (let index = 0; index < bytes.length; index++) password += bytes[index].toString(16).padStart(2, '0');
+    return password;
   }
 
   // Coalesces concurrent stop calls through one promise. closing is set for the
@@ -255,6 +438,7 @@ export class QfliMysqlRuntime {
       this.pid = undefined;
       this.host = undefined;
       this.closing = false;
+      this.sharingRequested = false;
     }
     // While termination is unconfirmed, ownership and closing are retained so a
     // later stop can retry and no query slips in against a live server.
@@ -270,7 +454,7 @@ export class QfliMysqlRuntime {
     let shutdownRequested = false;
     if (this.readExit(exitFile) === undefined && this.ready) {
       try {
-        const response = await this.module().shutdown(this.socket);
+        const response = await this.module().shutdown(this.socket, this.rootPassword);
         shutdownRequested = response.available && response.exitCode === 0;
       } catch (_) {}
     }
@@ -534,6 +718,15 @@ export class QfliMysqlRuntime {
       this.host = undefined;
     }
     this.makeDirectory(this.root);
+    if (fs.accessSync(`${this.root}/sharing-credentials.json`)) {
+      const credentials = JSON.parse(fs.readTextSync(`${this.root}/sharing-credentials.json`)) as MysqlCredentials;
+      if (!/^[0-9a-f]{64}$/.test(credentials.rootPassword) ||
+        !/^[0-9a-f]{64}$/.test(credentials.sharingPassword)) {
+        throw new Error('MySQL sharing credentials are invalid.');
+      }
+      this.credentials = credentials;
+      this.rootPassword = credentials.rootPassword;
+    }
     const markerPath = `${this.root}/initialized.json`;
     const initialized = fs.accessSync(markerPath);
     if (initialized) {
@@ -570,7 +763,7 @@ export class QfliMysqlRuntime {
 
     if (this.closing) throw new Error('Oracle MySQL is closing.');
     this.removeIfExists(`${this.root}/server.exit`);
-    const existing = await this.module().query(this.socket, '', 'SELECT VERSION()', []);
+    const existing = await this.module().query(this.socket, '', 'SELECT VERSION()', [], this.rootPassword);
     if (this.isReady(existing)) {
       const serverPid = this.readExit(`${this.root}/mysql.pid`);
       if (serverPid === undefined || serverPid <= 1) {
@@ -617,7 +810,12 @@ export class QfliMysqlRuntime {
         this.pid = undefined;
         throw new Error(this.diagnostic('Oracle MySQL exited without a startup result', undefined));
       }
-      const response = await this.module().query(this.socket, '', 'SELECT VERSION()', []);
+      let response = await this.module().query(this.socket, '', 'SELECT VERSION()', [], this.rootPassword);
+      if (!this.sharingRequested && !response.available && this.rootPassword.length > 0 &&
+        this.pid !== undefined && this.host !== undefined) {
+        response = await this.module().query(this.socket, '', 'SELECT VERSION()', [], '');
+        if (this.isReady(response)) this.rootPassword = '';
+      }
       if (this.isReady(response)) {
         this.ready = true;
         return;
@@ -763,6 +961,10 @@ export class QfliMysqlRuntime {
       const text = fs.readTextSync(logPath, { offset: Math.max(0, size - 8192), length: 8192 });
       details += `\n[${logPath}]\n${text}`;
     }
+    if (this.credentials !== undefined) {
+      details = details.split(this.credentials.rootPassword).join('[redacted]');
+      details = details.split(this.credentials.sharingPassword).join('[redacted]');
+    }
     return `${action}${code === undefined ? '' : ` (exit ${code})`}.${details}`;
   }
 
@@ -778,7 +980,12 @@ export class QfliMysqlRuntime {
       `plugin-dir=${this.option(`${this.root}/plugins`)}`,
       `lc-messages-dir=${this.option(`${this.root}/share`)}`,
       `character-sets-dir=${this.option(`${this.root}/share/charsets`)}`,
-      'skip-networking',
+      this.sharingRequested ? 'skip-networking=OFF' : 'skip-networking',
+      'bind-address=127.0.0.1',
+      'port=3306',
+      'loose-mysqlx=OFF',
+      // Match TCP clients to qfli_app@127.0.0.1 without reverse-DNS host substitution.
+      'skip-name-resolve',
       'skip-log-bin',
       'secure-file-priv=NULL',
       'performance-schema=OFF',
@@ -835,6 +1042,7 @@ export class QfliMysqlRuntime {
     const temporary = `${path}.tmp`;
     const file = fs.openSync(temporary, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE | fs.OpenMode.TRUNC);
     try {
+      if (path.endsWith('/sharing-credentials.json')) this.module().protectFile(file.fd);
       let written = 0;
       while (written < bytes.byteLength) {
         const count = fs.writeSync(file.fd, bytes.slice(written));

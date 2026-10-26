@@ -57,16 +57,24 @@ class PackageGuardTest(unittest.TestCase):
 
 
 class OfflinePermissionTest(unittest.TestCase):
-    def test_clipboard_only_is_accepted(self):
-        self.assertEqual(check_permissions([{"name": "ohos.permission.READ_PASTEBOARD"}]),
-                         ["ohos.permission.READ_PASTEBOARD"])
+    def test_clipboard_and_local_tcp_are_accepted(self):
+        self.assertEqual(
+            check_permissions([{"name": "ohos.permission.READ_PASTEBOARD"},
+                               {"name": "ohos.permission.INTERNET"}]),
+            ["ohos.permission.INTERNET", "ohos.permission.READ_PASTEBOARD"])
 
-    def test_old_network_package_and_any_permission_drift_are_rejected(self):
+    def test_missing_extra_or_duplicate_permission_is_rejected(self):
         for names in ([], ["ohos.permission.INTERNET"],
-                      ["ohos.permission.INTERNET", "ohos.permission.READ_PASTEBOARD"],
-                      ["ohos.permission.READ_PASTEBOARD", "ohos.permission.CAMERA"],
-                      ["ohos.permission.READ_PASTEBOARD", "ohos.permission.READ_PASTEBOARD"]):
-            with self.subTest(names=names), self.assertRaisesRegex(ValueError, "clipboard-only"):
+                      ["ohos.permission.READ_PASTEBOARD"],
+                      ["ohos.permission.INTERNET", "ohos.permission.CAMERA"],
+                      ["ohos.permission.INTERNET", "ohos.permission.READ_PASTEBOARD",
+                       "ohos.permission.CAMERA"],
+                      ["ohos.permission.INTERNET", "ohos.permission.INTERNET",
+                       "ohos.permission.READ_PASTEBOARD"],
+                      ["ohos.permission.INTERNET", "ohos.permission.READ_PASTEBOARD",
+                       "ohos.permission.READ_PASTEBOARD"]):
+            with self.subTest(names=names), self.assertRaisesRegex(
+                    ValueError, "extra, duplicate or missing permissions are forbidden"):
                 check_permissions([{"name": name} for name in names])
 
 

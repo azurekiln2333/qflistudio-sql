@@ -99,3 +99,35 @@ delete a version-mismatched datadir, or include concurrent cloud work unnoticed.
 
 Correct: build/inspect matching Bionic code, use the native installed layout,
 preserve real errors and user data, and review narrow owning delivery patches.
+
+## 8. Normal release packaging and installation
+
+Use the standard Flutter pub/tooling path for a normal Android release build.
+The current OHOS Flutter SDK skips platform tooling regeneration with `--no-pub`.
+A stale debug registrant can then reference `integration_test` in a release APK.
+Gradle excludes that development plugin from release dependencies.
+The resulting Java compilation fails with a missing `IntegrationTestPlugin` class.
+
+Correct: build with `--pub` so release tooling filters development plugins.
+Wrong: manually remove generated Java registrations or alter SDK sources.
+A standalone `flutter pub get --offline` generates non-release registration.
+It does not establish the release registration correction.
+Freeze `pubspec.lock` and require unchanged authored inputs after the build.
+
+For memory-constrained builds, use one Gradle worker and Kotlin in-process.
+The bundled snapshot generator accepts `--old_gen_heap_size=512` in MB.
+Pass it through `--extra-gen-snapshot-options=--old_gen_heap_size=512`.
+This limits the managed old-generation heap, not compiler zone allocations.
+Refresh system commit headroom before retrying an actual allocation failure.
+Retain each failed attempt and use a fresh runner directory for each retry.
+
+Before installation, inspect the actual APK with `aapt2` and `apksigner`.
+Require the intended package, version, ABI and `debuggable=false`.
+Distinguish development signing from release compilation and the debug flag.
+Reused staged Oracle binaries do not establish a current-source native rebuild.
+Use `adb -s <exact-device> push <apk> <staging-path>` and verify its SHA256.
+Use `adb -s <exact-device> shell pm install -r <staging-path>` to retain data.
+Require installer Success and compare the installed base APK hash.
+Check the installed version and exact launch activity before claiming delivery.
+A successful launch does not establish Oracle lifecycle or workspace acceptance.
+Never uninstall or clear the normal application to work around a signing error.

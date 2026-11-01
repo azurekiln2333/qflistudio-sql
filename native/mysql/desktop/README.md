@@ -1,6 +1,6 @@
 # Oracle MySQL Desktop Runtime
 
-Windows and Linux use the actual upstream Oracle server and C client. The
+Windows, Linux and the macOS helper integration use the actual upstream Oracle server and C client. The
 adapter in `lib/mysql_database.dart` starts the private server through
 `LocalMySqlRuntime` and invokes `qfli_mysql_bridge` on worker isolates. Explicit
 injected channels retain their existing behavior. No TCP service is opened and
@@ -52,6 +52,11 @@ dependencies in `bin`; Linux keeps the bridge and shared libraries in `lib`.
 The runtime explicitly points mysqld at its bundled resources and plugins.
 Retain all upstream LICENSE/docs and source/build provenance in release bundles.
 
+macOS Runner packaging is described in `../macos/README.md`. It requires full
+Oracle macOS SDKs per architecture and Xcode, builds signed helper applications,
+and selects the current process ABI. The default helper layout and the existing
+flat `QFLI_MYSQL_BUNDLE` override are separate installed layouts.
+
 ## Lifecycle
 
 The default storage is the user's local application data under `qfli_sql/mysql`.
@@ -84,7 +89,8 @@ exercise the typed application adapter using a temporary database.
 
 Windows Oracle 8.4.6 and Linux Oracle 8.0.46 have real-engine evidence. Full
 Windows Flutter GUI build remains unverified without MSVC; Linux Flutter GUI
-and Apple execution have not been tested. Portable macOS launcher/runtime source
-exists, but macOS bundle/signing integration is still required. Android server
-build/lifecycle, native iOS hosting and the product's local-MySQL engine selector
-remain open requirements. This backend delivery does not establish them.
+and Apple execution have not been tested. macOS helper bundle/signing source is
+integrated, but actual Apple SDK packaging and sandboxed execution remain
+unverified. Android server build/lifecycle was delivered separately; native iOS
+hosting remains missing and the applied engine selector awaits its ownership
+decision. Portable source tests do not establish native Apple functionality.

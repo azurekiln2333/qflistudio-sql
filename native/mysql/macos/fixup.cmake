@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.20)
+if(NOT CMAKE_HOST_APPLE)
+  message(FATAL_ERROR "Oracle helper dependency fixup requires macOS")
+endif()
+set(APPLE TRUE)
+if(NOT IS_DIRECTORY "${HELPER_APP}/Contents" OR NOT IS_DIRECTORY "${ORACLE_HOME}/lib")
+  message(FATAL_ERROR "Pass a staged helper app and complete Oracle distribution")
+endif()
+include(BundleUtilities)
+file(GLOB_RECURSE libraries LIST_DIRECTORIES FALSE
+  "${HELPER_APP}/Contents/Frameworks/*.dylib"
+  "${HELPER_APP}/Contents/Frameworks/*.so"
+  "${HELPER_APP}/Contents/PlugIns/*.dylib"
+  "${HELPER_APP}/Contents/PlugIns/*.so")
+set(search "${ORACLE_HOME}/lib;${ORACLE_HOME}/lib/private;${ORACLE_HOME}/lib/plugin")
+get_bundle_keys("${HELPER_APP}" "${libraries}" "${search}" keys)
+file(REAL_PATH "${HELPER_APP}" helper_root)
+file(REAL_PATH "${ORACLE_HOME}" oracle_root)
+foreach(key IN LISTS keys)
+  file(REAL_PATH "${${key}_RESOLVED_ITEM}" resolved)
+  cmake_path(IS_PREFIX helper_root "${resolved}" NORMALIZE in_helper)
+  cmake_path(IS_PREFIX oracle_root "${resolved}" NORMALIZE in_oracle)
+  if(NOT in_helper AND NOT in_oracle)
+    message(FATAL_ERROR "Oracle dependency must be provided by its SDK: ${resolved}")
+  endif()
+endforeach()
+clear_bundle_keys(keys)
+fixup_bundle("${HELPER_APP}" "${libraries}" "${search}")

@@ -1,6 +1,7 @@
 """Verify the original-catalog x86_64 audit HAP without touching a device.
 
-Uses the installed SDK's own strip, ELF and signature tools. A PASS proves
+Uses the installed SDK's own strip, ELF and, by default, signature tools.
+Explicit --unsigned inspection skips signing checks. A PASS proves
 package identity and static consistency only, never runtime acceptance.
 """
 
@@ -29,6 +30,13 @@ PRIVATE_EXPORTS = {
     "qfli_mysql_proto_enter_child_scope", "qfli_mysql_proto_child_exit",
 }
 AUDIT_TARGET = "integration_test/sql_curriculum_ohos_audit.dart"
+AUDIT_SOURCES = (
+    AUDIT_TARGET,
+    "integration_test/support/sql_curriculum_audit.dart",
+    "integration_test/support/sql_curriculum_runtime.dart",
+    "integration_test/support/sql_curriculum_store.dart",
+    "integration_test/support/sql_curriculum_support.dart",
+)
 FLUTTER_ASSETS = "resources/rawfile/flutter_assets/"
 
 
@@ -50,6 +58,23 @@ def check_permissions(request_permissions: list[dict]) -> list[str]:
 
 def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def check_audit_sources(kernel: bytes, sources: dict[str, bytes]) -> list[dict]:
+    require(set(sources) == set(AUDIT_SOURCES),
+            "Exactly five current audit sources are required")
+    normalized_kernel = kernel.replace(b"\r\n", b"\n")
+    bindings = []
+    for relative in AUDIT_SOURCES:
+        source = sources[relative]
+        require(bool(source), f"Current audit source is empty: {relative}")
+        require(relative.encode("utf-8") in normalized_kernel,
+                f"Kernel lacks the audit source path: {relative}")
+        require(source.replace(b"\r\n", b"\n") in normalized_kernel,
+                f"Kernel lacks the current audit source: {relative}")
+        bindings.append({"file": relative, "sha256": digest(source),
+                         "pathMarkerMatch": True, "embeddedSourceMatch": True})
+    return bindings
 
 
 def file_digest(path: Path) -> str:
@@ -185,15 +210,28 @@ def check_symbol_closure(llvm: Path, packaged: Path, platform: Path,
 def inspect(args: argparse.Namespace, report: dict) -> None:
     root = Path(__file__).resolve().parents[2]
     output = root / "build/ohos-audit"
-    artifact = output / "sql-audit-signed.hap"
+    unsigned_mode = getattr(args, "unsigned", False)
     unsigned = output / "sql-audit-unsigned.hap"
+    artifact = unsigned if unsigned_mode else output / "sql-audit-signed.hap"
     metadata = read_json(output / "build.json")
+    report["inspectionMode"] = "unsigned" if unsigned_mode else "signed"
+    report["deviceExecuted"] = False
+    if unsigned_mode:
+        report["signature"] = {"verified": False, "performed": False,
+                               "reason": "Unsigned static inspection only"}
+        require(metadata["signed"] is False, "Unsigned inspection requires an unsigned build record")
+        require(not {"signedSha256", "signingIdentity"}.intersection(metadata),
+                "Unsigned build record contains signing metadata")
+        require(metadata.get("deviceExecuted") is False,
+                "Unsigned build record must not claim device execution")
+    else:
+        require(metadata["signed"] is True, "Build record is not signed")
     staging = read_json(root / "build/mysql-port/package/libs/x86_64/staging.json")
     report["artifact"] = {"path": str(artifact), "bytes": artifact.stat().st_size,
                           "sha256": file_digest(artifact)}
-    require(metadata["signed"] is True, "Build record is not signed")
-    require(report["artifact"]["sha256"] == metadata["signedSha256"].lower(),
-            "Signed HAP hash differs from build record")
+    if not unsigned_mode:
+        require(report["artifact"]["sha256"] == metadata["signedSha256"].lower(),
+                "Signed HAP hash differs from build record")
     require(file_digest(unsigned) == metadata["unsignedSha256"].lower(),
             "Unsigned HAP hash differs from build record")
     require(metadata["architecture"] == "ohos-x64", "Inspector requires an x86_64 audit build")
@@ -212,11 +250,15 @@ def inspect(args: argparse.Namespace, report: dict) -> None:
             names = archive.namelist()
             check_names(names)
             check_names(original.namelist())
-            require(set(names) == set(original.namelist()) | {".pages.info"},
-                    "Signing changed ZIP entries beyond SDK code-sign metadata")
+            if unsigned_mode:
+                require(".pages.info" not in names,
+                        "Unsigned HAP contains SDK code-sign metadata")
+            else:
+                require(set(names) == set(original.namelist()) | {".pages.info"},
+                        "Signing changed ZIP entries beyond SDK code-sign metadata")
             report["zipEntries"] = len(names)
             # Streaming comparisons avoid retaining the large native images twice.
-            for name in original.namelist():
+            for name in (() if unsigned_mode else original.namelist()):
                 with archive.open(name) as signed_stream, original.open(name) as unsigned_stream:
                     require(hashlib.file_digest(signed_stream, "sha256").digest()
                             == hashlib.file_digest(unsigned_stream, "sha256").digest(),
@@ -247,13 +289,13 @@ def inspect(args: argparse.Namespace, report: dict) -> None:
             report["catalog"] = check_catalog(catalog["examples"], catalog["tutorials"],
                                               args.expected_examples, args.expected_scripts)
             kernel = archive.read(FLUTTER_ASSETS + "kernel_blob.bin")
-            require(AUDIT_TARGET.encode() in kernel
-                    and (root / AUDIT_TARGET).read_bytes().replace(b"\r\n", b"\n")
-                    in kernel.replace(b"\r\n", b"\n"), "Kernel lacks the current audit source")
+            source_bindings = check_audit_sources(
+                kernel, {relative: (root / relative).read_bytes() for relative in AUDIT_SOURCES})
             build_id = defines.get("QFLI_SQL_CURRICULUM_BUILD_ID", "")
             require(bool(build_id) and build_id.encode() in kernel, "Kernel lacks recorded build ID")
             report["kernel"] = {"sha256": digest(kernel), "bytes": len(kernel),
                                 "buildId": build_id, "currentAuditSourceEmbedded": True,
+                                "sources": source_bindings,
                                 "entryExecutionVerified": False}
             resource_root = root / "build/mysql-port/package/rawfile/mysql"
             runtime = json.loads(archive.read("resources/rawfile/mysql/runtime.json"))
@@ -326,6 +368,9 @@ def inspect(args: argparse.Namespace, report: dict) -> None:
             report["platformDependencyScope"] = (
                 "NEEDED names present in installed x86_64 SDK; strong import names resolved "
                 "for Oracle/SQLite/libc++; no device load or symbol-version runtime claim")
+        if unsigned_mode:
+            report["status"] = "PASS"
+            return
         java = Path(args.jdk) / "bin/java.exe"
         jar = sdk / "toolchains/lib/hap-sign-tool.jar"
         report["tools"]["hap-sign-tool.jar"] = {"path": str(jar), "sha256": file_digest(jar)}
@@ -358,13 +403,18 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sdk", default="D:/ProgramFiles/Huawei/DevEco Studio/sdk/default/openharmony")
     parser.add_argument("--jdk", default="D:/ProgramFiles/Huawei/DevEco Studio/jbr")
+    parser.add_argument("--unsigned", action="store_true",
+                        help="Inspect only the unsigned x86_64 HAP; no signature or device acceptance")
     parser.add_argument("--expected-examples", type=int, default=126)
     parser.add_argument("--expected-scripts", type=int, default=372)
-    parser.add_argument("--report", type=Path,
-                        default=Path(__file__).resolve().parents[2] / "build/ohos-audit/inspection.json")
+    parser.add_argument("--report", type=Path)
     args = parser.parse_args()
+    if args.report is None:
+        filename = "inspection-unsigned.json" if args.unsigned else "inspection.json"
+        args.report = Path(__file__).resolve().parents[2] / "build/ohos-audit" / filename
     report = {"status": "FAIL", "checkedAt": datetime.now(timezone.utc).isoformat(),
-              "scope": "static x86_64 original-catalog audit package", "deviceExecuted": False}
+              "scope": "static x86_64 original-catalog audit package", "deviceExecuted": False,
+              "inspectionMode": "unsigned" if args.unsigned else "signed"}
     try:
         inspect(args, report)
     except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError,

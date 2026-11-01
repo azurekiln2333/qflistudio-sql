@@ -14,7 +14,7 @@ The app-local `SqlWorkbenchPage` is the **数据库** destination: on a phone it
 IS the **expandable database→table tree**; on desktop the tree is a side panel
 beside the workspace. `SqlProjectsPage` is the **项目** destination — a
 self-contained single-toolbar page built from the shared public project APIs
-(`ProjectStore`, `ProjectCard`, `ProjectDialogs`, `EditorPage`). Both accept an
+(`ProjectStore`, `ProjectCard`, `ProjectDialogs`, `openEditorPage`). Both accept an
 `embedded` flag: embedded they drop the cross-page affordances (a back button and
 the 项目/更多 push actions respectively) because the destinations are siblings;
 standalone (pushed route, tests) they keep the previous behavior. Database UI
@@ -47,8 +47,18 @@ tests.
 - Projects are the **项目** destination: a self-contained single-toolbar page
   (one `AppBar` titled "项目", search toggle, and a 更多 menu with
   添加现有项目/移除失效项目) hosting a real project list built from
-  `ProjectStore`/`ProjectCard`/`ProjectDialogs`/`EditorPage`. Embedded it has no
+  `ProjectStore`/`ProjectCard`/`ProjectDialogs`/`openEditorPage`. Embedded it has no
   back button; it never adds a home tab bar, rail or PageView of its own.
+- `SqlLabApp` owns one `RetainedEditorController` for the app lifetime, installs
+  its Navigator observer and `RetainedEditorHost` in MaterialApp, and disposes
+  the controller with the app. Project opens use public `openEditorPage` with
+  the actual project/store/auth/settings/initial path. Do not replace SQL's
+  database home/five destinations with the shared QfliApp to obtain this behavior.
+- The project toolbar's `已保存的工作区` action opens a single `工作区` AppBar and
+  shared `SavedWorkspacesTab`. It uses the profile's supported named-workspace
+  capability without a main-product key override. Preserve local/offline guards.
+  Named membership, documents, cursors and per-root expansion belong to the
+  saved workspace document; they must not overwrite standalone ProjectHistory.
 - The 功能/教程/示例 destinations host the shared `FunctionsTab` /
   `LocalTutorialsTab` / `ExampleCodeTab` directly (each keeps its own toolbar).
   In embedded mode the workbench no longer offers the 更多 menu or the 项目 push,
@@ -141,6 +151,8 @@ tests.
 | User cancels a dialog | Perform no database write |
 | Row page exceeds the display cap | Data shows error; Schema remains independently available |
 | SQL URI exceeds 1 MiB | Native bridge rejects before allocating its content buffer |
+| Workspace dialog awaits real directory IO | Fixture awaits actual name field and member choice using the bounded real-IO-aware helper before reading a widget |
+| Tree elements remain built inside a clipped/hidden side panel | Fixture requires interactive controls and target rows; element existence alone cannot establish visible restoration |
 
 ## 5. Good / Base / Bad Cases
 
@@ -158,6 +170,25 @@ storage errors.
 `test/sql_home_shell_test.dart` covers the five PageView destinations, swiping to
 项目/功能/教程/示例, desktop rail vs phone bottom bar, the absence of a second home
 toolbar, embedded mode hiding the duplicate pushes, and 2× text scale.
+`test/sql_named_workspace_test.dart` drives actual SqlLabApp/project navigation,
+named save/card reopen, retained dirty buffers and whole-app reconstruction.
+Assert ordered owners, distinct cursors, positive root-row collapse state and
+exact standalone history bytes through disposal. A QfliApp-only fixture bypasses
+SQL's actual entry surface. `test/sql_workspace_integration_test.dart` separately
+checks the named session and three actual SQLite owner-aware Run operations.
+Use the current `保存`/WorkspaceStore contract; legacy `应用`/multi-root history
+assertions are historical, rather than a reason to disable named capability.
+Workspace dialog fixtures must account for `WorkspaceStore.load()` before
+`showDialog`: `pumpAndSettle()` alone does not establish real IO completion.
+Use the existing bounded `_until` helper, which advances real asynchronous work
+with `runAsync`, to await the actual name field and member checkbox. Scroll the
+choice into view before tapping and preserve its value assertion.
+Tree restoration checks must require `hitTestable()` for the positive row/control
+checks and keep the structural absence checks for collapsed children. A clipped
+`AnimatedAlign(widthFactor: 0)` may keep elements in the finder tree. Do not
+suppress hit-test warnings, repeatedly toggle until green, seed the expected
+session, or infer a shared-core State recreation from Widget construction alone.
+Host widget reconstruction does not establish process restart or installed OHOS.
 `test/sql_engine_context_test.dart`, `test/sql_tools_service_test.dart` and
 `test/sql_tools_tab_test.dart` cover stale selection, delayed metadata/history,
 partial results/SQLSTATE, plan refusal, direct retained layout and actual bundled
@@ -185,3 +216,10 @@ case-sensitive table name, and expression spelling can determine result headers.
 
 Correct: `select real as text from text;` becomes
 `SELECT real as text from text;`, with its body preserved verbatim.
+
+Wrong: tap a workspace action, call `pumpAndSettle()`, then immediately read a
+checkbox while the dialog is still awaiting real directory IO.
+
+Correct: use bounded real-IO-aware waiting for the actual dialog controls before
+reading values. Require an interactive tree row before clicking it, while
+preserving all ownership, history, cursor and collapsed-child assertions.

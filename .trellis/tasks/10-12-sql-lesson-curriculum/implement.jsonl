@@ -1,0 +1,6 @@
+{"file":".trellis/spec/frontend/tutorial-code-import.md","reason":"Content list/detail, code block, and import contracts the new catalog must satisfy"}
+{"file":".trellis/spec/backend/sql-query-library.md","reason":"SQL execution/result and storage contract context for runnable examples"}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Shared-package asset boundary and cross-layer consistency when replacing content"}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Avoid duplicating template content; reuse a deterministic authoring pipeline"}
+{"file": ".trellis/tasks/10-12-sql-lesson-curriculum/research/coverage-map.md", "reason": "R4 category-to-lesson coverage map; authoring must satisfy every row"}
+{"file": ".trellis/spec/frontend/sql-content-repository.md", "reason": "Local SQL content repository and asset schema contract"}

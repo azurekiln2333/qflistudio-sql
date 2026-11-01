@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/sql-workbench.md","reason":"Verify tree/workspace behavior and busy-gating are unchanged"}
+{"file":".trellis/spec/frontend/tutorial-code-import.md","reason":"Verify content reachability, detail code, and import actions"}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Home navigation, content loading and shared-package boundary consistency"}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Frontend quality checks for the final verification"}

@@ -23,10 +23,11 @@ This directory contains guidelines for backend development. Fill in each file wi
 | [SQLite Workspace](./sql-workspace.md) | Stable grid identity and fixed-offset paging | Documented |
 | [SQLite Native Runtime](./sqlite-native-runtime.md) | Multi-platform C packaging, FFI, queries and real runtime evidence | Implemented |
 | [SQL Diagnostics](./sql-diagnostics.md) | Exact snapshots, isolated prepare-only validation, UTF-16 ranges and incomplete coverage | Implemented; target acceptance separate |
-| [OHOS Audit Packaging](./ohos-audit-packaging.md) | Real ABI staging, separate audit bundle, SDK test signing and final archive provenance | Build verified; device acceptance separate |
+| [OHOS Audit Packaging](./ohos-audit-packaging.md) | Real ABI staging, separate audit bundle, SDK test signing and final archive provenance | Historical build verified; current build/device gates open |
 | [Oracle MySQL Workspace](./mysql-workspace.md) | Oracle metadata, primary keys, binary values, and native client | Documented |
-| [Oracle Desktop Runtime](./mysql-desktop-runtime.md) | Windows/Linux private server lifecycle, FFI and bundle contract | Implemented |
+| [Oracle Desktop Runtime](./mysql-desktop-runtime.md) | Windows/Linux lifecycle/FFI/bundles and macOS helper build/signing contract | Windows/Linux verified; macOS execution unverified |
 | [Oracle Android Runtime](./mysql-android-runtime.md) | Bionic build, installed code/data layout and private server lifecycle | Implemented; x86_64 device verified |
+| [Oracle OHOS Runtime](./mysql-ohos-runtime.md) | Phone preloaded private host, private binding, fork/child contract, fence config | 12/12 device PASS (preload host); fence delta + normal-app acceptance pending |
 
 ---
 
@@ -35,6 +36,7 @@ This directory contains guidelines for backend development. Fill in each file wi
 - Read SQLite Native Runtime for SQLite engine, FFI and packaging changes.
 - Read Oracle Desktop Runtime for local MySQL client, lifecycle or desktop packaging changes.
 - Read Oracle Android Runtime for Android Oracle build, installation and lifecycle changes.
+- Read Oracle OHOS Runtime for HarmonyOS phone host, private binding and server start changes.
 
 ## Quality Check
 

@@ -1,5 +1,14 @@
 # Implementation
 
+## Active continuation (2026-10-09)
+
+The user resumed HarmonyOS phone hosting and runtime acceptance and requested Pi
+in the right Herdr pane. Earlier test/device deferrals below are historical and
+no longer apply. See research/ohos-resume-2026-10-09.md for current ownership,
+implementation direction and acceptance.
+
+## Existing work
+
 - [x] Make the existing bundled SQLite bridge executable from the current runner, including directory creation, honest runtime errors, and tests. Verified with a signed HarmonyOS HAP and on-device SQL round-trip. This is groundwork, not MySQL completion.
 - [x] Define structured database results and parameterized mutation operations for the grid. Verified on HarmonyOS with quoted text and NULL round-trips; the current script runner remains a separate multi-statement path until engine unification.
 - [x] Build the database explorer, editable table grid, create/delete database and table dialogs, and SQL editor as the SQL app's main workspace while retaining project/editor access. Current engine remains SQLite; frontend and native x86_64 emulator tests pass.
@@ -52,7 +61,16 @@
 - `flutter analyze --no-pub`: passed; `flutter test --no-pub`: 36 tests passed.
 - The host test CMake project configured and built both executables successfully.
 
-## Implementation Continuation (2026-09-30)
+## Implementation
+
+## Active continuation (2026-10-09)
+
+The user resumed HarmonyOS phone hosting and runtime acceptance and requested Pi
+in the right Herdr pane. Earlier test/device deferrals below are historical and
+no longer apply. See research/ohos-resume-2026-10-09.md for current ownership,
+implementation direction and acceptance.
+
+## Existing work Continuation (2026-09-30)
 
 - User explicitly requested implementation to continue without further tests
   or device connection probes. Do not mark acceptance criteria complete from
@@ -99,3 +117,13 @@
   Static review found no remaining issues in the corrected URI, primary-key,
   and independent-schema paths. Phone hosting remains the known open blocker;
   the task remains in progress and runtime acceptance is not marked complete.
+
+
+## Phone Host Lifecycle Corrections (2026-10-09)
+
+- Fixed stop ownership: stopInternal clears pid/host/closing whenever a terminal state is confirmed, including nonzero shutdown or release error, so a later stop/restart no longer fails ECHILD. Ownership is retained only while termination is unconfirmed.
+- reapOwned reports {confirmed, code, error}; registered native-child status is settled through the exit record so sentinel 125 is replaced by the real mysqld code.
+- Replaced invalid ArkTS 'let failure: unknown' with typed Error state.
+- diagnostic() now surfaces initialize.log, server.stderr.log, and mysql.log, exposing pre-mysqld exec/loader failures.
+- native/CMakeLists.txt and ohos/entry/hvigorfile.ts now require all three runtime binaries including libqfli_mysql_launcher.so.
+- Production host lifecycle tests: 22/22 pass via native/tests/run-host-test.sh. No native rebuild required (C++ host/launcher/server unchanged this batch; already staged in build/mysql-port/package/libs/arm64-v8a).

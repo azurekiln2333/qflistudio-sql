@@ -80,6 +80,34 @@ This host gate does not establish ArkTS typing, actual picker/share IO, normal
 startup networking or installed execution. Rebuild and inspect the HAP after
 native changes; an earlier package containing INTERNET is historical evidence.
 
+`test/sql_workspace_integration_test.dart` exercises the production `sqlProfile`
+through `EditorPage` workspace selection, actual Run/long-press controls and
+real `NativeSqliteDatabase` results. Keep separate row tags for configured-entry
+and selected-file runs. With A dirty and B active, B's run must save B only and
+write B's root `.qfli/data.sqlite`; A's unsaved buffer/disk and both config files
+must remain intact. Switch the actual tab back to A and verify its entry writes
+only A's database. Missing bundled SQLite is an explicit unavailable-host skip,
+never a pass for this gate.
+
+For compact-drawer/session coverage, create membership and expansion through
+the UI, close/reopen the drawer, then unmount/reconstruct `EditorPage` after
+fencing the actual `ProjectHistory` queues. Assert root-specific expansion,
+ordered document owners, active owner and cursor endpoints. An initially empty
+editor has no `EditorProblemsBar`; wait for its empty state and drawer control,
+open the first file, then wait for the Problems/code view before querying its
+controller. A restored nonempty session must still assert the expected files.
+Use distinct collapsed cursors for mobile drawer persistence: the bundled
+editor deliberately cancels a ranged selection when mobile focus leaves the
+code view. Testing that range across a drawer would exercise selection policy
+instead of persisted cursor identity.
+Record exact consumed SQL/core revisions and source hashes. Host reconstruction
+does not establish process restart or OHOS UI acceptance.
+Normalize fixture paths assembled from portable relative segments, and compare
+tree-opened filesystem paths with `p.equals`. Windows `p.join` may retain mixed
+separators while `Directory.list` returns native paths. Timeouts must identify
+the operation and actual current/open-file paths and owners; do not weaken UI
+or persistence assertions to hide a path-identity mismatch.
+
 ## 7. Wrong vs Correct
 
 Wrong: implementing a second terminal engine, exposing unsupported mysql flags,

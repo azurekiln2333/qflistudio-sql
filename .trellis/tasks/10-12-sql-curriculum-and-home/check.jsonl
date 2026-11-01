@@ -1,0 +1,3 @@
+{"file":".trellis/spec/frontend/index.md","reason":"Frontend quality verification for the integrated UI"}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Frontend quality bar for final integration review"}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Verify cross-child data flow and shared-package ownership"}

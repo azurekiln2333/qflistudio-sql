@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_ROOT/../.." && pwd)"
+PORT_ROOT="${QFLI_MYSQL_PORT_ROOT:-$REPO_ROOT/build/mysql-port}"
+SDK_ROOT="${QFLI_OHOS_SDK:-/mnt/d/ProgramFiles/Huawei/OpenHarmony/Sdk/23/native}"
+SOURCE="$PORT_ROOT/mysql-8.4.6"
+PREFIX="$PORT_ROOT/openssl-ohos"
+HOST_BUILD="$PORT_ROOT/host-build"
+HOST_TOOLS="${QFLI_MYSQL_HOST_TOOLS:-$HOST_BUILD/runtime_output_directory}"
+TARGET_BUILD="$PORT_ROOT/ohos-build"
+
+bash "$SCRIPT_ROOT/prepare-source.sh"
+test -f "$PREFIX/lib/libssl.a"
+test -f "$PREFIX/lib/libcrypto.a"
+
+if [[ -z "${QFLI_MYSQL_HOST_TOOLS:-}" ]]; then
+  cmake -S "$SOURCE" -B "$HOST_BUILD" \
+  -DCMAKE_C_COMPILER="${QFLI_HOST_CLANG:-/usr/bin/clang}" \
+  -DCMAKE_CXX_COMPILER="${QFLI_HOST_CLANGXX:-/usr/bin/clang++}" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_FLAGS_RELEASE=-O1 -DCMAKE_CXX_FLAGS_RELEASE=-O1 \
+  -DWITH_SSL=system -DWITH_ICU=system -DWITH_TIRPC=system \
+  -DWITH_ROUTER=OFF -DWITH_MYSQLX=OFF -DWITH_NDB=OFF \
+  -DWITH_NDBCLUSTER_STORAGE_ENGINE=OFF \
+  -DWITH_GROUP_REPLICATION=OFF -DWITH_UNIT_TESTS=OFF \
+  -DWITH_AUTHENTICATION_CLIENT_PLUGINS=OFF \
+  -DWITH_AUTHENTICATION_LDAP=OFF -DWITH_AUTHENTICATION_KERBEROS=OFF \
+  -DWITH_AUTHENTICATION_WEBAUTHN=OFF -DWITH_NUMA=OFF \
+  -DWITH_SYSTEMD=OFF -DUSE_BISON_RESULTS_FROM_MAKE_DIST=ON
+  cmake --build "$HOST_BUILD" --target \
+  comp_err comp_client_err comp_sql uca9dump gen_lex_token gen_keyword_list gen_lex_hash protoc -j1
+else
+  for tool in comp_err comp_client_err comp_sql uca9dump gen_lex_token gen_keyword_list gen_lex_hash protoc; do
+    test -x "$HOST_TOOLS/$tool"
+  done
+fi
+
+# Unexecuted cross-runtime probes select Oracle's existing fallback paths.
+cmake -S "$SOURCE" -B "$TARGET_BUILD" \
+  -DCMAKE_TOOLCHAIN_FILE="$SCRIPT_ROOT/ohos-toolchain.cmake" \
+  -DQFLI_OHOS_SDK="$SDK_ROOT" \
+  -DQFLI_CLANG="${QFLI_CLANG:-/usr/bin/clang-18}" \
+  -DQFLI_CLANGXX="${QFLI_CLANGXX:-/usr/bin/clang++-18}" \
+  -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+  -DQFLI_MYSQL_HOST_TOOLS="$HOST_TOOLS" \
+  -DWITH_PROTOC="$HOST_TOOLS/protoc" \
+  -DQFLI_MYSQL_WITHOUT_LINE_EDITING=ON \
+  -DQFLI_MYSQL_WITHOUT_ZSTD_DICT_BUILDER=ON \
+  -DQFLI_MYSQL_STATIC_ABSEIL=ON \
+  -DQFLI_MYSQL_PLATFORM_CMAKE="$SCRIPT_ROOT/ohos-targets.cmake" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_FLAGS_RELEASE="-O1 -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE="-O1 -DNDEBUG" \
+  -DHAVE_SETNS=FALSE -DHAVE_CLOCK_GETTIME=FALSE -DHAVE_CLOCK_REALTIME=FALSE \
+  -DHAVE_FALLOC_PUNCH_HOLE_AND_KEEP_SIZE=FALSE -DHAVE___BUILTIN_FFS=FALSE \
+  -DWITH_SSL=system -DOPENSSL_ROOT_DIR="$PREFIX" -DWITH_TIRPC=bundled \
+  -Dprotobuf_BUILD_SHARED_LIBS=OFF \
+  -Dprotobuf_BUILD_LIBPROTOC=ON \
+  -DOPENSSL_INCLUDE_DIR="$PREFIX/include" \
+  -DOPENSSL_SSL_LIBRARY="$PREFIX/lib/libssl.a" \
+  -DOPENSSL_CRYPTO_LIBRARY="$PREFIX/lib/libcrypto.a" \
+  -DWITH_ROUTER=OFF -DWITH_MYSQLX=OFF -DWITH_NDB=OFF \
+  -DWITH_NDBCLUSTER_STORAGE_ENGINE=OFF \
+  -DWITH_GROUP_REPLICATION=OFF -DWITH_UNIT_TESTS=OFF \
+  -DWITH_AUTHENTICATION_CLIENT_PLUGINS=OFF \
+  -DWITH_AUTHENTICATION_LDAP=OFF -DWITH_AUTHENTICATION_KERBEROS=OFF \
+  -DWITH_AUTHENTICATION_WEBAUTHN=OFF -DWITH_NUMA=OFF \
+  -DWITH_SASL=system -DWITH_LDAP=system \
+  -DWITH_KERBEROS=none -DWITH_FIDO=none -DWITH_CURL=none \
+  -DWITH_EDITLINE=system -DWITH_SYSTEMD=OFF -DWITH_EXT_BACKTRACE=OFF \
+  -DUSE_BISON_RESULTS_FROM_MAKE_DIST=ON
+
+cmake --build "$TARGET_BUILD" --target qfli_mysql -j1
+cmake --build "$TARGET_BUILD" --target qfli_mysql_server -j1
+cmake -DQFLI_MYSQL_PORT_ROOT="$PORT_ROOT" -P "$SCRIPT_ROOT/package-runtime.cmake"

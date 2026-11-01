@@ -1,0 +1,1039 @@
+==============================================================================
+#1 [basics/beginner/SQLite 3.50] SELECT 基础与列选择
+objective: 用 SELECT 指定要返回的列，并给列起别名
+-- setup --
+CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT NOT NULL, salary REAL NOT NULL);
+INSERT INTO employees (id, name, salary) VALUES
+  (1, 'Alice', 12000.0),
+  (2, 'Bob', 9000.0),
+  (3, 'Carol', 15000.0);
+-- query --
+SELECT name AS 姓名, salary AS 月薪 FROM employees ORDER BY salary DESC;
+-- expected --
+Carol|15000.0
+Alice|12000.0
+Bob|9000.0
+-- explain --
+SQLite 3.50 中 SELECT 的基本形态是 SELECT 列表 FROM 表。SELECT 后面的列表决定返回哪些列，顺序也由它决定，与建表顺序无关。AS 给列起别名，别名只影响结果集的列名，不改变存储。示例先建一张 employees 表并插入三行，然后只投影 name 和 salary 两列并按 salary 降序，因此返回的是薪资从高到低的三行；这里没有 WHERE，全部行都参与。
+-- pitfalls --
+  * SELECT * 会随表结构变化而变化，生产查询应显式列出所需列。
+  * 表达式列的别名在 WHERE/GROUP BY 中的可见性在 SQLite 与 MySQL 有差异。
+-- exercises --
+  (1) 只返回 name 列，并按 name 升序。 | hint=SELECT 指定单列后接 ORDER BY。
+      answer: SELECT name FROM employees ORDER BY name;
+      expected: Alice
+Bob
+Carol
+  (2) 返回 id 与 name 两列，按 id 升序。 | hint=列顺序由 SELECT 列表决定。
+      answer: SELECT id, name FROM employees ORDER BY id;
+      expected: 1|Alice
+2|Bob
+3|Carol
+==============================================================================
+#2 [basics/beginner/SQLite 3.50] WHERE 行过滤入门
+objective: 用 WHERE 和比较运算符筛选满足条件的行
+-- setup --
+CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT NOT NULL, price REAL NOT NULL);
+INSERT INTO products VALUES
+  (1, '键盘', 199.0),
+  (2, '鼠标', 89.0),
+  (3, '显示器', 899.0),
+  (4, 'U盘', 100.0);
+-- query --
+SELECT id, name, price FROM products WHERE price > 100 ORDER BY id;
+-- expected --
+1|键盘|199.0
+3|显示器|899.0
+-- explain --
+WHERE 在 FROM 之后、返回之前对每一行求值，只有条件为真的行进入结果。SQLite 3.50 支持 =、<>（或 !=）、<、<=、>、>= 等比较运算符。示例在 products 表上用price > 100 过滤，返回价格严格大于 100 的商品：键盘 199 与显示器 899 命中，鼠标 89 因低于 100 被排除，U盘恰为 100 既不大于也不被选中——这正是“严格大于”与“大于等于”的分界，若改成 price >= 100 则 U盘 会进入结果。结果按 id 排序以保证可复现。
+-- pitfalls --
+  * NULL 与任何比较都返回 NULL（非真），需要用 IS NULL 判断。
+  * 比较字符串时大小写与排序规则由 collation 决定。
+-- exercises --
+  (1) 返回价格低于 100 的商品 id 与 name，按 id 排序。 | hint=使用 price < 100。
+      answer: SELECT id, name FROM products WHERE price < 100 ORDER BY id;
+      expected: 2|鼠标
+  (2) 返回名称不是“鼠标”的商品 id，按 id 排序。 | hint=使用 <> 或 !=。
+      answer: SELECT id FROM products WHERE name <> '鼠标' ORDER BY id;
+      expected: 1
+3
+4
+==============================================================================
+#3 [basics/beginner/SQLite 3.50] 逻辑运算符与优先级
+objective: 组合多个条件并用括号控制优先级
+-- setup --
+CREATE TABLE staff (id INTEGER PRIMARY KEY, name TEXT, department TEXT, active INTEGER);
+INSERT INTO staff VALUES
+  (1, 'Alice', 'sales', 1),
+  (2, 'Bob', 'sales', 0),
+  (3, 'Carol', 'support', 1),
+  (4, 'Dave', 'engineering', 1);
+-- query --
+SELECT id, name FROM staff WHERE (department = 'sales' OR department = 'support') AND active = 1 ORDER BY id;
+-- expected --
+1|Alice
+3|Carol
+-- explain --
+AND 比 OR 优先级高，所以 a OR b AND c 等价于 a OR (b AND c)。要表达“两个备选之一再叠加一个条件”必须显式加括号。SQLite 3.50 中 AND/OR/NOT 遵循三值逻辑。示例用 (department='sales' OR department='support') AND active=1 选出在职的销售或支持人员，括号确保 OR 先分组再看 active。
+-- pitfalls --
+  * 漏写括号时 OR 会被整体条件优先级影响，结果常与预期不同。
+  * NOT 作用于整个后续表达式时也需要括号界定范围。
+-- exercises --
+  (1) 返回工程部门或非在职的员工 id，按 id 排序。 | hint=用 department='engineering' OR active=0。
+      answer: SELECT id FROM staff WHERE department = 'engineering' OR active = 0 ORDER BY id;
+      expected: 2
+4
+  (2) 返回既不是销售又不在职的员工 id，按 id 排序。 | hint=用 NOT 或 <> 配 AND。
+      answer: SELECT id FROM staff WHERE department <> 'sales' AND active = 0 ORDER BY id;
+      expected: (no rows)
+==============================================================================
+#4 [basics/beginner/SQLite 3.50] BETWEEN 与 IN 区间判断
+objective: 用 BETWEEN 表示闭区间、用 IN 表示集合成员
+-- setup --
+CREATE TABLE scores (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);
+INSERT INTO scores VALUES
+  (1, 'Alice', 75),
+  (2, 'Bob', 80),
+  (3, 'Carol', 59),
+  (4, 'Dave', 60),
+  (5, 'Eve', 95);
+-- query --
+SELECT name, score FROM scores WHERE score BETWEEN 60 AND 80 ORDER BY score, name;
+-- expected --
+Dave|60
+Alice|75
+Bob|80
+-- explain --
+BETWEEN a AND b 是闭区间，等价于 x >= a AND x <= b，两端都包含。IN (…) 判断值是否属于给定集合，等价于一串 OR，但更短更清晰。示例用 score BETWEEN 60 AND 80 选出 60 到 80 分（含两端）的学生，因此 60 和 80 都会被选中。
+-- pitfalls --
+  * BETWEEN 是闭区间，容易误以为不含端点。
+  * NOT IN 遇到集合中含 NULL 时整体结果可能为空。
+-- exercises --
+  (1) 用 IN 返回 id 为 1 或 5 的记录，按 id 排序。 | hint=WHERE id IN (1, 5)。
+      answer: SELECT id, name FROM scores WHERE id IN (1, 5) ORDER BY id;
+      expected: 1|Alice
+5|Eve
+  (2) 返回分数不在 60 到 80 之间的学生，按分数升序。 | hint=使用 NOT BETWEEN。
+      answer: SELECT name, score FROM scores WHERE score NOT BETWEEN 60 AND 80 ORDER BY score;
+      expected: Carol|59
+Eve|95
+==============================================================================
+#5 [basics/beginner/SQLite 3.50] LIKE 模式匹配
+objective: 用 LIKE 的 % 与 _ 通配符做模糊匹配
+-- setup --
+CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT);
+INSERT INTO users VALUES
+  (1, 'alice@example.com'),
+  (2, 'bob@example.com'),
+  (3, 'amy@test.org'),
+  (4, 'adam@example.com');
+-- query --
+SELECT id, email FROM users WHERE email LIKE 'a%.com' ORDER BY id;
+-- expected --
+1|alice@example.com
+4|adam@example.com
+-- explain --
+LIKE 用 % 匹配任意长度（含 0）字符、_ 匹配单个字符。SQLite 3.50 中 LIKE 默认对 ASCII 大小写不敏感、对非 ASCII 敏感；可用 ESCAPE 指定转义符匹配字面 % 或 _。示例匹配 email 以 'a' 开头且以 '.com' 结尾的行，前导 'a%' 与尾部 '%.com' 组合实现首尾约束。
+-- pitfalls --
+  * LIKE 'a%.com' 中的 . 是普通字符，若要匹配任意单字符应使用 _。
+  * 对非 ASCII 的大小写不敏感需要设置大小写折叠扩展。
+-- exercises --
+  (1) 返回 email 中包含 'example' 的用户 id，按 id 排序。 | hint=使用 %example%。
+      answer: SELECT id FROM users WHERE email LIKE '%example%' ORDER BY id;
+      expected: 1
+2
+4
+  (2) 返回邮箱第二个字符为 'o' 的用户 id，按 id 排序。 | hint=用 _ 匹配单个字符：'_o%'。
+      answer: SELECT id FROM users WHERE email LIKE '_o%' ORDER BY id;
+      expected: 2
+==============================================================================
+#6 [basics/beginner/SQLite 3.50] ORDER BY 排序与多列排序
+objective: 用单列和多列排序并指定升降序
+-- setup --
+CREATE TABLE emp (id INTEGER PRIMARY KEY, name TEXT, dept TEXT, salary INTEGER);
+INSERT INTO emp VALUES
+  (1, 'Alice', 'sales', 9000),
+  (2, 'Bob', 'sales', 12000),
+  (3, 'Carol', 'engineering', 8000),
+  (4, 'Dave', 'engineering', 15000);
+-- query --
+SELECT dept, name, salary FROM emp ORDER BY dept ASC, salary DESC;
+-- expected --
+engineering|Dave|15000
+engineering|Carol|8000
+sales|Bob|12000
+sales|Alice|9000
+-- explain --
+ORDER BY 决定结果行顺序，默认升序 ASC，DESC 表示降序。多列排序时后面的列只在前面的列相等时才起作用。SQLite 3.50 中 NULL 在升序时排最前，可用 NULLS FIRST/LAST 显式指定。示例按部门升序、同部门内按薪资降序排列，因此 engineering 组的Dave 在 Carol 之前。
+-- pitfalls --
+  * 只按非唯一列排序时其余行的顺序不稳定。
+  * 在 MySQL 中默认 NULL 升序排最前、降序排最后，与显式 NULLS 子句的方言不同。
+-- exercises --
+  (1) 按薪资从高到低返回 name 与 salary。 | hint=ORDER BY salary DESC。
+      answer: SELECT name, salary FROM emp ORDER BY salary DESC;
+      expected: Dave|15000
+Bob|12000
+Alice|9000
+Carol|8000
+  (2) 按薪资升序返回 name。 | hint=ORDER BY salary ASC。
+      answer: SELECT name FROM emp ORDER BY salary;
+      expected: Carol
+Alice
+Bob
+Dave
+==============================================================================
+#7 [basics/beginner/SQLite 3.50] LIMIT 与 OFFSET 分页
+objective: 用 LIMIT/OFFSET 取前 N 行并分页
+-- setup --
+CREATE TABLE logs (id INTEGER PRIMARY KEY, message TEXT);
+INSERT INTO logs VALUES (1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e');
+-- query --
+SELECT id, message FROM logs ORDER BY id LIMIT 2 OFFSET 2;
+-- expected --
+3|c
+4|d
+-- explain --
+LIMIT n 只返回前 n 行，OFFSET m 跳过前 m 行。分页必须有稳定的 ORDER BY，否则同一页可能重复或遗漏。示例按 id 升序跳过 2 行再取 2 行，即第 2 页（每页 2 行）返回 id 3、4。
+-- pitfalls --
+  * 没有 ORDER BY 时 LIMIT 的结果顺序不确定。
+  * 大 OFFSET 会随页数增长而变慢，深分页应考虑键集分页。
+-- exercises --
+  (1) 取按 id 升序的前 3 行。 | hint=LIMIT 3，无 OFFSET。
+      answer: SELECT id, message FROM logs ORDER BY id LIMIT 3;
+      expected: 1|a
+2|b
+3|c
+  (2) 取最后一行（跳过 4 行取 1 行），按 id 升序。 | hint=LIMIT 1 OFFSET 4。
+      answer: SELECT id FROM logs ORDER BY id LIMIT 1 OFFSET 4;
+      expected: 5
+==============================================================================
+#8 [basics/beginner/SQLite 3.50] DISTINCT 去重
+objective: 用 DISTINCT 去掉结果中的重复行
+-- setup --
+CREATE TABLE orders (id INTEGER PRIMARY KEY, customer TEXT, amount INTEGER);
+INSERT INTO orders VALUES (1,'alice',100),(2,'alice',200),(3,'bob',150),(4,'bob',150);
+-- query --
+SELECT DISTINCT customer FROM orders ORDER BY customer;
+-- expected --
+alice
+bob
+-- explain --
+DISTINCT 作用于整个 SELECT 列表，消除完全相同的组合行，而不是某一列。示例从orders 表取去重后的 customer 列，只有单个列的重复会被合并。DISTINCT 通常需要排序或哈希，数据量大时比 GROUP BY 有额外开销。
+-- pitfalls --
+  * 误以为 DISTINCT 只对紧跟的第一列生效——它针对整行组合。
+  * 对含大文本列做整行去重代价高。
+-- exercises --
+  (1) 返回去重后的 (customer, amount) 组合，按 customer 升序、amount 升序。 | hint=SELECT DISTINCT customer, amount。
+      answer: SELECT DISTINCT customer, amount FROM orders ORDER BY customer, amount;
+      expected: alice|100
+alice|200
+bob|150
+  (2) 统计有多少个不同客户（返回一个数字）。 | hint=用 COUNT(DISTINCT customer)。
+      answer: SELECT COUNT(DISTINCT customer) FROM orders;
+      expected: 2
+==============================================================================
+#9 [basics/beginner/SQLite 3.50] 表达式与计算列
+objective: 在 SELECT 中做算术运算并理解优先级
+-- setup --
+CREATE TABLE order_items (id INTEGER PRIMARY KEY, price REAL, qty INTEGER);
+INSERT INTO order_items VALUES (1, 19.5, 3), (2, 100.0, 2);
+-- query --
+SELECT id, price, qty, price * qty AS subtotal FROM order_items ORDER BY id;
+-- expected --
+1|19.5|3|58.5
+2|100.0|2|200.0
+-- explain --
+SELECT 列表里可以写任意表达式，算术运算符 + - * / % 中 * / % 优先级高于 + -，可用括号改变顺序。SQLite 3.50 中整数除法会截断，要保留小数需至少一个操作数为实数。示例用 (price * qty) 计算订单小计，金额保存为 REAL。
+-- pitfalls --
+  * 整数相除在 SQLite 中会截断，例如 7/2 = 3。
+  * 除零在 SQLite 中返回 NULL，不报错。
+-- exercises --
+  (1) 返回 id 与 price+qty 的结果（列名 total），按 id 排序。 | hint=直接相加。
+      answer: SELECT id, price + qty FROM order_items ORDER BY id;
+      expected: 1|22.5
+2|102.0
+  (2) 返回每个商品单价加 10% 后的价格（列名 markup），按 id 排序。 | hint=price * 1.1。
+      answer: SELECT id, price * 1.1 FROM order_items ORDER BY id;
+      expected: 1|21.45
+2|110.0
+==============================================================================
+#10 [basics/beginner/SQLite 3.50] 类型亲和与 CAST
+objective: 理解 SQLite 动态类型并用 CAST 显式转换
+-- setup --
+CREATE TABLE raw (id INTEGER PRIMARY KEY, value TEXT);
+INSERT INTO raw VALUES (1, '42'), (2, '7');
+-- query --
+SELECT id, CAST(value AS INTEGER) + 1 AS next_int FROM raw ORDER BY id;
+-- expected --
+1|43
+2|8
+-- explain --
+SQLite 是动态类型：列有“类型亲和”，但任何列都能存任意类型。CAST(x AS type) 显式转换，常用 INTEGER/TEXT/REAL。示例把文本 '42' 与文本 '7' 用 CAST 转成整数再相加得到 49；若不转，'42'+'7' 也会被 SQLite 隐式转成数字，但显式 CAST 语义更清楚。
+-- pitfalls --
+  * CAST 不能转换的文本会变成 0 而不是报错。
+  * 类型亲和不是强制类型，写入时不会自动严格校验。
+-- exercises --
+  (1) 把 value 转成整数后相加求和（返回单个数字）。 | hint=SUM(CAST(value AS INTEGER))。
+      answer: SELECT SUM(CAST(value AS INTEGER)) FROM raw;
+      expected: 49
+  (2) 返回把 id 与 value 拼成一个字符串的列 combined，按 id 排序。 | hint=用 || 拼接，必要时先 CAST id 为 TEXT。
+      answer: SELECT id || '-' || value FROM raw ORDER BY id;
+      expected: 1-42
+2-7
+==============================================================================
+#11 [basics/beginner/SQLite 3.50] 表别名与列限定名
+objective: 用表别名简写并消除列名歧义
+-- setup --
+CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, salary INTEGER);
+INSERT INTO employees VALUES (1,'Alice',9000),(2,'Bob',12000);
+-- query --
+SELECT e.name, e.salary FROM employees AS e WHERE e.salary > 10000 ORDER BY e.id;
+-- expected --
+Bob|12000
+-- explain --
+FROM 表 AS 别名 之后可以用 别名.列 限定引用。单表时别名只是简写；多表连接时限定名是消除同名列歧义的必需手段。示例给 employees 起别名 e，并用 e.name、e.salary 限定引用，效果与全名一致。
+-- pitfalls --
+  * 起了别名后，某些数据库不允许再用原名引用（SQLite 允许，但不可移植）。
+  * 列别名与表别名不可混用，e.name 的 e 必须是表别名。
+-- exercises --
+  (1) 用别名 x 返回 employees 的 id 与 name，按 id 排序。 | hint=FROM employees AS x。
+      answer: SELECT x.id, x.name FROM employees AS x ORDER BY x.id;
+      expected: 1|Alice
+2|Bob
+  (2) 用别名返回薪资大于等于 9000 的 name，按 id 排序。 | hint=WHERE 中用别名限定。
+      answer: SELECT e.name FROM employees AS e WHERE e.salary >= 9000 ORDER BY e.id;
+      expected: Alice
+Bob
+==============================================================================
+#12 [basics/beginner/SQLite 3.50] SELECT 结果集与列顺序
+objective: 理解结果列顺序由 SELECT 决定并可显式控制
+-- setup --
+CREATE TABLE t (id INTEGER PRIMARY KEY, name TEXT);
+INSERT INTO t VALUES (1,'Alice'),(2,'Bob');
+-- query --
+SELECT name, id FROM t ORDER BY id;
+-- expected --
+Alice|1
+Bob|2
+-- explain --
+结果集列的顺序、名称完全由 SELECT 列表决定：重命名表列不会影响 SELECT * 以外的显式投影，而 SELECT * 会随表结构变化。示例交换 id 与 name 的投影顺序，证明列顺序由查询而非建表决定。
+-- pitfalls --
+  * 依赖 SELECT * 的列顺序在表结构变更后会破坏下游。
+  * 列别名与源列名相同容易混淆投影来源。
+-- exercises --
+  (1) 按 id 降序返回 id 与 name。 | hint=ORDER BY id DESC。
+      answer: SELECT id, name FROM t ORDER BY id DESC;
+      expected: 2|Bob
+1|Alice
+  (2) 只返回 name，按 name 降序。 | hint=ORDER BY name DESC。
+      answer: SELECT name FROM t ORDER BY name DESC;
+      expected: Bob
+Alice
+==============================================================================
+#13 [basics/beginner/SQLite 3.50] 排序中的 NULL 位置
+objective: 控制 NULL 在排序结果中的位置
+-- setup --
+CREATE TABLE exam (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);
+INSERT INTO exam VALUES (1,'Alice',90),(2,'Bob',NULL),(3,'Carol',60);
+-- query --
+SELECT name, score FROM exam ORDER BY score ASC NULLS LAST, name;
+-- expected --
+Carol|60
+Alice|90
+Bob|
+-- explain --
+SQLite 3.30 起支持 ORDER BY ... NULLS FIRST/LAST。默认升序时 NULL 排最前、降序时排最后。示例显式使用 NULLS LAST 让缺失分数排在最后，因此 90、60 在前，NULL 在后。MySQL 的行为不同，需要 NULLS 子句或 ISNULL 技巧。
+-- pitfalls --
+  * 把 NULL 当作 0 比较会得到错误排序或过滤结果。
+  * 默认 NULL 位置在 SQLite 与 MySQL 之间不一致。
+-- exercises --
+  (1) 把 NULL 排在前面，按分数升序返回 name 与 score（NULL 在前）。 | hint=ORDER BY score ASC NULLS FIRST。
+      answer: SELECT name, score FROM exam ORDER BY score ASC NULLS FIRST;
+      expected: Bob|
+Carol|60
+Alice|90
+  (2) 返回分数不为 NULL 的学生 name，按分数降序。 | hint=WHERE score IS NOT NULL。
+      answer: SELECT name FROM exam WHERE score IS NOT NULL ORDER BY score DESC;
+      expected: Alice
+Carol
+==============================================================================
+#14 [basics/beginner/SQLite 3.50] 综合练习：单表查询
+objective: 组合过滤、排序与分页完成单表查询
+-- setup --
+CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);
+INSERT INTO sales VALUES
+  (1,'north',150),(2,'south',90),(3,'north',300),
+  (4,'east',120),(5,'south',500),(6,'east',80);
+-- query --
+SELECT id, region, amount FROM sales WHERE amount >= 100 ORDER BY amount DESC LIMIT 3;
+-- expected --
+5|south|500
+3|north|300
+1|north|150
+-- explain --
+真实查询常同时用到多个子句：WHERE 过滤、ORDER BY 排序、LIMIT 取前几名。本课用sales 表筛选出金额大于等于 100 的订单，按金额降序取前 3 条，因此返回金额最高的三条。子句顺序固定为 SELECT … FROM … WHERE … ORDER BY … LIMIT。
+-- pitfalls --
+  * LIMIT 在 ORDER BY 之后生效，先排序再截断。
+  * WHERE 不能引用 SELECT 列表里的聚合函数。
+-- exercises --
+  (1) 返回所有区域去重后的列表，按字母升序。 | hint=SELECT DISTINCT region。
+      answer: SELECT DISTINCT region FROM sales ORDER BY region;
+      expected: east
+north
+south
+  (2) 返回金额小于 100 的订单 id，按金额升序。 | hint=WHERE amount < 100。
+      answer: SELECT id FROM sales WHERE amount < 100 ORDER BY amount;
+      expected: 6
+2
+==============================================================================
+#15 [functions/beginner/SQLite 3.50] 字符串函数（上）：长度与截取
+objective: 用 length、substr 处理字符串长度与子串
+-- setup --
+CREATE TABLE people (id INTEGER PRIMARY KEY, name TEXT);
+INSERT INTO people VALUES (1,'Alice'),(2,'Bob'),(3,'Charlotte');
+-- query --
+SELECT id, name, length(name) AS len, substr(name,1,1) AS initial FROM people ORDER BY id;
+-- expected --
+1|Alice|5|A
+2|Bob|3|B
+3|Charlotte|9|C
+-- explain --
+SQLite 3.50 提供 length(x) 返回字符数（BLOB 返回字节数），substr(x,start,len) 从 1 开始计位取子串。示例取姓名首字符作为缩写，并用 length 显示姓名长度；substr(name,1,1) 返回第一个字符。
+-- pitfalls --
+  * substr 起始下标是 1，不是 0。
+  * length 对中文按字符计数，对 BLOB 按字节。
+-- exercises --
+  (1) 返回 name 的前 3 个字符，按 id 排序。 | hint=substr(name,1,3)。
+      answer: SELECT substr(name,1,3) FROM people ORDER BY id;
+      expected: Ali
+Bob
+Cha
+  (2) 返回 name 长度大于 3 的 id，按 id 排序。 | hint=WHERE length(name) > 3。
+      answer: SELECT id FROM people WHERE length(name) > 3 ORDER BY id;
+      expected: 1
+3
+==============================================================================
+#16 [functions/beginner/SQLite 3.50] 字符串函数（下）：拼接、替换、大小写
+objective: 用拼接、替换、大小写和去空白函数清洗文本
+-- setup --
+CREATE TABLE accounts (id INTEGER PRIMARY KEY, user_name TEXT, domain TEXT);
+INSERT INTO accounts VALUES (1,'alice','example.com'),(2,'  bob  ','test.org');
+-- query --
+SELECT id, upper(trim(user_name)) AS uname, trim(user_name) || '@' || domain AS email FROM accounts ORDER BY id;
+-- expected --
+1|ALICE|alice@example.com
+2|BOB|bob@test.org
+-- explain --
+|| 拼接字符串，replace(x,from,to) 替换，upper/lower 改大小写，trim 去两端空白。示例把名字与域名拼成邮箱，并用 upper 输出大写名。SQLite 3.50 中 upper/lower 只处理 ASCII，非 ASCII 需要外部函数。
+-- pitfalls --
+  * upper/lower 对中文与带重音的拉丁字符不生效。
+  * 拼接 NULL 会得到 NULL，需要 COALESCE。
+-- exercises --
+  (1) 把 domain 中 'example.com' 替换为 'sample.net'，按 id 排序。 | hint=replace(domain,'example.com','sample.net')。
+      answer: SELECT replace(domain,'example.com','sample.net') FROM accounts ORDER BY id;
+      expected: sample.net
+test.org
+  (2) 返回 user_name 已去除空白的长度，按 id 排序。 | hint=length(trim(user_name))。
+      answer: SELECT length(trim(user_name)) FROM accounts ORDER BY id;
+      expected: 5
+3
+==============================================================================
+#17 [functions/beginner/SQLite 3.50] 数值函数与舍入
+objective: 用数值函数处理取绝对值与舍入
+-- setup --
+CREATE TABLE txn (id INTEGER PRIMARY KEY, balance REAL);
+INSERT INTO txn VALUES (1, 10.456), (2, -3.2), (3, 5.0);
+-- query --
+SELECT id, balance, abs(balance) AS a, round(abs(balance), 1) AS r FROM txn ORDER BY id;
+-- expected --
+1|10.456|10.456|10.5
+2|-3.2|3.2|3.2
+3|5.0|5.0|5.0
+-- explain --
+abs(x) 取绝对值，round(x,n) 四舍五入到 n 位小数，SQLite 中 max/min 既可作为聚合（多行）也可作为标量（多参数）。示例对存款差额做绝对值并保留 1 位小数，round 的舍入采用银行家舍入的对半远离零等价实现需注意边界。
+-- pitfalls --
+  * round 的结果仍是浮点，可能残留表示误差。
+  * 标量 min/max 至少需要两个参数。
+-- exercises --
+  (1) 返回每行 balance 的整数部分（向下取整需注意负数），按 id 排序。 | hint=SQLite 中 CAST(balance AS INTEGER) 对负数向零截断。
+      answer: SELECT id, CAST(balance AS INTEGER) FROM txn ORDER BY id;
+      expected: 1|10
+2|-3
+3|5
+  (2) 返回 balance 的最大值（标量，仅一行）。 | hint=max(balance)。
+      answer: SELECT max(balance) FROM txn;
+      expected: 10.456
+==============================================================================
+#18 [functions/beginner/SQLite 3.50] 日期时间函数入门
+objective: 用日期函数提取日期部分并做时间运算
+-- setup --
+CREATE TABLE shipments (id INTEGER PRIMARY KEY, shipped_at TEXT);
+INSERT INTO shipments VALUES (1,'2026-01-01'),(2,'2026-02-28');
+-- query --
+SELECT id, shipped_at, date(shipped_at, '+1 day') AS eta FROM shipments ORDER BY id;
+-- expected --
+1|2026-01-01|2026-01-02
+2|2026-02-28|2026-03-01
+-- explain --
+SQLite 3.50 把日期存为 TEXT（ISO8601）或数字。date(x)、datetime(x) 归一化，date(x,'+1 day') 做日期加法。示例把 shipped_at 加一天得到预计到达日期。SQLite 没有专门的 DATE 类型，'2026-01-01' 只是普通文本，函数负责解释。
+-- pitfalls --
+  * 日期必须是可解析的格式，否则 date() 返回 NULL。
+  * 闰年由 date 函数正确处理，别手算。
+-- exercises --
+  (1) 返回每行的年份部分，按 id 排序。 | hint=strftime('%Y', shipped_at)。
+      answer: SELECT id, strftime('%Y', shipped_at) FROM shipments ORDER BY id;
+      expected: 1|2026
+2|2026
+  (2) 返回 2026-02-28 加 2 天后的日期。 | hint=date('2026-02-28','+2 days')。
+      answer: SELECT date('2026-02-28', '+2 days');
+      expected: 2026-03-02
+==============================================================================
+#19 [functions/beginner/SQLite 3.50] 日期时间运算与格式化
+objective: 计算两个日期之间的天数并按格式输出
+-- setup --
+CREATE TABLE trips (id INTEGER PRIMARY KEY, start_date TEXT, end_date TEXT);
+INSERT INTO trips VALUES (1,'2026-01-01','2026-01-05'),(2,'2026-03-01','2026-03-11');
+-- query --
+SELECT id, CAST(julianday(end_date) - julianday(start_date) AS INTEGER) AS days, strftime('%Y-%m', start_date) AS ym FROM trips ORDER BY id;
+-- expected --
+1|4|2026-01
+2|10|2026-03
+-- explain --
+julianday(x) 返回儒略日数（含小数），两日期相减得到天数差。strftime 按格式串输出，如 %Y-%m-%d。示例计算已发货到到货的天数差，并用 strftime 输出年月。
+-- pitfalls --
+  * julianday 差是浮点，直接比较可能受精度影响。
+  * strftime 的格式串大小写敏感。
+-- exercises --
+  (1) 返回天数差大于 5 的行程 id，按 id 排序。 | hint=用 julianday 差比较。
+      answer: SELECT id FROM trips WHERE julianday(end_date) - julianday(start_date) > 5 ORDER BY id;
+      expected: 2
+  (2) 返回 start_date 的星期几（0=周日，用 %w），按 id 排序。 | hint=strftime('%w', start_date)。
+      answer: SELECT id, strftime('%w', start_date) FROM trips ORDER BY id;
+      expected: 1|4
+2|0
+==============================================================================
+#20 [functions/beginner/SQLite 3.50] NULL 语义与三值逻辑
+objective: 理解 NULL 表示未知以及三值逻辑的判定
+-- setup --
+CREATE TABLE emp (id INTEGER PRIMARY KEY, name TEXT, manager_id INTEGER);
+INSERT INTO emp VALUES (1,'Alice',NULL),(2,'Bob',1),(3,'Carol',1),(4,'Dave',NULL);
+-- query --
+SELECT id, name FROM emp WHERE manager_id IS NULL ORDER BY id;
+-- expected --
+1|Alice
+4|Dave
+-- explain --
+NULL 表示“未知”，与任何值比较（包括 NULL = NULL）结果都是 NULL，在 WHERE 中视为不成立。判断缺失必须用 IS NULL / IS NOT NULL。示例用 IS NULL 找出没有经理的员工，NULL=0 或 NULL<>0 都无法命中。
+-- pitfalls --
+  * NULL = NULL 返回 NULL 而非真，不能用等号判空。
+  * COUNT(列) 会跳过 NULL，COUNT(*) 不会。
+-- exercises --
+  (1) 返回有经理（manager_id 非空）的员工 id，按 id 排序。 | hint=IS NOT NULL。
+      answer: SELECT id FROM emp WHERE manager_id IS NOT NULL ORDER BY id;
+      expected: 2
+3
+  (2) 统计有经理的员工数量与总员工数量（一行两列）。 | hint=COUNT(manager_id), COUNT(*)。
+      answer: SELECT COUNT(manager_id), COUNT(*) FROM emp;
+      expected: 2|4
+==============================================================================
+#21 [functions/beginner/SQLite 3.50] COALESCE 与 IFNULL
+objective: 用 COALESCE/IFNULL 为 NULL 提供默认值
+-- setup --
+CREATE TABLE items (id INTEGER PRIMARY KEY, price REAL, discount REAL);
+INSERT INTO items VALUES (1,100.0,NULL),(2,200.0,10.0);
+-- query --
+SELECT id, price, COALESCE(discount,0) AS d, price - COALESCE(discount,0) AS net FROM items ORDER BY id;
+-- expected --
+1|100.0|0|100.0
+2|200.0|10.0|190.0
+-- explain --
+COALESCE(a,b,...) 返回第一个非 NULL 参数；IFNULL(a,b) 是双参数的简写。示例给缺失的折扣补 0，再计算折后价，避免 NULL 参与运算导致整行结果为 NULL。
+-- pitfalls --
+  * COALESCE 参数类型应一致，混合类型会触发类型比较规则。
+  * IFNULL 只有两个参数，多级回退要用 COALESCE。
+-- exercises --
+  (1) 用 IFNULL 把 discount 为空的显示为 -1，按 id 排序。 | hint=IFNULL(discount,-1)。
+      answer: SELECT id, IFNULL(discount,-1) FROM items ORDER BY id;
+      expected: 1|-1
+2|10.0
+  (2) 返回折后价净额总和（单值）。 | hint=SUM(price - COALESCE(discount,0))。
+      answer: SELECT SUM(price - COALESCE(discount,0)) FROM items;
+      expected: 290.0
+==============================================================================
+#22 [functions/beginner/SQLite 3.50] NULLIF 与空字符串处理
+objective: 用 NULLIF 把特定值转为 NULL，常用于除零保护
+-- setup --
+CREATE TABLE ratio (id INTEGER PRIMARY KEY, num INTEGER, den INTEGER);
+INSERT INTO ratio VALUES (1,10,2),(2,10,0),(3,0,5);
+-- query --
+SELECT id, num / NULLIF(den,0) AS q FROM ratio ORDER BY id;
+-- expected --
+1|5
+2|
+3|0
+-- explain --
+NULLIF(a,b) 在 a = b 时返回 NULL，否则返回 a。常用于把空字符串或 0 转换为 NULL，如 x / NULLIF(y,0) 避免除零。示例用 NULLIF(denominator,0) 使除零结果为 NULL 而非报错，并用 COALESCE 兜底显示。
+-- pitfalls --
+  * NULLIF 相等判断遵循类型比较规则，'0' 与 0 可能不等。
+  * 除零在 SQLite 本身返回 NULL，但显式 NULLIF 语义更清晰、可移植。
+-- exercises --
+  (1) 返回 num=NULLIF(den,den) 的结果（应全为 NULL 故为空），按 id 排序。 | hint=NULLIF(den,den) 恒为 NULL。
+      answer: SELECT id, NULLIF(den,den) FROM ratio ORDER BY id;
+      expected: 1|
+2|
+3|
+  (2) 用 COALESCE 把上一题的除法结果 NULL 显示为 -1，按 id 排序。 | hint=COALESCE(num/NULLIF(den,0),-1)。
+      answer: SELECT id, COALESCE(num / NULLIF(den,0), -1) FROM ratio ORDER BY id;
+      expected: 1|5
+2|-1
+3|0
+==============================================================================
+#23 [functions/beginner/SQLite 3.50] CASE 简单表达式
+objective: 用简单 CASE 把取值映射为标签
+-- setup --
+CREATE TABLE orders (id INTEGER PRIMARY KEY, code INTEGER);
+INSERT INTO orders VALUES (1,1),(2,2),(3,3),(4,9);
+-- query --
+SELECT id, CASE code WHEN 1 THEN '新建' WHEN 2 THEN '已支付' WHEN 3 THEN '已发货' ELSE '未知' END AS status FROM orders ORDER BY id;
+-- expected --
+1|新建
+2|已支付
+3|已发货
+4|未知
+-- explain --
+CASE expr WHEN v1 THEN r1 WHEN v2 THEN r2 ELSE rd END 是等值映射，逐一比较 expr。示例把 code 1/2/3 映射为中文状态标签，无匹配的走 ELSE。
+-- pitfalls --
+  * 所有分支与 ELSE 应返回相同类型；缺失 ELSE 时无匹配返回 NULL。
+  * 简单 CASE 不能写区间比较，区间要用搜索 CASE。
+-- exercises --
+  (1) 把 code 为 1 显示 'A'，其余显示 'B'，按 id 排序。 | hint=CASE code WHEN 1 THEN 'A' ELSE 'B' END。
+      answer: SELECT id, CASE code WHEN 1 THEN 'A' ELSE 'B' END FROM orders ORDER BY id;
+      expected: 1|A
+2|B
+3|B
+4|B
+  (2) 只返回 code 为 2 的状态标签，按 id 排序。 | hint=在 WHERE 中限定 code=2，并复用 CASE。
+      answer: SELECT CASE code WHEN 2 THEN '已支付' ELSE '其他' END FROM orders WHERE code = 2;
+      expected: 已支付
+==============================================================================
+#24 [functions/beginner/SQLite 3.50] CASE 搜索表达式与分桶
+objective: 用搜索 CASE 按区间把数值分桶
+-- setup --
+CREATE TABLE grades (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);
+INSERT INTO grades VALUES (1,'Alice',95),(2,'Bob',82),(3,'Carol',60),(4,'Dave',45);
+-- query --
+SELECT name, score, CASE WHEN score >= 90 THEN 'A' WHEN score >= 80 THEN 'B' WHEN score >= 60 THEN 'C' ELSE 'D' END AS grade FROM grades ORDER BY id;
+-- expected --
+Alice|95|A
+Bob|82|B
+Carol|60|C
+Dave|45|D
+-- explain --
+搜索 CASE 的每个 WHEN 是独立布尔条件，按顺序求值，命中即停。示例把成绩按 >=90 为 A、>=80 为 B、>=60 为 C、其余为 D 分档。条件顺序很重要，必须先判高区间。
+-- pitfalls --
+  * 分桶条件必须从高到低写，顺序错会误判。
+  * CASE 一旦命中就停止，后续条件不再求值。
+-- exercises --
+  (1) 返回 score 是否及格（>=60 为 'pass' 否则 'fail'），按 id 排序。 | hint=CASE WHEN score>=60 THEN 'pass' ELSE 'fail' END。
+      answer: SELECT id, CASE WHEN score >= 60 THEN 'pass' ELSE 'fail' END FROM grades ORDER BY id;
+      expected: 1|pass
+2|pass
+3|pass
+4|fail
+  (2) 统计每个等级的人数，按等级升序。 | hint=GROUP BY 分桶表达式。
+      answer: SELECT CASE WHEN score >= 90 THEN 'A' WHEN score >= 80 THEN 'B' WHEN score >= 60 THEN 'C' ELSE 'D' END AS g, COUNT(*) FROM grades GROUP BY g ORDER BY g;
+      expected: A|1
+B|1
+C|1
+D|1
+==============================================================================
+#25 [functions/beginner/SQLite 3.50] IIF 与条件表达式
+objective: 用 IIF 写简洁的二元条件
+-- setup --
+CREATE TABLE stock (id INTEGER PRIMARY KEY, name TEXT, qty INTEGER);
+INSERT INTO stock VALUES (1,'pen',0),(2,'book',10),(3,'bag',0);
+-- query --
+SELECT id, name, IIF(qty = 0, '缺货', '有货') AS label FROM stock ORDER BY id;
+-- expected --
+1|pen|缺货
+2|book|有货
+3|bag|缺货
+-- explain --
+SQLite 3.32 起提供 IIF(cond, a, b)，等价于两分支 CASE，更简短。示例用 IIF 给库存为 0 的商品标注 '缺货' 否则 '有货'。复杂多分支仍应使用 CASE。
+-- pitfalls --
+  * IIF 只有两个分支，多分支要嵌套或改 CASE。
+  * IIF 的条件为 NULL 时走 else 分支。
+-- exercises --
+  (1) 返回 qty 是否大于 0 的布尔标记（1/0），按 id 排序。 | hint=IIF(qty>0,1,0)。
+      answer: SELECT id, IIF(qty > 0, 1, 0) FROM stock ORDER BY id;
+      expected: 1|0
+2|1
+3|0
+  (2) 返回缺货商品的 id，按 id 排序。 | hint=WHERE qty = 0。
+      answer: SELECT id FROM stock WHERE qty = 0 ORDER BY id;
+      expected: 1
+3
+==============================================================================
+#26 [functions/beginner/SQLite 3.50] 类型转换与 ROUND/TRUNC 取舍
+objective: 区分四舍五入与截断并选择合适转换
+-- setup --
+CREATE TABLE vals (id INTEGER PRIMARY KEY, v REAL);
+INSERT INTO vals VALUES (1,2.6),(2,-2.6),(3,2.4);
+-- query --
+SELECT id, v, round(v) AS r, CAST(v AS INTEGER) AS t FROM vals ORDER BY id;
+-- expected --
+1|2.6|3.0|2
+2|-2.6|-3.0|-2
+3|2.4|2.0|2
+-- explain --
+round 四舍五入，CAST(x AS INTEGER) 向零截断。示例比较同一数值的两种处理：2.6 四舍五入为 3，截断为 2；-2.6 四舍五入为 -3，截断为 -2。理解差异避免对账偏差。
+-- pitfalls --
+  * CAST 负数向零截断，与 floor 不同。
+  * round(x) 返回浮点，显示可能带 .0。
+-- exercises --
+  (1) 返回每行乘以 100 后转成整数，按 id 排序。 | hint=CAST(round(v*100) AS INTEGER)。
+      answer: SELECT id, CAST(round(v * 100) AS INTEGER) FROM vals ORDER BY id;
+      expected: 1|260
+2|-260
+3|240
+  (2) 返回 v 的绝对值再四舍五入，按 id 排序。 | hint=round(abs(v))。
+      answer: SELECT id, round(abs(v)) FROM vals ORDER BY id;
+      expected: 1|3.0
+2|3.0
+3|2.0
+==============================================================================
+#27 [functions/beginner/SQLite 3.50] 字符串分割与拼接技巧
+objective: 用 instr/substr 解析简单分隔字符串
+-- setup --
+CREATE TABLE kv (id INTEGER PRIMARY KEY, pair TEXT);
+INSERT INTO kv VALUES (1,'name:alice'),(2,'city:beijing');
+-- query --
+SELECT id, substr(pair,1,instr(pair,':')-1) AS k, substr(pair,instr(pair,':')+1) AS v FROM kv ORDER BY id;
+-- expected --
+1|name|alice
+2|city|beijing
+-- explain --
+instr(x,sub) 返回子串位置（1 起，找不到为 0）。结合 substr 可截取分隔符前后。示例把 'a:b' 形式的键值拆成键和值，用 instr 定位冒号。
+-- pitfalls --
+  * 找不到分隔符时 instr 返回 0，substr 会得到空串或边界异常。
+  * 多分隔符场景应使用递归 CTE 或应用层处理。
+-- exercises --
+  (1) 返回 pair 中冒号后的值，按 id 排序。 | hint=substr(pair, instr(pair,':')+1)。
+      answer: SELECT substr(pair, instr(pair, ':') + 1) FROM kv ORDER BY id;
+      expected: alice
+beijing
+  (2) 返回 pair 的长度，按 id 排序。 | hint=length(pair)。
+      answer: SELECT id, length(pair) FROM kv ORDER BY id;
+      expected: 1|10
+2|12
+==============================================================================
+#28 [functions/beginner/SQLite 3.50] 随机数与唯一标识生成
+objective: 用 random/hex/randomblob 生成随机数与伪 UUID
+-- setup --
+CREATE TABLE tokens (id INTEGER PRIMARY KEY, token TEXT);
+INSERT INTO tokens VALUES (1,'') ,(2,'');
+-- query --
+SELECT id, length(lower(hex(randomblob(16)))) AS n FROM tokens ORDER BY id;
+-- expected --
+1|32
+2|32
+-- explain --
+random() 返回 64 位随机整数，randomblob(n) 返回 n 字节随机 BLOB，hex() 转十六进制。示例用 lower(hex(randomblob(16))) 生成 32 位十六进制串作为伪 UUID。随机值每次运行不同，因此本课示例用固定长度的判断而非固定值来保证可复现。
+-- pitfalls --
+  * randomblob 结果不可用于排序或等值断言。
+  * 伪 UUID 不保证全局唯一，外键场景应使用正式 UUID。
+-- exercises --
+  (1) 返回一个 8 个十六进制字符的随机串的长度（单值）。 | hint=length(hex(randomblob(4)))。
+      answer: SELECT length(hex(randomblob(4)));
+      expected: 8
+  (2) 返回 1 的绝对值（测试确定性，单值）。 | hint=abs(1)。
+      answer: SELECT abs(1);
+      expected: 1
+==============================================================================
+#29 [functions/beginner/SQLite 3.50] GLOB 与模式匹配差异
+objective: 区分 LIKE 与 GLOB 的匹配规则
+-- setup --
+CREATE TABLE words (id INTEGER PRIMARY KEY, w TEXT);
+INSERT INTO words VALUES (1,'Apple'),(2,'apple'),(3,'Apricot'),(4,'banana');
+-- query --
+SELECT id, w FROM words WHERE w GLOB 'A*' ORDER BY id;
+-- expected --
+1|Apple
+3|Apricot
+-- explain --
+GLOB 使用 Unix 风格通配：* 匹配任意长度，? 匹配单字符，[] 字符类，且大小写敏感。LIKE 使用 %/_ 且 ASCII 下不区分大小写。示例用 GLOB 'A*' 精确匹配大写 A 开头。
+-- pitfalls --
+  * GLOB 区分大小写，而 LIKE 默认不区分（ASCII）。
+  * 字符类 [a-z] 在 GLOB 中有效，_ 是 LIKE 的概念。
+-- exercises --
+  (1) 用 GLOB 返回小写 a 开头的词 id，按 id 排序。 | hint=w GLOB 'a*'。
+      answer: SELECT id FROM words WHERE w GLOB 'a*' ORDER BY id;
+      expected: 2
+  (2) 用 GLOB 返回第二个字母为小写 a 的词 id，按 id 排序。 | hint='?a*'。
+      answer: SELECT id FROM words WHERE w GLOB '?a*' ORDER BY id;
+      expected: 4
+==============================================================================
+#30 [functions/beginner/SQLite 3.50] 综合练习：表达式与函数
+objective: 组合函数完成一个清洗与分类查询
+-- setup --
+CREATE TABLE raw_orders (id INTEGER PRIMARY KEY, customer TEXT, amount TEXT);
+INSERT INTO raw_orders VALUES (1,' alice ', '100'),(2,'BOB',''),(3,'Carol','250');
+-- query --
+SELECT id, upper(trim(customer)) AS c, COALESCE(CAST(amount AS INTEGER),0) AS a, CASE WHEN COALESCE(CAST(amount AS INTEGER),0) >= 200 THEN '高' ELSE '低' END AS tier FROM raw_orders ORDER BY id;
+-- expected --
+1|ALICE|100|低
+2|BOB|0|低
+3|CAROL|250|高
+-- explain --
+真实数据处理常把 trim、upper、COALESCE、CASE 组合使用。本课把混合大小写与空白的客户名规范化，按金额分档，并补全缺失金额为 0。示例归一化后按金额降序输出。
+-- pitfalls --
+  * CAST 空串为 0 而非 NULL，需要先用 NULLIF 区分。
+  * 函数嵌套层次多时注意每层返回类型。
+-- exercises --
+  (1) 返回规范化后客户名长度大于 4 的 id，按 id 排序。 | hint=length(trim(customer)) > 4。
+      answer: SELECT id FROM raw_orders WHERE length(trim(customer)) > 4 ORDER BY id;
+      expected: 1
+3
+  (2) 返回金额为空字符串的订单 id，按 id 排序。 | hint=amount = ''。
+      answer: SELECT id FROM raw_orders WHERE amount = '' ORDER BY id;
+      expected: 2
+==============================================================================
+#31 [aggregation/beginner/SQLite 3.50] COUNT 的三种写法与差异
+objective: 区分 COUNT(*)、COUNT(列) 与 COUNT(DISTINCT 列)
+-- setup --
+CREATE TABLE members (id INTEGER PRIMARY KEY, city TEXT, email TEXT);
+INSERT INTO members VALUES (1,'beijing','a@x.com'),(2,'beijing',NULL),(3,'shanghai','c@x.com'),(4,'shenzhen',NULL);
+-- query --
+SELECT COUNT(*) AS rows, COUNT(email) AS with_email, COUNT(DISTINCT city) AS cities FROM members;
+-- expected --
+4|2|3
+-- explain --
+COUNT(*) 统计行数，COUNT(col) 跳过该列为 NULL 的行，COUNT(DISTINCT col) 统计去重后的非 NULL 值个数。示例同一张表三种计数结果不同：4 行中 email 有 2 个 NULL，不同城市有 3 个。
+-- pitfalls --
+  * 把 COUNT(col) 当作行数会漏掉 NULL 行。
+  * COUNT(DISTINCT) 忽略 NULL，不会把 NULL 计为一种。
+-- exercises --
+  (1) 统计不同 email 的个数（单值）。 | hint=COUNT(DISTINCT email)。
+      answer: SELECT COUNT(DISTINCT email) FROM members;
+      expected: 2
+  (2) 统计 city 为 beijing 的行数（单值）。 | hint=COUNT(*) 配 WHERE。
+      answer: SELECT COUNT(*) FROM members WHERE city = 'beijing';
+      expected: 2
+==============================================================================
+#32 [aggregation/beginner/SQLite 3.50] SUM/AVG/MIN/MAX
+objective: 用四个基本聚合函数做汇总
+-- setup --
+CREATE TABLE orders (id INTEGER PRIMARY KEY, amount REAL);
+INSERT INTO orders VALUES (1,100),(2,80),(3,250),(4,NULL),(5,100);
+-- query --
+SELECT SUM(amount) AS total, AVG(amount) AS avg_amt, MIN(amount) AS lo, MAX(amount) AS hi FROM orders;
+-- expected --
+530.0|132.5|80.0|250.0
+-- explain --
+SUM 求和、AVG 求平均、MIN/MAX 求最小最大，都忽略 NULL。示例对订单金额汇总：总额 530、平均 132.5、最小 80、最大 250。AVG 是 530/4，NULL 不参与。
+-- pitfalls --
+  * AVG 的分母是非 NULL 计数，不是总行数。
+  * 全为 NULL 时 SUM/AVG/MIN/MAX 都返回 NULL。
+-- exercises --
+  (1) 统计 amount 非空的订单数（单值）。 | hint=COUNT(amount)。
+      answer: SELECT COUNT(amount) FROM orders;
+      expected: 4
+  (2) 返回 amount 的总和（单值）。 | hint=SUM(amount)。
+      answer: SELECT SUM(amount) FROM orders;
+      expected: 530.0
+==============================================================================
+#33 [aggregation/beginner/SQLite 3.50] GROUP BY 分组基础
+objective: 按分组列对数据分组并聚合
+-- setup --
+CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);
+INSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'north',150),(4,'south',50);
+-- query --
+SELECT region, SUM(amount) AS total FROM sales GROUP BY region ORDER BY region;
+-- expected --
+north|250
+south|250
+-- explain --
+GROUP BY 把行按分组键分成若干组，每组产生一行聚合结果。SELECT 列表中非聚合列必须出现在 GROUP BY 中。示例按 region 分组求销售额合计，返回每个区域的总额。
+-- pitfalls --
+  * SELECT 里出现未分组的裸列在 SQLite 中会任取一行，语义不确定。
+  * GROUP BY 后 ORDER BY 才决定组间顺序。
+-- exercises --
+  (1) 按 region 统计订单数量，按 region 升序。 | hint=COUNT(*)。
+      answer: SELECT region, COUNT(*) FROM sales GROUP BY region ORDER BY region;
+      expected: north|2
+south|2
+  (2) 按 region 求金额平均值，按 region 升序。 | hint=AVG(amount)。
+      answer: SELECT region, AVG(amount) FROM sales GROUP BY region ORDER BY region;
+      expected: north|125.0
+south|125.0
+==============================================================================
+#34 [aggregation/beginner/SQLite 3.50] HAVING 过滤分组
+objective: 用 HAVING 在聚合后过滤分组
+-- setup --
+CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);
+INSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'north',50),(4,'east',500);
+-- query --
+SELECT region, SUM(amount) AS total FROM sales GROUP BY region HAVING SUM(amount) >= 200 ORDER BY region;
+-- expected --
+east|500
+south|200
+-- explain --
+WHERE 在分组前过滤行，HAVING 在分组后过滤组。示例先按 region 分组求总额，再用 HAVING total >= 200 只保留总额达标的区域。HAVING 可以引用聚合结果，WHERE 不行。
+-- pitfalls --
+  * 把聚合条件写进 WHERE 会报错或语义错误。
+  * HAVING 里列名别名在部分数据库不可用，写聚合表达式最稳妥。
+-- exercises --
+  (1) 保留订单数大于 1 的区域，按 region 升序。 | hint=HAVING COUNT(*) > 1。
+      answer: SELECT region FROM sales GROUP BY region HAVING COUNT(*) > 1 ORDER BY region;
+      expected: north
+  (2) 求总额严格大于 300 的区域，按 region 升序。 | hint=HAVING SUM(amount) > 300。
+      answer: SELECT region FROM sales GROUP BY region HAVING SUM(amount) > 300 ORDER BY region;
+      expected: east
+==============================================================================
+#35 [aggregation/beginner/SQLite 3.50] GROUP BY 多列与聚合顺序
+objective: 按多列组合分组并理解分组粒度
+-- setup --
+CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, product TEXT, amount INTEGER);
+INSERT INTO sales VALUES (1,'north','pen',10),(2,'north','pen',20),(3,'north','book',50),(4,'south','pen',5);
+-- query --
+SELECT region, product, SUM(amount) AS total FROM sales GROUP BY region, product ORDER BY region, product;
+-- expected --
+north|book|50
+north|pen|30
+south|pen|5
+-- explain --
+GROUP BY a, b 按 (a,b) 组合分组，分组数等于不同组合数。示例按 (region, product) 分组求和，north/pen 与 north/book 是两个不同的组。
+-- pitfalls --
+  * 分组列顺序影响结果行顺序，需配合 ORDER BY。
+  * 组合键基数被低估会得到比预期更多的组。
+-- exercises --
+  (1) 按 region 与 product 统计行数，按 region、product 升序。 | hint=COUNT(*)。
+      answer: SELECT region, product, COUNT(*) FROM sales GROUP BY region, product ORDER BY region, product;
+      expected: north|book|1
+north|pen|2
+south|pen|1
+  (2) 按 product 汇总总额，按总额降序。 | hint=GROUP BY product。
+      answer: SELECT product, SUM(amount) FROM sales GROUP BY product ORDER BY SUM(amount) DESC;
+      expected: book|50
+pen|35
+==============================================================================
+#36 [aggregation/beginner/SQLite 3.50] 聚合与 NULL 的交互
+objective: 理解聚合函数对 NULL 的处理规则
+-- setup --
+CREATE TABLE scores (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);
+INSERT INTO scores VALUES (1,'Alice',90),(2,'Bob',NULL),(3,'Carol',90);
+-- query --
+SELECT COUNT(*) AS rows, COUNT(score) AS n, SUM(score) AS s, AVG(score) AS a FROM scores;
+-- expected --
+3|2|180|90.0
+-- explain --
+除 COUNT(*) 外，所有聚合函数都跳过 NULL。示例 scores 表中 Bob 分数为 NULL：COUNT(*) = 3，COUNT(score) = 2，SUM = 180，AVG = 90（180/2，不是 180/3）。
+-- pitfalls --
+  * 误以为 AVG 会按总行数做分母。
+  * 用 SUM/COUNT(*) 手算平均会与 AVG 不同。
+-- exercises --
+  (1) 返回 score 的总和（单值）。 | hint=SUM(score)。
+      answer: SELECT SUM(score) FROM scores;
+      expected: 180
+  (2) 返回 score 非空的行数（单值）。 | hint=COUNT(score)。
+      answer: SELECT COUNT(score) FROM scores;
+      expected: 2
+==============================================================================
+#37 [aggregation/beginner/SQLite 3.50] GROUP_CONCAT 分组拼接
+objective: 用 GROUP_CONCAT 把组内值拼成一个字符串
+-- setup --
+CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, product TEXT);
+INSERT INTO sales VALUES (1,'north','pen'),(2,'north','book'),(3,'south','bag');
+-- query --
+SELECT region, GROUP_CONCAT(product, ',') AS products FROM sales GROUP BY region ORDER BY region;
+-- expected --
+north|pen,book
+south|bag
+-- explain --
+GROUP_CONCAT(col, sep) 把组内值按 sep（默认逗号）拼接。SQLite 3.44 起支持ORDER BY 子句控制拼接顺序；本课示例保证顺序以稳定输出。示例把每个区域的产品名拼成一串。
+-- pitfalls --
+  * 默认分隔符是逗号，拼接文本本身含逗号会产生歧义。
+  * 拼接结果长度受 string 长度限制影响。
+-- exercises --
+  (1) 按 region 用分号拼接 product，按 region 升序。 | hint=GROUP_CONCAT(product,';')。
+      answer: SELECT region, GROUP_CONCAT(product, ';') FROM sales GROUP BY region ORDER BY region;
+      expected: north|pen;book
+south|bag
+  (2) 统计每个区域的产品数量，按 region 升序。 | hint=COUNT(product)。
+      answer: SELECT region, COUNT(product) FROM sales GROUP BY region ORDER BY region;
+      expected: north|2
+south|1
+==============================================================================
+#38 [aggregation/intermediate/SQLite 3.50] 小计与总计（ROLLUP 思路）
+objective: 用 UNION ALL 手工构造分组小计
+-- setup --
+CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);
+INSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'north',50);
+-- query --
+SELECT region, SUM(amount) AS total FROM sales GROUP BY region UNION ALL SELECT 'TOTAL', SUM(amount) FROM sales;
+-- expected --
+north|150
+south|200
+TOTAL|350
+-- explain --
+SQLite 3.50 不支持 GROUPING SETS/ROLLUP，需要 UNION ALL 拼接明细组与总计。示例先用 GROUP BY 得到各区域小计，再 UNION ALL 一行全表总计，用 'TOTAL' 标记。MySQL 8.0 原生支持 WITH ROLLUP。
+-- pitfalls --
+  * UNION ALL 不去重也不排序，需要外层 ORDER BY。
+  * 各分支列类型应一致，否则类型比较规则会介入。
+-- exercises --
+  (1) 只返回全表总额（单值）。 | hint=SUM(amount)。
+      answer: SELECT SUM(amount) FROM sales;
+      expected: 350
+  (2) 返回 north 区域总额（单值）。 | hint=WHERE region='north'。
+      answer: SELECT SUM(amount) FROM sales WHERE region = 'north';
+      expected: 150
+==============================================================================
+#39 [aggregation/beginner/SQLite 3.50] 聚合结果排序与分页
+objective: 对分组结果排序后取前几名
+-- setup --
+CREATE TABLE sales (id INTEGER PRIMARY KEY, region TEXT, amount INTEGER);
+INSERT INTO sales VALUES (1,'north',100),(2,'south',200),(3,'east',500),(4,'west',50);
+-- query --
+SELECT region, SUM(amount) AS total FROM sales GROUP BY region ORDER BY total DESC LIMIT 2;
+-- expected --
+east|500
+south|200
+-- explain --
+聚合结果要排序必须用 ORDER BY 引用聚合表达式或别名，LIMIT 取前 N。示例按区域汇总后取金额最高前 2 名区域。
+-- pitfalls --
+  * ORDER BY 别名在 SQLite/MySQL 都可用，但标准 SQL 只保证部分场景。
+  * LIMIT 无 ORDER BY 时取哪几组不确定。
+-- exercises --
+  (1) 按区域汇总后取金额最低 1 个区域，返回 region 与 total。 | hint=ORDER BY total ASC LIMIT 1。
+      answer: SELECT region, SUM(amount) AS total FROM sales GROUP BY region ORDER BY total ASC LIMIT 1;
+      expected: west|50
+  (2) 按区域汇总后返回 region 列表，按 total 降序。 | hint=只 SELECT region。
+      answer: SELECT region FROM sales GROUP BY region ORDER BY SUM(amount) DESC;
+      expected: east
+south
+north
+west
+==============================================================================
+#40 [aggregation/intermediate/SQLite 3.50] 综合练习：销售汇总报表
+objective: 组合分组、聚合、过滤与排序生成汇总报表
+-- setup --
+CREATE TABLE orders (id INTEGER PRIMARY KEY, region TEXT, product TEXT, amount INTEGER);
+INSERT INTO orders VALUES (1,'north','pen',10),(2,'north','pen',20),(3,'north','book',15),(4,'south','pen',40),(5,'south','book',5);
+-- query --
+SELECT region, product, SUM(amount) AS total FROM orders GROUP BY region, product HAVING SUM(amount) >= 30 ORDER BY total DESC, region, product;
+-- expected --
+south|pen|40
+north|pen|30
+-- explain --
+本课把订单按 (region, product) 汇总，筛掉总额小于 30 的组合，再按总额降序输出。这是最常见的销售报表形态：先分组聚合，再 HAVING 过滤，最后排序。
+-- pitfalls --
+  * HAVING 与 WHERE 混用位置错误会改变分组前的行集。
+  * 排序键不唯一时结果顺序不稳，应加次级排序键。
+-- exercises --
+  (1) 按 region 汇总总额，返回 region 与 total，按 region 升序。 | hint=GROUP BY region。
+      answer: SELECT region, SUM(amount) AS total FROM orders GROUP BY region ORDER BY region;
+      expected: north|45
+south|45
+  (2) 统计 product 为 pen 的订单总额（单值）。 | hint=WHERE product='pen'。
+      answer: SELECT SUM(amount) FROM orders WHERE product = 'pen';
+      expected: 70

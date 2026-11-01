@@ -1,0 +1,4 @@
+Active task: .trellis/tasks/10-22-offline-ide-completeness
+你负责 SQL 诊断实现。先读任务 PRD/design/implement、trellis-before-dev、research/tools-diagnostics-audit.md 与 core/services/code_analysis.dart。仅可改新 lib/sql_code_analyzer.dart、新 lib/sql_syntax_validator.dart、lib/sqlite_ffi.dart（隔离 prepare-only 操作），和对应 test/sql_code_analyzer_test.dart/test/sql_syntax_validator_test.dart。不得改 main/tools/content/core/native/acceptance；协调者负责 main注册及 OHOS native桥。你不是唯一写入者，请保护别人修改及 baseline，不得 git add/commit/push/设备操作。
+使用精确 unsaved snapshots、UTF16 halfopen ranges，路径归属过滤。先实现可靠 literal/comment/parens 词法校验，再做隔离 SQLite prepare-only 真语法检查（不可 query 执行、不可用户数据库）；SQLite PRAGMA prepare也可能有副作用，隔离内存DB、禁止ATTACH/不安全PRAGMA等。sqlite3_error_offset UTF8字节转UTF16。缺schema/不支持/引擎不可用不得假装clean。MySQL不得用SQLite grammar误检，清晰支持范围/原因。测试保存文本与未保存不同、中文emoji CRLF、NUL/越界/外部路径、SQL输入不会写源/数据库/文件且后端确实运行。导出const SqlCodeAnalyzer，必要的新native接口告知协调者。先报告cwd与task然后执行，已授权。
+

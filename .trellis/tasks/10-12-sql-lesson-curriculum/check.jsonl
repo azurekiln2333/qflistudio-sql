@@ -1,0 +1,5 @@
+{"file":".trellis/spec/frontend/tutorial-code-import.md","reason":"Verify lesson/example catalog compliance with the content and import contract"}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"Verify only sql entries changed and the shared asset contract still parses"}
+{"file":".trellis/spec/backend/quality-guidelines.md","reason":"Backend/quality expectations for validation reports and evidence"}
+{"file": ".trellis/tasks/10-12-sql-lesson-curriculum/research/coverage-map.md", "reason": "Verify the built catalog covers every mapped category and lesson id"}
+{"file": ".trellis/spec/frontend/sql-content-repository.md", "reason": "Verify repository/asset contract and validation pipeline"}

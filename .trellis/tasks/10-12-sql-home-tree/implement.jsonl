@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/sql-workbench.md","reason":"Home surface, tree, busy-gating, engine and dialog contracts the UI must preserve"}
+{"file":".trellis/spec/frontend/tutorial-code-import.md","reason":"Content list/detail, copy and editor/project import contracts to reuse"}
+{"file":".trellis/spec/frontend/index.md","reason":"Flutter component, state and quality conventions for the app UI"}
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"Frontend quality bar expected of the UI change"}

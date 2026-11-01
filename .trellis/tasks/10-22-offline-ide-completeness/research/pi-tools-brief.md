@@ -1,0 +1,4 @@
+Active task: .trellis/tasks/10-22-offline-ide-completeness
+你负责 SQL 直接工具页实现。先读 PRD/design/implement、trellis-before-dev、SQL frontend specs、research/tools-diagnostics-audit.md。仅可修改 lib/sql_tools_tab.dart、新 lib/sql_tools_service.dart（或同名相关工具文件）、test/sql_tools_tab_test.dart、test/sql_tools_service_test.dart 和 test/sql_home_shell_test.dart 的旧工具页断言。其他 worker 同工作区写代码，你不是唯一写入者；不得回退他们的修改，也不得改 baseline WIP。不得 git add/commit/push、改 main/runner/database/core/内容/native或设备。
+SQL 专用能力全部直接铺工具页：真实本地引擎/数据库上下文，SQL 输入/执行/结果/错误/SQLSTATE/截断，多结果集，安全不执行源语句的 EXPLAIN 查询计划，结构/索引查看，离线 SQL 文本/标识符/值工具。使用现有 repository/engine preference，不可标 MySQL 却执行 SQLite。移除专用中转页，保留 commonTools/terminal。当前每调用新连接，不能造跨调用 Begin/Commit；无调试后端不造按钮。加入真实可测的 seam/widget测试，大字体窄屏/保留状态。先回复当前 cwd和任务路径，再执行，不再问过程授权。完成前运行 focused analyze/tests。主协调者负责 OHOS executeScript 新后端，保持接口 SqlScriptDatabase 不变。
+

@@ -2,12 +2,14 @@
 
 ## Scope
 
-Windows/Linux local Oracle MySQL backend and packaging. The default product
+Windows/Linux local Oracle MySQL backend and packaging, plus the macOS helper
+build/signing integration. The default product
 engine preference currently remains SQLite/cloud; selection of this local
 backend is a separate workbench integration change. Android has its own verified
-runtime contract in mysql-android-runtime.md. macOS bundle/signing and native
-iOS hosting remain implementation gaps. Never
-report those platforms as delivered based on portable source or desktop tests.
+runtime contract in mysql-android-runtime.md. Actual macOS SDK packaging,
+signing and sandboxed execution remain unverified; native iOS hosting remains
+an implementation gap. Never report Apple functionality as verified based on
+portable source or desktop tests.
 
 ## Interfaces And Transport
 
@@ -73,6 +75,26 @@ resources/plugins and license inputs. Keep provenance and host libc prerequisite
 explicit. CMake requires verified Oracle source RapidJSON headers; no ad hoc JSON
 serializer or replacement SQL engine is allowed.
 
+macOS Runner invokes native/mysql/macos/bundle.py before outer app signing.
+It requires complete Oracle 8.4.6 SDKs for each Xcode ARCHS entry, builds the
+bridge/launcher, and packages separate QfliMySql-{arm64,x64}.app helpers. Their
+MacOS/Frameworks/PlugIns/Resources layout is selected by the current Dart FFI
+ABI. Explicit QFLI_MYSQL_BUNDLE keeps the flat desktop layout. pluginDirectory
+is injected during initialization and normal server start for helper plugins.
+
+Reuse CMake BundleUtilities for the native dependency closure. Dependencies
+must come from the SDK/staged helper or Apple system library paths. Validate
+CPU, macOS platform and minimum OS, thin universal inputs, rewrite references
+to @loader_path and remove native RPATHs. @executable_path is incorrect for the
+bridge dlopened in the outer Flutter executable. Reject SDKs requiring a newer
+OS than Runner's declared target; do not silently change deployment settings.
+
+Sign libraries/plugins, then executables and helper apps before outer Runner
+signing. The helper only inherits sandbox permissions. Runner owns network
+client/server entitlements for the private Unix socket; do not disable library
+validation. Record final signed hashes in outer Resources, avoiding a helper
+resource hash/signature cycle. Preserve upstream licenses and exact input hashes.
+
 ## Verification
 
 - Standalone lifecycle test: actual upstream initialization/version/private
@@ -85,6 +107,9 @@ serializer or replacement SQL engine is allowed.
 - Available evidence: Windows 8.4.6, Linux 8.0.46, complete installed runtime
   bundles, Windows Flutter tests. MSVC/full desktop GUIs and Apple execution
   are not established by these checks.
+- macOS portable packaging-validator regressions do not establish actual Apple
+  build/signing/sandbox behavior. On an Apple host use the packaged app to check
+  CRUD, persistence, stop and parent-death recovery with real Oracle SDKs.
 
 ## Wrong Vs Correct
 

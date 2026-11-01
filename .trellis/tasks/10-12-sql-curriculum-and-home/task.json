@@ -1,0 +1,29 @@
+{
+  "id": "sql-curriculum-and-home",
+  "name": "sql-curriculum-and-home",
+  "title": "SQL home, projects page, and 100+ lesson curriculum",
+  "description": "Home becomes a database/table tree, project list moves to its own page, and all placeholder tutorials are replaced with 110+ real SQL lessons and runnable examples.",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lichengyu",
+  "assignee": "lichengyu",
+  "createdAt": "2026-10-12",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "10-12-sql-home-tree",
+    "10-12-sql-lesson-curriculum"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

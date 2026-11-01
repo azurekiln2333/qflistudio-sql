@@ -1,38 +1,37 @@
 {
   "app": {
-    // 签名材料来自 DevEco 的「Automatically generate signature」：
-    //   C:\Users\lichengyu\.ohos\config\default_ohos_EyK2s6z...{cer,p7b,p12}
-    // 其 .p7b 绑的正是 com.azurekiln.qfli.sqlab，与本 App 的 bundleName 一致。
-    //
-    // 关键：products[].signingConfig 这一项**必须写**。只填 signingConfigs 数组不够，
-    // hvigor 不会自动挑「唯一的那一个」，缺了它只会打
-    //   WARN: No signingConfig found for product default
-    // 然后跳过 SignHap（`SignHap... after 1 ms`），产出 entry-default-unsigned.hap，
-    // 装到设备上报：
-    //   code:9568320  error: no signature file.
-    //
-    // 换 bundleName 就得换 .p7b（描述文件绑死 bundleName）：要么在 DevEco 里重新
-    // 自动生成，要么去 AGC 新建应用重签。把 bundleName 改回 com.azurekiln.qflistudio
-    // 也能复用主工程那套，但两个 App 会互相覆盖安装。
     "signingConfigs": [
       {
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "C:\\Users\\lichengyu\\.ohos\\config\\default_ohos_EyK2s6zPODEbf3XHtkcGYQQuAS6k-HePGMeNPRNUwSI=.cer",
+          "certpath": "C:\\Users\\lichengyu\\.ohos\\config\\default_ohos_pxlgjI975CNVmO2QumNYrvK1ZT1_yiRs7uJSYBnK1EY=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B0DF223E4A60E8ED4BB0753D188F2F65AB4F69E687DF24D13BEEFA583A71D486AA6999AB2FB8788",
-          "profile": "C:\\Users\\lichengyu\\.ohos\\config\\default_ohos_EyK2s6zPODEbf3XHtkcGYQQuAS6k-HePGMeNPRNUwSI=.p7b",
+          "keyPassword": "0000001AA932F8152BDC6B81CACC4C71647671DBB290B0EB250F40D216C457C43497AD436C9E9B2FE6F8",
+          "profile": "C:\\Users\\lichengyu\\.ohos\\config\\default_ohos_pxlgjI975CNVmO2QumNYrvK1ZT1_yiRs7uJSYBnK1EY=.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "C:\\Users\\lichengyu\\.ohos\\config\\default_ohos_EyK2s6zPODEbf3XHtkcGYQQuAS6k-HePGMeNPRNUwSI=.p12",
-          "storePassword": "0000001BF4EC908A7AD17F26ECA21D73D798DA802700061AC190C283A47EE7A1CB119170B296F4EEC00BAE"
+          "storeFile": "C:\\Users\\lichengyu\\.ohos\\config\\default_ohos_pxlgjI975CNVmO2QumNYrvK1ZT1_yiRs7uJSYBnK1EY=.p12",
+          "storePassword": "0000001A4DF1FBB6020084B6158CB33F23FAC356C1F76F161C6EF3A5F36BDD530EFEE3381496B44F2C43"
+        }
+      },
+      {
+        "name": "releaseKey",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "D:/Keystore/suanxiwanjie_release.cer",
+          "keyAlias": "suanxiwanjie",
+          "keyPassword": "00000020C0D3BCBDD2E6A5BAA323D2F624F0C4D76F8BC80520480F3333FC886AB327BDE046FEFFD457C26B02CC3F76DD",
+          "profile": "D:/Keystore/Profile/sqlabRelease.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "D:/Keystore/suanxiwanjie.p12",
+          "storePassword": "000000206059335086B7DDEE511182464D36CB6DD241E9A4E84301472FFAF9864C7F2BEFF5906BC1F1557AD1F6EB5172"
         }
       }
     ],
     "products": [
       {
         "name": "default",
-        "signingConfig": "default",
+        "signingConfig": "releaseKey",
         "compatibleSdkVersion": "5.1.0(18)",
         "runtimeOS": "HarmonyOS",
         "targetSdkVersion": "6.1.1(24)"

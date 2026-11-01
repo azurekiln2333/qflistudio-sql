@@ -65,6 +65,14 @@ export default class EntryAbility extends FlutterAbility {
         if (call.method === 'openAgreement') {
           result.error('OFFLINE_ONLY', '离线模式不支持打开在线协议', null);
           return;
+        } else if (call.method === 'startupProgress') {
+          const progress = call.argument('progress') as number;
+          if (typeof progress === 'number' && Number.isFinite(progress)) {
+            abilityContext.eventHub.emit('EVENT_STARTUP_PROGRESS', Math.max(0, Math.min(1, progress)));
+            result.success(null);
+          } else {
+            result.error('INVALID_PROGRESS', 'Startup progress must be a number', null);
+          }
         } else if (call.method === 'openUrl') {
           result.error('OFFLINE_ONLY', '离线模式不支持打开外部链接', null);
           return;

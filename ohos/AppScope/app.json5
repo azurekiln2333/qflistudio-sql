@@ -1,6 +1,6 @@
 {
   "app": {
-    "bundleName": "com.azurekiln.qfli.sqlab",
+    "bundleName": "com.azurekiln.qfli.sql",
     "vendor": "example",
     "versionCode": 1000000,
     "versionName": "1.0.0",

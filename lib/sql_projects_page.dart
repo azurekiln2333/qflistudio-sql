@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:qfli_studio_core/editor/editor_page.dart';
+import 'package:qfli_studio_core/editor/retained_editor_host.dart';
 import 'package:qfli_studio_core/i18n/studio_localizations.dart';
 import 'package:qfli_studio_core/models/project.dart';
 import 'package:qfli_studio_core/services/app_paths.dart';
@@ -13,13 +13,14 @@ import 'package:qfli_studio_core/store/project_store.dart';
 import 'package:qfli_studio_core/store/settings_store.dart';
 import 'package:qfli_studio_core/widgets/project_card.dart';
 import 'package:qfli_studio_core/widgets/project_dialogs.dart';
+import 'package:qfli_studio_core/workspace/saved_workspaces_tab.dart';
 
 /// Standalone project list for the SQL app.
 ///
 /// This is a real, single-toolbar project page: it owns ONE `AppBar` titled
 /// "项目" with a back button and a search field, plus a create action. It uses
 /// the shared public project APIs directly (`ProjectStore`, `ProjectCard`,
-/// `ProjectDialogs`, `EditorPage`) instead of embedding the shared `HomeTab`
+/// `ProjectDialogs`, `openEditorPage`) instead of embedding the shared `HomeTab`
 /// shell, which carries its own app bar and app-level navigation. There is no
 /// second home rail/PageView here.
 class SqlProjectsPage extends StatefulWidget {
@@ -111,14 +112,26 @@ class _SqlProjectsPageState extends State<SqlProjectsPage> {
     widget.store.touch(project);
     _reportActivity('open_project');
     if (!mounted) return;
-    await Navigator.of(context).push(
+    await openEditorPage(
+      context,
+      project: project,
+      store: widget.store,
+      auth: widget.auth,
+      settings: widget.settings,
+      initialOpenPath: initialOpenFile,
+    );
+  }
+
+  Future<void> _openSavedWorkspaces() async {
+    await Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (_) => EditorPage(
-          project: project,
-          store: widget.store,
-          auth: widget.auth,
-          settings: widget.settings,
-          initialOpenPath: initialOpenFile,
+        builder: (_) => Scaffold(
+          appBar: AppBar(title: const Text('工作区')),
+          body: SavedWorkspacesTab(
+            store: widget.store,
+            auth: widget.auth,
+            settings: widget.settings,
+          ),
         ),
       ),
     );
@@ -206,6 +219,11 @@ class _SqlProjectsPageState extends State<SqlProjectsPage> {
               )
             : const Text('项目'),
         actions: [
+          IconButton(
+            tooltip: '已保存的工作区',
+            icon: const Icon(Icons.workspaces_outline),
+            onPressed: () => unawaited(_openSavedWorkspaces()),
+          ),
           IconButton(
             tooltip: _searchOpen ? '关闭搜索' : '搜索项目',
             icon: Icon(_searchOpen ? Icons.close : Icons.search),

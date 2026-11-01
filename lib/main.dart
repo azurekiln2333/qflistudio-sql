@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:qfli_studio_core/editor/editor_fonts.dart';
 import 'package:qfli_studio_core/services/project_templates.dart';
@@ -42,8 +44,10 @@ const StudioProfile sqlProfile = StudioProfile(
   entryFileNames: ['main.sql', 'src/main.sql'],
 );
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+Future<void> main() async {
+  final binding = WidgetsFlutterBinding.ensureInitialized();
+  final nativeStartup = !kIsWeb && defaultTargetPlatform == TargetPlatform.ohos;
+  if (nativeStartup) binding.deferFirstFrame();
   EditorFonts.registerLicense();
 
   // 在 runApp 之前定档。
@@ -53,17 +57,53 @@ void main() async {
   final auth = AuthStore();
   final settings = SettingsStore();
   final ready = ValueNotifier<bool>(false);
-  // 先 runApp 品牌启动页（与原生遮罩同色，无白屏），数据后台并行加载。
   runApp(SqlLabApp(store: store, auth: auth, settings: settings, ready: ready));
-  // 首帧提交后再做磁盘/插件初始化，避免与首帧构建争用主 isolate。
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    unawaited(
-      AppBootstrap.run(
+
+  const platformChannel = MethodChannel('qflistudio/platform');
+  Future<void> reportProgress(double progress) async {
+    try {
+      await platformChannel.invokeMethod<void>('startupProgress', {
+        'progress': progress,
+      });
+    } on PlatformException catch (error) {
+      debugPrint('Startup progress unavailable: ${error.code}');
+    } on MissingPluginException {
+      // Other entry shells use the Flutter startup screen.
+    }
+  }
+
+  Future<void> completeStartup() async {
+    try {
+      final minimumDisplay = nativeStartup
+          ? Future<void>.delayed(const Duration(milliseconds: 1100))
+          : Future<void>.value();
+      if (nativeStartup) {
+        // Let the native splash subscribe before reporting initialization work.
+        await Future<void>.delayed(const Duration(milliseconds: 160));
+        unawaited(reportProgress(0.05));
+      }
+      await AppBootstrap.run(
         store: store,
         auth: auth,
         settings: settings,
         ready: ready,
-      ),
-    );
+        onProgress: nativeStartup
+            ? (progress) => unawaited(reportProgress(0.05 + progress * 0.95))
+            : null,
+      );
+      await Future.wait([
+        minimumDisplay,
+        if (nativeStartup)
+          Future<void>.delayed(const Duration(milliseconds: 320)),
+      ]);
+      // Submit a laid-out home page as the first frame beneath the native splash.
+      if (nativeStartup) await binding.endOfFrame;
+    } finally {
+      if (nativeStartup) binding.allowFirstFrame();
+    }
+  }
+
+  binding.addPostFrameCallback((_) {
+    unawaited(completeStartup());
   });
 }

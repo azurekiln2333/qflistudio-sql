@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
@@ -428,10 +429,22 @@ class LocalMySqlRuntime {
   static LocalMySqlRuntime _discover() {
     final app = p.dirname(Platform.resolvedExecutable);
     final configured = Platform.environment['QFLI_MYSQL_BUNDLE'];
+    final helperLayout = Platform.isMacOS && configured == null;
+    final helper = helperLayout
+        ? p.normalize(
+            p.join(
+              app,
+              '..',
+              'Helpers',
+              'QfliMySql-${Abi.current() == Abi.macosArm64 ? 'arm64' : 'x64'}.app',
+              'Contents',
+            ),
+          )
+        : null;
     final bundle = Directory(
       configured ??
-          (Platform.isMacOS
-              ? p.normalize(p.join(app, '..', 'Resources', 'qfli_mysql'))
+          (helperLayout
+              ? p.join(helper!, 'Resources')
               : p.join(app, 'qfli_mysql')),
     );
     final home =
@@ -454,18 +467,26 @@ class LocalMySqlRuntime {
     return LocalMySqlRuntime(
       bundleDirectory: bundle,
       dataDirectory: Directory(p.join(root, 'qfli_sql', 'mysql')),
-      launcherPath: p.join(
-        bundle.path,
-        'bin',
-        Platform.isWindows ? 'qfli_mysql_launcher.exe' : 'qfli_mysql_launcher',
-      ),
-      libraryPath: p.join(
-        bundle.path,
-        Platform.isWindows ? 'bin' : 'lib',
-        Platform.isWindows
-            ? 'qfli_mysql_bridge.dll'
-            : 'libqfli_mysql_bridge.${Platform.isMacOS ? 'dylib' : 'so'}',
-      ),
+      serverPath: helperLayout ? p.join(helper!, 'MacOS', 'mysqld') : null,
+      pluginDirectory: helperLayout ? p.join(helper!, 'PlugIns') : null,
+      launcherPath: helperLayout
+          ? p.join(helper!, 'MacOS', 'qfli_mysql_launcher')
+          : p.join(
+              bundle.path,
+              'bin',
+              Platform.isWindows
+                  ? 'qfli_mysql_launcher.exe'
+                  : 'qfli_mysql_launcher',
+            ),
+      libraryPath: helperLayout
+          ? p.join(helper!, 'Frameworks', 'libqfli_mysql_bridge.dylib')
+          : p.join(
+              bundle.path,
+              Platform.isWindows ? 'bin' : 'lib',
+              Platform.isWindows
+                  ? 'qfli_mysql_bridge.dll'
+                  : 'libqfli_mysql_bridge.${Platform.isMacOS ? 'dylib' : 'so'}',
+            ),
     );
   }
 }

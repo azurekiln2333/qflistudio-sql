@@ -66,6 +66,8 @@ jobs:
             pkg-config libssl-dev libicu-dev libtirpc-dev rpcsvc-proto unzip p7zip-full
       - name: Setup Android SDK and NDK
         uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        with:
+          packages: platform-tools
       - name: Install NDK 27.0.12077973
         run: sdkmanager --install 'ndk;27.0.12077973'
       - name: Resource snapshot
@@ -241,7 +243,7 @@ jobs:
 
   ios:
     name: iOS SQLite native package
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 45
     steps:
       - name: Checkout

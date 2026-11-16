@@ -24,3 +24,11 @@ matching the existing Android pattern, so runner SDK paths do not revert to
 the original developer's Windows-mounted SDK path during compiler probes.
 
 Local checks establish orchestration syntax, not cross-target compile success.
+
+## First remote trial
+Run 43937038894 completed source upload. Android failed because setup-android's
+default package tools no longer exists; select platform-tools. macos-14 was
+rejected as unsupported; use macos-15. OHOS SDK extraction succeeded and proved
+the pinned Linux mirror contains API23 version6.1.0.31, not the local Windows
+6.1.0.32. Pin the observed Linux release while retaining all ABI/header checks;
+do not claim SDK or output byte equivalence to the local Windows build.

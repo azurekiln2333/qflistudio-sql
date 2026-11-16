@@ -101,9 +101,11 @@ app's macOS 10.15 deployment setting; do not silently raise app compatibility.
 
 - MySQL 8.4.6 and OpenSSL 3.5.3 hashes match the existing native port scripts.
 - Android uses NDK 27.0.12077973, API28, Clang18 and two compiler jobs.
-- OHOS uses API23 SDK6.1.0.32 and Clang18. The SDK comes from the
+- OHOS uses API23 SDK6.1.0.31 and Clang18. The SDK comes from the
   `openharmony-rs/ohos-sdk` mirror, not an official OpenHarmony GitHub mirror.
   CI checks its pinned archive checksum, installed metadata and required paths.
+  The Linux release is 6.1.0.31; the local Windows SDK is 6.1.0.32. CI records
+  this difference and does not claim the resulting binaries are byte-identical.
 - Fresh runner trees and job timeouts bound builds. Disk, memory or time limits
   remain possible; actual logs determine the result.
 - Keep corresponding source archives and licenses with redistributed runtimes.

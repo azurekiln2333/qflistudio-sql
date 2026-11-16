@@ -155,8 +155,10 @@ jobs:
           SDK: ${{ steps.ohos.outputs.ohos_sdk_native }}
         run: |
           test -f "$SDK/oh-uni-package.json"
+          cat "$SDK/oh-uni-package.json"
+          cp "$SDK/oh-uni-package.json" "$RUNNER_TEMP/native-logs/ohos-sdk.json"
           test "$(jq -r .apiVersion "$SDK/oh-uni-package.json")" = 23
-          test "$(jq -r .version "$SDK/oh-uni-package.json")" = 6.1.0.32
+          test "$(jq -r .version "$SDK/oh-uni-package.json")" = 6.1.0.31
           test -d "$SDK/sysroot"
           test -d "$SDK/llvm/lib/clang/15.0.4"
           test -d "$SDK/llvm/include/libcxx-ohos/include/c++/v1"
@@ -204,7 +206,7 @@ jobs:
           cp "$RUNNER_TEMP/native-logs/sdk-archive.sha256" "$QFLI_MYSQL_PORT_ROOT/package/"
           {
             echo "commit=$GITHUB_SHA"
-            echo 'target=OHOS arm64; API23; SDK6.1.0.32'
+            echo 'target=OHOS arm64; API23; SDK6.1.0.31'
             echo 'sdk_mirror=https://github.com/openharmony-rs/ohos-sdk/releases/tag/v6.1'
             echo "mysql_source_sha256=$MYSQL_SHA256"
             echo "openssl_source_sha256=$OPENSSL_SHA256"

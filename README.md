@@ -265,3 +265,9 @@ SQLite 表格界面不提供结构编辑或导出。Oracle 提供索引编辑。
 上游引擎：[SQLite](https://www.sqlite.org/) 3.50.0（公有领域）、[Oracle MySQL](https://www.mysql.com/) 8.4.6 社区源码、OpenSSL 3.5.3。
 发布包必须附带原生组件的配套材料。
 材料包含上游源码、补丁、构建脚本与许可声明。
+
+## 许可证
+
+本仓库代码采用 GNU GPL v3.0 许可证。
+单独声明许可证的内容沿用原许可证。
+许可证全文见 [LICENSE](LICENSE)。

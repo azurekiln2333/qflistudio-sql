@@ -23,6 +23,7 @@ cp "$ROOT/native/src/qfli_sql_bridge.h" "$OUTPUT/headers/"
 cp "$ROOT/native/third_party/sqlite/sqlite3.h" "$OUTPUT/headers/"
 cp "$ROOT/native/third_party/sqlite/sqlite3.c" "$OUTPUT/package/SQLite-LICENSE-source.c"
 cp "$ROOT/native/src/qfli_sql_bridge.c" "$OUTPUT/package/SQLite-bridge-source.c"
+cp "$ROOT/LICENSE" "$OUTPUT/package/LICENSE"
 
 COMMON=(-std=gnu99 -O2 -fvisibility=default -DSQLITE_THREADSAFE=1
   -DSQLITE_DEFAULT_MEMSTATUS=0 -DSQLITE_DQS=0 -DSQLITE_OMIT_LOAD_EXTENSION
@@ -39,7 +40,7 @@ build_slice() {
   "$LIBTOOL" -static -no_warning_for_no_symbols -o "$dir/libqfli_sqlite.a" \
     "$dir/sqlite3.o" "$dir/qfli_sql_bridge.o"
   test -s "$dir/libqfli_sqlite.a"
-  "$LIPO" -verify_arch "$arch" "$dir/libqfli_sqlite.a"
+  "$LIPO" "$dir/libqfli_sqlite.a" -verify_arch "$arch"
   xcrun vtool -show-build "$dir/qfli_sql_bridge.o" | tee "$dir/platform.txt"
   if [[ "$platform" == iphoneos ]]; then
     grep -Eq 'platform[[:space:]]+IOS$' "$dir/platform.txt"
@@ -56,7 +57,7 @@ mkdir -p "$OUTPUT/build/iphonesimulator"
 "$LIPO" -create "$OUTPUT/build/iphonesimulator-arm64/libqfli_sqlite.a" \
   "$OUTPUT/build/iphonesimulator-x86_64/libqfli_sqlite.a" \
   -output "$OUTPUT/build/iphonesimulator/libqfli_sqlite.a"
-"$LIPO" -verify_arch arm64 x86_64 "$OUTPUT/build/iphonesimulator/libqfli_sqlite.a"
+"$LIPO" "$OUTPUT/build/iphonesimulator/libqfli_sqlite.a" -verify_arch arm64 x86_64
 
 xcodebuild -create-xcframework \
   -library "$OUTPUT/build/iphoneos-arm64/libqfli_sqlite.a" -headers "$OUTPUT/headers" \

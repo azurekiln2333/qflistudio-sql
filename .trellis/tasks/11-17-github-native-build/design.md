@@ -8,7 +8,7 @@ iOS MySQL host. User explicitly corrected and approved scope on 2026-11-17.
 ## Jobs and Inputs
 - GitHub-only trial branch ci/native-build-20261117 from current local HEAD.
 - Linux hosted runners compile target OHOS/Android code, not desktop product binaries.
-- OHOS arm64: pinned setup-ohos-sdk commit and verified API23/6.1.0.32 metadata;
+- OHOS arm64: pinned setup-ohos-sdk commit and verified API23/6.1.0.31 (Linux release; local Windows is 6.1.0.32) metadata;
   source-hash checks; existing OpenSSL/Oracle build/package scripts. Compile SQLite
   OHOS NAPI with the actual SDK and staged Oracle dependencies where needed.
 - Android arm64-v8a and x86_64: NDK27.0.12077973, Clang18, pinned Oracle/OpenSSL,
@@ -22,6 +22,9 @@ iOS MySQL host. User explicitly corrected and approved scope on 2026-11-17.
   App-specific bridge/helper compilation remains part of application packaging.
 - Use read-only workflow permissions, immutable action revisions, manual triggers
   and branch push triggers. Isolate failures across platforms and always retain logs.
+- Manual runs accept target all/android/ohos/ios. Platform selection permits a
+  targeted retry while other platforms continue their original builds. Every
+  selected run retains corresponding source inputs. Push runs keep all platforms.
 - Shared host generator logic may be extracted from the existing OHOS build script
   if needed by Android; preserve default behavior and use environment overrides.
 - Conservative configurable parallelism with resource snapshots and bounded timeouts.
@@ -38,6 +41,7 @@ iOS MySQL host. User explicitly corrected and approved scope on 2026-11-17.
 | native-build-logs-* | Job logs and resource/diagnostic reports; never advertised as runtimes |
 
 Archive Unix outputs in tar files to preserve executable permissions/symlinks.
+Include the repository LICENSE unchanged alongside upstream notices and hash it.
 Record commit, input hashes, SDK/NDK/compiler versions, ABI and output hashes.
 Retention is 14 days. Upload runtime artifacts only after completeness/ABI checks.
 Current iOS CocoaPods builds from source; document XCFramework as an optional

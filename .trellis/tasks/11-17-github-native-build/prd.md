@@ -26,6 +26,9 @@ another planning round.
 - R6: Upload complete native packages, source provenance, hashes and logs.
   Document download locations, retention and local staging commands.
 - R7: Preserve unrelated changes, databases, historical packages and non-GitHub mirrors.
+- R8: Add the GNU GPL v3 license and README declaration from the main project
+  D:/MyNewProjects/qflistudio. The user explicitly authorized a conventional
+  commit and push on 2026-11-17, prioritizing this before further build work.
 
 ## Acceptance Criteria
 - [ ] R1/R7: Storage audit separates caches, runtime packages and database backups.
@@ -37,11 +40,14 @@ another planning round.
   resource/toolchain/implementation blocker is explicit, never a false pass.
 - [ ] R6: Successful downloadable artifacts match manifests/checksums and documented layouts.
 - [ ] R2/R6: Static checks and independent review pass for workflow/helper changes.
+- [x] R8: Root LICENSE matches the main project, README preserves separately
+  licensed content, and the license commit is verified on the GitHub trial branch.
 
 ## Confirmed Facts
 Local HEAD started at a841bc77, six commits ahead of GitHub main. No project
 workflow existed. origin has five push URLs; use the explicit GitHub URL.
-OHOS uses MySQL8.4.6/OpenSSL3.5.3, SDK23/6.1.0.32 and Clang18. Android uses NDK27.
+OHOS uses MySQL8.4.6/OpenSSL3.5.3, SDK23 and Clang18. CI uses Linux SDK6.1.0.31;
+the local Windows SDK is 6.1.0.32. Android uses NDK27.
 The Flutter application depends on sibling qfli_studio_core; standalone native
 builds avoid that dependency. Existing native iOS packaging is SQLite only.
 

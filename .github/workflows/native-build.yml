@@ -4,6 +4,17 @@ on:
   push:
     branches: [ci/native-build-20261117]
   workflow_dispatch:
+    inputs:
+      target:
+        description: Native platform to build
+        type: choice
+        required: true
+        default: all
+        options:
+          - all
+          - android
+          - ohos
+          - ios
 
 defaults:
   run:
@@ -49,6 +60,7 @@ jobs:
 
   android:
     name: Android native (${{ matrix.abi }})
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'android' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     strategy:
@@ -97,6 +109,7 @@ jobs:
         run: |
           package="$RUNNER_TEMP/mysql-android-${{ matrix.abi }}/package"
           bash tool/ci/audit_android_native.sh "$package" '${{ matrix.abi }}' 2>&1 | tee "$RUNNER_TEMP/native-logs/audit.log"
+          cp LICENSE "$package/LICENSE"
           python3 tool/ci/package_native.py package "$package" "$RUNNER_TEMP/native-artifact" 'native-android-${{ matrix.abi }}'
           echo 'Download native-android-${{ matrix.abi }} from Artifacts below (retained 14 days).' >> "$GITHUB_STEP_SUMMARY"
       - name: Resource snapshot after build
@@ -125,6 +138,7 @@ jobs:
 
   ohos:
     name: OHOS native (arm64)
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'ohos' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     steps:
@@ -217,6 +231,7 @@ jobs:
         run: |
           package="$RUNNER_TEMP/mysql-ohos-arm64/package"
           bash tool/ci/audit_ohos_native.sh "$package" 2>&1 | tee "$RUNNER_TEMP/native-logs/audit.log"
+          cp LICENSE "$package/LICENSE"
           python3 tool/ci/package_native.py package "$package" "$RUNNER_TEMP/native-artifact" native-ohos-arm64
           echo 'Download native-ohos-arm64 from Artifacts below (retained 14 days).' >> "$GITHUB_STEP_SUMMARY"
       - name: Resource snapshot after build
@@ -245,6 +260,7 @@ jobs:
 
   ios:
     name: iOS SQLite native package
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'ios' }}
     runs-on: macos-15
     timeout-minutes: 45
     steps:

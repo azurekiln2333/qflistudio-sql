@@ -8,17 +8,24 @@ It does not compile Windows or Linux distributions.
 
 The trial runs on pushes to `ci/native-build-20261117`. It also exposes
 `workflow_dispatch`; its manual button requires the workflow on the default branch.
+For a manual run, select `target`: `all` (default), `android`, `ohos`, or `ios`.
+Selecting one platform retries that platform without rebuilding the others.
+Every run includes the corresponding source inputs. Pushes build all platforms.
 
 1. Open https://github.com/azurekiln2333/qflistudio-sql/actions.
 2. Select **Mobile native builds**, then a run and its source commit.
 3. Inspect each job result. Successful platforms remain downloadable if another fails.
 4. Sign in and download the named item under **Artifacts**.
-5. Extract the Actions ZIP, verify `SHA256SUMS`, then extract the inner `.tar.gz`.
+5. Extract the Actions ZIP. For OHOS/Android, verify the outer `SHA256SUMS`
+   before extracting the `.tar.gz`. For iOS, extract the `.tar.gz` first.
+6. Verify the inner `SHA256SUMS` from the extracted package directory.
 
 Artifacts expire after **14 days**. Download accepted packages and their matching
 source inputs for longer retention. This workflow does not publish GitHub Releases.
 Every runtime archive contains per-file hashes and source/ABI provenance. Logs
 upload separately even after a failure. Logs alone are not runtime packages.
+Packages built with the license packaging step include the repository `LICENSE`
+and upstream license notices. Check the run's source commit for older artifacts.
 
 | Artifact | Native payload |
 | --- | --- |

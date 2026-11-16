@@ -1,6 +1,8 @@
 set(QFLI_OHOS_SDK "/mnt/d/ProgramFiles/Huawei/OpenHarmony/Sdk/23/native" CACHE PATH "HarmonyOS native SDK")
 set(QFLI_CLANG "/usr/bin/clang-18" CACHE FILEPATH "Linux Clang for the OHOS target")
 set(QFLI_CLANGXX "/usr/bin/clang++-18" CACHE FILEPATH "Linux Clang++ for the OHOS target")
+list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES
+  QFLI_OHOS_SDK QFLI_CLANG QFLI_CLANGXX)
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR aarch64)
 set(CMAKE_C_COMPILER "${QFLI_CLANG}")

@@ -204,6 +204,7 @@ node tool/test_sql_offline_platform.cjs
 `native/mysql/` 存放 Oracle 服务端补丁、交叉构建脚本、打包与子进程入口。`native/tests/` 存放验证工具。
 `native/README.md` 仍只描述两个 NAPI 函数。该说明已过期。实际桥接暴露五个方法。
 Oracle 原生文档：[鸿蒙 arm64 服务端移植](native/mysql/README.md)、[Windows 与 Linux 本机准备](native/mysql/desktop/README.md)、[Android Bionic 构建](native/mysql/android/README.md)。
+移动平台构建见[移动平台云构建](native/CI.md)。产物从 GitHub Actions 下载。
 
 ## 离线边界
 

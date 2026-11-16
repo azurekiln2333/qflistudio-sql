@@ -1,0 +1,8 @@
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "Reuse existing targets and input contracts"}
+{"file": ".trellis/spec/backend/sqlite-native-runtime.md", "reason": "Real SQLite runtime and platform evidence"}
+{"file": ".trellis/spec/backend/mysql-ohos-runtime.md", "reason": "Production private server and packaging contract"}
+{"file": ".trellis/spec/backend/ohos-audit-packaging.md", "reason": "Native package provenance and evidence limits"}
+{"file": ".trellis/tasks/11-17-github-native-build/research/ohos-ci.md", "reason": "SDK source, runner feasibility and artifact structure"}
+{"file": ".trellis/tasks/11-17-github-native-build/research/storage.md", "reason": "Protected local packages and database backups"}
+{"file": ".trellis/spec/backend/mysql-android-runtime.md", "reason": "Android Bionic packaging and ABI contract"}
+{"file": ".trellis/spec/backend/mysql-desktop-runtime.md", "reason": "Apple existing runtime boundary"}

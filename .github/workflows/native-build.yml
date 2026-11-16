@@ -1,0 +1,268 @@
+name: Mobile native builds
+
+on:
+  push:
+    branches: [ci/native-build-20261117]
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
+env:
+  QFLI_BUILD_JOBS: '2'
+  MYSQL_SHA256: a1e523dc8be96d18a5ade106998661285ca01b6f5b46c08b2654110e40df2fb7
+  OPENSSL_SHA256: c9489d2abcf943cdc8329a57092331c598a402938054dc3a22218aea8a8ec3bf
+  MYSQL_URL: https://cdn.mysql.com/archives/mysql-8.4/mysql-8.4.6.tar.gz
+  OPENSSL_URL: https://www.openssl.org/source/openssl-3.5.3.tar.gz
+
+jobs:
+  source-inputs:
+    name: Corresponding native source inputs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Download and verify sources
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-source-inputs"
+          cd "$RUNNER_TEMP/native-source-inputs"
+          curl --fail --location --retry 3 "$MYSQL_URL" -o mysql-8.4.6.tar.gz
+          curl --fail --location --retry 3 "$OPENSSL_URL" -o openssl-3.5.3.tar.gz
+          echo "$MYSQL_SHA256  mysql-8.4.6.tar.gz" | sha256sum --check
+          echo "$OPENSSL_SHA256  openssl-3.5.3.tar.gz" | sha256sum --check
+          git -C "$GITHUB_WORKSPACE" archive --format=tar.gz --output="$PWD/qfli-sql-source.tar.gz" HEAD
+          printf 'commit=%s\nmysql=%s\nopenssl=%s\n' "$GITHUB_SHA" "$MYSQL_URL" "$OPENSSL_URL" > PROVENANCE.txt
+          sha256sum ./*.tar.gz > SHA256SUMS
+      - name: Upload corresponding sources
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-source-inputs
+          path: ${{ runner.temp }}/native-source-inputs
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+
+  android:
+    name: Android native (${{ matrix.abi }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        abi: [arm64-v8a, x86_64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install build tools
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-logs"
+          sudo apt-get update
+          sudo apt-get install -y clang-18 llvm-18 lld-18 cmake ninja-build make perl bison \
+            pkg-config libssl-dev libicu-dev libtirpc-dev rpcsvc-proto unzip p7zip-full
+      - name: Setup Android SDK and NDK
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+      - name: Install NDK 27.0.12077973
+        run: sdkmanager --install 'ndk;27.0.12077973'
+      - name: Resource snapshot
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-logs"
+          df -h | tee "$RUNNER_TEMP/native-logs/resources-before.txt"
+          free -h | tee -a "$RUNNER_TEMP/native-logs/resources-before.txt"
+      - name: Download verified source archives
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-inputs"
+          curl --fail --location --retry 3 "$MYSQL_URL" -o "$RUNNER_TEMP/native-inputs/mysql.tar.gz"
+          curl --fail --location --retry 3 "$OPENSSL_URL" -o "$RUNNER_TEMP/native-inputs/openssl.tar.gz"
+          echo "$MYSQL_SHA256  $RUNNER_TEMP/native-inputs/mysql.tar.gz" | sha256sum --check
+          echo "$OPENSSL_SHA256  $RUNNER_TEMP/native-inputs/openssl.tar.gz" | sha256sum --check
+      - name: Build Oracle and SQLite
+        env:
+          QFLI_ANDROID_ABI: ${{ matrix.abi }}
+          QFLI_MYSQL_ANDROID_WORK: ${{ runner.temp }}/mysql-android-${{ matrix.abi }}
+          QFLI_MYSQL_ARCHIVE: ${{ runner.temp }}/native-inputs/mysql.tar.gz
+          QFLI_OPENSSL_ARCHIVE: ${{ runner.temp }}/native-inputs/openssl.tar.gz
+          QFLI_HOST_CLANG: clang-18
+          QFLI_HOST_CLANGXX: clang++-18
+        run: |
+          export QFLI_ANDROID_NDK="$ANDROID_HOME/ndk/27.0.12077973"
+          bash tool/ci/build_android_native.sh 2>&1 | tee "$RUNNER_TEMP/native-logs/build.log"
+      - name: Audit and package
+        run: |
+          package="$RUNNER_TEMP/mysql-android-${{ matrix.abi }}/package"
+          bash tool/ci/audit_android_native.sh "$package" '${{ matrix.abi }}' 2>&1 | tee "$RUNNER_TEMP/native-logs/audit.log"
+          python3 tool/ci/package_native.py package "$package" "$RUNNER_TEMP/native-artifact" 'native-android-${{ matrix.abi }}'
+          echo 'Download native-android-${{ matrix.abi }} from Artifacts below (retained 14 days).' >> "$GITHUB_STEP_SUMMARY"
+      - name: Resource snapshot after build
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-logs"
+          df -h | tee "$RUNNER_TEMP/native-logs/resources-after.txt"
+          free -h | tee -a "$RUNNER_TEMP/native-logs/resources-after.txt"
+      - name: Upload Android native runtime
+        if: success()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-android-${{ matrix.abi }}
+          path: ${{ runner.temp }}/native-artifact
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+      - name: Upload Android logs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-android-${{ matrix.abi }}-logs
+          path: ${{ runner.temp }}/native-logs
+          if-no-files-found: warn
+          retention-days: 14
+
+  ohos:
+    name: OHOS native (arm64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install build tools
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-logs"
+          sudo apt-get update
+          sudo apt-get install -y clang-18 llvm-18 lld-18 cmake ninja-build make perl bison \
+            pkg-config libssl-dev libicu-dev libtirpc-dev rpcsvc-proto jq unzip
+      - name: Verify pinned SDK archive checksum
+        run: |
+          curl --fail --location --retry 3 \
+            https://github.com/openharmony-rs/ohos-sdk/releases/download/v6.1/ohos-sdk-windows_linux-public.tar.gz.sha256 \
+            -o "$RUNNER_TEMP/native-logs/sdk-archive.sha256"
+          test "$(tr -d '[:space:]' < "$RUNNER_TEMP/native-logs/sdk-archive.sha256")" = b833b75a64ee46bbd7880921abbb49b733ec5c8171b6684c9b524d57f624cee0
+      - name: Setup OpenHarmony SDK
+        id: ohos
+        uses: openharmony-rs/setup-ohos-sdk@cfd996a9cff9e72a7e59827cb5424fcfae4ada3e
+        with:
+          version: '6.1'
+          components: native
+          mirror: force
+          cache: 'false'
+      - name: Verify SDK metadata
+        env:
+          SDK: ${{ steps.ohos.outputs.ohos_sdk_native }}
+        run: |
+          test -f "$SDK/oh-uni-package.json"
+          test "$(jq -r .apiVersion "$SDK/oh-uni-package.json")" = 23
+          test "$(jq -r .version "$SDK/oh-uni-package.json")" = 6.1.0.32
+          test -d "$SDK/sysroot"
+          test -d "$SDK/llvm/lib/clang/15.0.4"
+          test -d "$SDK/llvm/include/libcxx-ohos/include/c++/v1"
+          test -f "$SDK/build/cmake/ohos.toolchain.cmake"
+          test -f "$SDK/llvm/lib/aarch64-linux-ohos/c++/libc++_static.a"
+          test -f "$SDK/llvm/lib/aarch64-linux-ohos/libunwind.a"
+          cp "$SDK/oh-uni-package.json" "$RUNNER_TEMP/native-logs/ohos-sdk.json"
+      - name: Resource snapshot
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-logs"
+          df -h | tee "$RUNNER_TEMP/native-logs/resources-before.txt"
+          free -h | tee -a "$RUNNER_TEMP/native-logs/resources-before.txt"
+      - name: Download verified source archives
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-inputs"
+          curl --fail --location --retry 3 "$MYSQL_URL" -o "$RUNNER_TEMP/native-inputs/mysql.tar.gz"
+          curl --fail --location --retry 3 "$OPENSSL_URL" -o "$RUNNER_TEMP/native-inputs/openssl.tar.gz"
+          echo "$MYSQL_SHA256  $RUNNER_TEMP/native-inputs/mysql.tar.gz" | sha256sum --check
+          echo "$OPENSSL_SHA256  $RUNNER_TEMP/native-inputs/openssl.tar.gz" | sha256sum --check
+      - name: Build OHOS Oracle and SQLite
+        env:
+          QFLI_OHOS_SDK: ${{ steps.ohos.outputs.ohos_sdk_native }}
+          QFLI_MYSQL_PORT_ROOT: ${{ runner.temp }}/mysql-ohos-arm64
+          QFLI_MYSQL_ARCHIVE: ${{ runner.temp }}/native-inputs/mysql.tar.gz
+          QFLI_OPENSSL_ARCHIVE: ${{ runner.temp }}/native-inputs/openssl.tar.gz
+          QFLI_CLANG: /usr/bin/clang-18
+          QFLI_CLANGXX: /usr/bin/clang++-18
+          QFLI_HOST_CLANG: /usr/bin/clang-18
+          QFLI_HOST_CLANGXX: /usr/bin/clang++-18
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-logs"
+          bash native/mysql/build-openssl-ohos.sh 2>&1 | tee "$RUNNER_TEMP/native-logs/openssl.log"
+          bash native/mysql/build-mysql-ohos.sh 2>&1 | tee "$RUNNER_TEMP/native-logs/mysql.log"
+          # native/CMakeLists requires the real Oracle package in this local layout.
+          mkdir -p build/mysql-port
+          ln -s "$QFLI_MYSQL_PORT_ROOT/package" build/mysql-port/package
+          cmake -S native -B "$RUNNER_TEMP/sqlite-ohos" \
+            -DCMAKE_TOOLCHAIN_FILE="$QFLI_OHOS_SDK/build/cmake/ohos.toolchain.cmake" \
+            -DOHOS_ARCH=arm64-v8a -DCMAKE_BUILD_TYPE=Release \
+            2>&1 | tee "$RUNNER_TEMP/native-logs/sqlite.log"
+          cmake --build "$RUNNER_TEMP/sqlite-ohos" --target qfli_sql --parallel 2 \
+            2>&1 | tee -a "$RUNNER_TEMP/native-logs/sqlite.log"
+          cp "$RUNNER_TEMP/sqlite-ohos/libqfli_sql.so" "$QFLI_MYSQL_PORT_ROOT/package/libs/arm64-v8a/"
+          cp "$QFLI_OHOS_SDK/oh-uni-package.json" "$QFLI_MYSQL_PORT_ROOT/package/ohos-sdk.json"
+          cp "$RUNNER_TEMP/native-logs/sdk-archive.sha256" "$QFLI_MYSQL_PORT_ROOT/package/"
+          {
+            echo "commit=$GITHUB_SHA"
+            echo 'target=OHOS arm64; API23; SDK6.1.0.32'
+            echo 'sdk_mirror=https://github.com/openharmony-rs/ohos-sdk/releases/tag/v6.1'
+            echo "mysql_source_sha256=$MYSQL_SHA256"
+            echo "openssl_source_sha256=$OPENSSL_SHA256"
+            clang-18 --version
+            cmake --version
+          } > "$QFLI_MYSQL_PORT_ROOT/package/CI_PROVENANCE.txt"
+      - name: Audit and package
+        run: |
+          package="$RUNNER_TEMP/mysql-ohos-arm64/package"
+          bash tool/ci/audit_ohos_native.sh "$package" 2>&1 | tee "$RUNNER_TEMP/native-logs/audit.log"
+          python3 tool/ci/package_native.py package "$package" "$RUNNER_TEMP/native-artifact" native-ohos-arm64
+          echo 'Download native-ohos-arm64 from Artifacts below (retained 14 days).' >> "$GITHUB_STEP_SUMMARY"
+      - name: Resource snapshot after build
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/native-logs"
+          df -h | tee "$RUNNER_TEMP/native-logs/resources-after.txt"
+          free -h | tee -a "$RUNNER_TEMP/native-logs/resources-after.txt"
+      - name: Upload OHOS native runtime
+        if: success()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-ohos-arm64
+          path: ${{ runner.temp }}/native-artifact
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+      - name: Upload OHOS logs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-ohos-arm64-logs
+          path: ${{ runner.temp }}/native-logs
+          if-no-files-found: warn
+          retention-days: 14
+
+  ios:
+    name: iOS SQLite native package
+    runs-on: macos-14
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build and inspect XCFramework
+        run: |
+          bash tool/ci/build-ios-sqlite.sh "$RUNNER_TEMP/ios-sqlite" 2>&1 | tee "$RUNNER_TEMP/ios-sqlite.log"
+          echo 'Download native-ios-sqlite from Artifacts below (retained 14 days). This contains SQLite, not an iOS MySQL host.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload iOS native package
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-ios-sqlite
+          path: ${{ runner.temp }}/ios-sqlite/native-ios-sqlite.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+      - name: Upload iOS logs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-ios-sqlite-logs
+          path: ${{ runner.temp }}/ios-sqlite.log
+          if-no-files-found: warn
+          retention-days: 14

@@ -46,6 +46,10 @@ Bad: claim iOS MySQL support from a SQLite XCFramework or delete all build/ data
 Actionlint, shell syntax, Python compilation, package hash/archive inspection,
 real GitHub cross-build results, and production ELF/staging audits. Check iOS
 platform triples and XCFramework slices, not architecture alone.
+Record each Mach-O slice's actual minimum OS. Xcode 16.4 emits an iOS 14.0
+minimum for the arm64 simulator slice even when the requested target is 13.0;
+the device arm64 and simulator x86_64 slices retain 13.0. The requested compiler
+target alone does not establish the minimum encoded in every object.
 Pass the input file before lipo -verify_arch. That option consumes following
 arguments as architecture names, so a trailing filename is rejected by Apple lipo.
 

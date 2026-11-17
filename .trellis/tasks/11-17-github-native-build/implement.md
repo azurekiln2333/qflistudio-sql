@@ -26,3 +26,11 @@ YAML/actionlint, shell syntax, Python checks, actual runner compile/package audi
 iOS XCFramework slice inspection and artifact manifest/hash verification.
 Compilation is not application/device execution. Preserve logs and every platform's
 actual outcome. Do not replace unavailable iOS MySQL with a mock or claim support.
+
+## Completion Checkpoint
+All implementation and validation steps passed on 2026-11-17. OHOS/Android
+passed in run 43937691966 at 5a83aea; iOS passed in targeted run 43942332046
+at 08a3b41. Downloaded archives passed independent hash, architecture, symbol
+and platform/dependency checks. The user-requested main merge was a fast-forward
+to 08a3b41, followed by an explicit GitHub push and remote ref verification.
+Final evidence records each package's source commit and its verification limits.

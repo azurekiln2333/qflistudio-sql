@@ -21,7 +21,7 @@ This directory contains guidelines for backend development. Fill in each file wi
 | [Logging Guidelines](./logging-guidelines.md) | Structured logging, log levels | To fill |
 | [SQL Query Library](./sql-query-library.md) | Query persistence and filesystem failure behavior | Documented |
 | [SQLite Workspace](./sql-workspace.md) | Stable grid identity and fixed-offset paging | Documented |
-| [Mobile Native CI](./native-ci.md) | Hosted OHOS/Android/iOS native builds and artifact contracts | Initial remote trial pending |
+| [Mobile Native CI](./native-ci.md) | Hosted OHOS/Android/iOS native builds and artifact contracts | Remote builds and downloaded artifacts verified; device acceptance separate |
 | [SQLite Native Runtime](./sqlite-native-runtime.md) | Multi-platform C packaging, FFI, queries and real runtime evidence | Implemented |
 | [SQL Diagnostics](./sql-diagnostics.md) | Exact snapshots, isolated prepare-only validation, UTF-16 ranges and incomplete coverage | Implemented; target acceptance separate |
 | [OHOS Audit Packaging](./ohos-audit-packaging.md) | Real ABI staging, separate audit bundle, SDK test signing and final archive provenance | Historical build verified; current build/device gates open |

@@ -29,19 +29,31 @@ another planning round.
 - R8: Add the GNU GPL v3 license and README declaration from the main project
   D:/MyNewProjects/qflistudio. The user explicitly authorized a conventional
   commit and push on 2026-11-17, prioritizing this before further build work.
+- R9: Merge the CI branch into main and push main to GitHub, as explicitly
+  requested by the user on 2026-11-17.
 
 ## Acceptance Criteria
-- [ ] R1/R7: Storage audit separates caches, runtime packages and database backups.
-- [ ] R2/R3: OHOS/Android jobs run with their real target toolchains, with
+- [x] R1/R7: Storage audit separates caches, runtime packages and database backups.
+- [x] R2/R3: OHOS/Android jobs run with their real target toolchains, with
   architecture/dependency checks before successful artifact upload.
-- [ ] R3: iOS device/simulator SQLite bridge package builds remotely and is inspected.
-- [ ] R4: macOS official package links and the current integration boundary are documented.
-- [ ] R5: Real GitHub run URLs and per-job results are recorded. Any unresolved
+- [x] R3: iOS device/simulator SQLite bridge package builds remotely and is inspected.
+- [x] R4: macOS official package links and the current integration boundary are documented.
+- [x] R5: Real GitHub run URLs and per-job results are recorded. Any unresolved
   resource/toolchain/implementation blocker is explicit, never a false pass.
-- [ ] R6: Successful downloadable artifacts match manifests/checksums and documented layouts.
-- [ ] R2/R6: Static checks and independent review pass for workflow/helper changes.
+- [x] R6: Successful downloadable artifacts match manifests/checksums and documented layouts.
+- [x] R2/R6: Static checks and independent review pass for workflow/helper changes.
 - [x] R8: Root LICENSE matches the main project, README preserves separately
   licensed content, and the license commit is verified on the GitHub trial branch.
+- [x] R9: main fast-forwards to 08a3b41695bdf7d3085b6159850a82dfbf64e3a6.
+  GitHub main and the CI branch were verified at that commit after push.
+
+## Acceptance Evidence
+See research/ci-final-job-status.md for the two actual runs and direct artifact
+URLs. research/artifact-verification.md covers the downloaded OHOS/Android
+packages. research/ios-artifact-verification.md covers the downloaded XCFramework.
+The OHOS/Android packages were built from 5a83aea, before the root GPL addition.
+The iOS package was built from 08a3b41 and includes that license. All source commits
+and checksum inventories are retained. Device execution remains out of scope.
 
 ## Confirmed Facts
 Local HEAD started at a841bc77, six commits ahead of GitHub main. No project
